@@ -52,10 +52,10 @@ router.patch('/:id/review', async (req, res) => {
     try {
         const { reviewStatus, reviewedBy } = req.body;
 
-        if (!['approved', 'overridden'].includes(reviewStatus)) {
+        if (!['approved', 'rejected', 'ignored'].includes(reviewStatus)) {
             return res.status(400).json({
                 success: false,
-                error: 'reviewStatus must be "approved" or "overridden"'
+                error: 'reviewStatus must be "approved", "rejected", or "ignored"'
             });
         }
 

@@ -1,58 +1,39 @@
-# AI Content Moderation System
+# Moderate System (AI)
 
-An AI-powered content moderation API that automates initial content screening using LLMs, makes consistent decisions based on centralized policies, and provides full audit trails.
+An advanced, AI-powered content moderation platform that automates initial content screening, enforces policy compliance, and provides detailed analytics. Built with a "Strict Minimalist" design philosophy for high-efficiency data oversight.
 
-## Features
+## ✨ Key Features
 
-- 🤖 **AI-Powered Moderation** — Automated content screening using Claude via OpenRouter
-- 📋 **Policy-Based Analysis** — Decisions reference stored moderation policies
-- 🏷️ **Violation Classification** — Categorizes: hate_speech, harassment, spam, nsfw, violence, misinformation, self_harm, illegal
-- 📊 **Confidence Scoring** — Returns 0-1 confidence for each decision
-- 📝 **Policy Citation** — Every rejection includes the specific policy violated
-- 📈 **Audit Trail** — All decisions logged in MongoDB
-- 👥 **Human Review Queue** — Uncertain content queued for manual review
+- **🤖 AI-Powered Analysis** — Automated screening using Claude (via OpenRouter) & LangChain.
+- **🛡️ Policy Protocol** — Centralized rule management for consistent enforcement.
+- **📊 Real-Time Analytics** — Live dashboard with volume, latency, and verdict distribution metrics.
+- **👁️ Review Queue** — Manual oversight workflow for flagged/uncertain content.
+- **🎨 Minimalist UI** — High-contrast "Data Terminal" aesthetic (Black & White) using Tailwind CSS.
+- **📈 Detailed Logging** — Full audit trail of all AI decisions and human reviews.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 18 + Vite |
-| Backend | Express.js 4 + Node.js 20 |
-| Database | MongoDB 6 + Mongoose 8 |
-| AI Orchestration | LangChain.js |
-| AI Provider | OpenRouter API |
+### Core
+| Component | Technology |
+|-----------|------------|
+| **Frontend** | React 18, Vite |
+| **Styling** | Tailwind CSS (v3), Lucide React (Icons) |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB, Mongoose |
 
-## Project Structure
+### AI & Data
+| Component | Technology |
+|-----------|------------|
+| **LLM Orchestration** | LangChain.js |
+| **Model Provider** | OpenRouter (Claude-3-Haiku default) |
+| **Visualization** | Recharts |
 
-```
-content-moderation/
-├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/     # UI components
-│   │   ├── services/       # API client
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── package.json
-├── server/                 # Express backend
-│   ├── config/             # Database config
-│   ├── models/             # Mongoose schemas
-│   ├── routes/             # API routes
-│   ├── services/           # Business logic
-│   ├── prompts/            # AI prompt templates
-│   ├── scripts/            # Utility scripts
-│   ├── server.js
-│   └── package.json
-├── .env.example
-└── README.md
-```
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js 20+
 - MongoDB 6+
-- OpenRouter API key
+- OpenRouter API Key
 
 ### Installation
 
@@ -62,72 +43,73 @@ content-moderation/
    cd content-moderation-ai
    ```
 
-2. **Setup environment variables**
+2. **Setup Environment**
    ```bash
-   cp .env.example .env
-   # Edit .env with your values
+   # Create .env file in root
+   PORT=5001
+   MONGODB_URI=mongodb://localhost:27017/content-moderation
+   OPENROUTER_API_KEY=sk-or-v1-your-key-here
+   AI_MODEL=anthropic/claude-3-haiku
+   CONFIDENCE_THRESHOLD=0.7
    ```
 
-3. **Install backend dependencies**
+3. **Install Dependencies**
    ```bash
+   # Backend
    cd server
    npm install
-   ```
 
-4. **Install frontend dependencies**
-   ```bash
-   cd client
+   # Frontend
+   cd ../client
    npm install
    ```
 
-5. **Seed the database**
+4. **Seed Database** (Optional)
    ```bash
    cd server
    npm run seed
    ```
 
-6. **Start the development servers**
+5. **Run Application**
    ```bash
-   # Terminal 1 - Backend
+   # Terminal 1: Backend
    cd server
    npm run dev
 
-   # Terminal 2 - Frontend
+   # Terminal 2: Frontend
    cd client
    npm run dev
    ```
 
-## API Endpoints
+## 📡 API Endpoints
 
-### Moderation
-
+### Core Moderation
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | /api/v1/moderate | Analyze content |
-| GET | /api/v1/logs | Get moderation history |
-| GET | /api/v1/logs/:id | Get single log |
-| PATCH | /api/v1/logs/:id/review | Submit human review |
+| `POST` | `/api/v1/moderate` | Submit content for AI analysis |
+| `GET` | `/api/v1/logs` | Fetch moderation history |
+| `PATCH` | `/api/v1/logs/:id/review` | Submit human review decision |
 
-### Policies
-
+### Analytics
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /api/v1/policies | List all policies |
-| GET | /api/v1/policies/:id | Get single policy |
-| POST | /api/v1/policies | Create policy |
-| PUT | /api/v1/policies/:id | Update policy |
-| DELETE | /api/v1/policies/:id | Delete policy |
+| `GET` | `/api/v1/analytics/overview` | Dashboard summary metrics |
+| `GET` | `/api/v1/analytics/timeseries` | Chart data (volume over time) |
+| `GET` | `/api/v1/analytics/categories` | Violation distribution |
 
-## Environment Variables
+### Policy Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/v1/policies` | List all active policies |
+| `POST` | `/api/v1/policies` | Create new policy definition |
 
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/content-moderation
-OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxx
-AI_MODEL=anthropic/claude-3-haiku
-CONFIDENCE_THRESHOLD=0.7
-NODE_ENV=development
-```
+## 🎨 Design System
+
+The UI follows a **Strict Minimalist (B&W)** theme:
+- **Font**: DM Mono (Google Fonts)
+- **Colors**: Black (`#09090b`), White (`#ffffff`), Gray (`#a1a1aa`)
+- **Status Colors**: Green (Safe), Red (Rejected), Amber (Flagged)
+- **Icons**: Lucide React (No emojis)
 
 ## License
 

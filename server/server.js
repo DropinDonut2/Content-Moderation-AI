@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 const moderateRoutes = require('./routes/moderate');
 const policyRoutes = require('./routes/policies');
 const logRoutes = require('./routes/logs');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/v1/moderate', moderateRoutes);
 app.use('/api/v1/policies', policyRoutes);
 app.use('/api/v1/logs', logRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

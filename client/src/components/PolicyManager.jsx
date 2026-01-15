@@ -1,35 +1,34 @@
 import { useState, useEffect } from 'react'
-import { getPolicies, createPolicy, updatePolicy, deletePolicy } from '../services/api'
+import { getPolicies, updatePolicy, deletePolicy, createPolicy } from '../services/api'
+import { Plus, Edit2, Trash2, AlertTriangle, ShieldAlert, Shield, ShieldCheck } from 'lucide-react'
+
+// Move initial state outside component to prevent reference error
+const initialFormState = {
+    policyId: '',
+    title: '',
+    category: 'hate_speech',
+    description: '',
+    severity: 'medium',
+    defaultAction: 'flag'
+}
 
 function PolicyManager() {
     const [policies, setPolicies] = useState([])
     const [loading, setLoading] = useState(true)
-    const [editing, setEditing] = useState(null)
-    const [showForm, setShowForm] = useState(false)
-
-    const emptyPolicy = {
-        policyId: '',
-        title: '',
-        category: 'hate_speech',
-        description: '',
-        examples: [],
-        severity: 'medium',
-        defaultAction: 'flag',
-        isActive: true
-    }
-
-    const [formData, setFormData] = useState(emptyPolicy)
+    const [editingId, setEditingId] = useState(null)
+    const [formData, setFormData] = useState(initialFormState)
 
     useEffect(() => {
         fetchPolicies()
     }, [])
 
     const fetchPolicies = async () => {
+        setLoading(true)
         try {
-            const response = await getPolicies()
-            setPolicies(response.data)
+            const data = await getPolicies()
+            setPolicies(data.data)
         } catch (error) {
-            console.error('Failed to fetch policies:', error)
+            console.error(error)
         } finally {
             setLoading(false)
         }
@@ -38,191 +37,186 @@ function PolicyManager() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const data = {
-                ...formData,
-                examples: typeof formData.examples === 'string'
-                    ? formData.examples.split('\n').filter(e => e.trim())
-                    : formData.examples
-            }
-
-            if (editing) {
-                await updatePolicy(editing, data)
+            if (editingId) {
+                await updatePolicy(editingId, formData)
             } else {
-                await createPolicy(data)
+                await createPolicy(formData)
             }
-
-            setShowForm(false)
-            setEditing(null)
-            setFormData(emptyPolicy)
+            setEditingId(null)
+            setFormData(initialFormState)
             fetchPolicies()
         } catch (error) {
-            console.error('Failed to save policy:', error)
-            alert('Failed to save policy: ' + error.message)
+            alert('Operation failed')
         }
     }
 
-    const handleEdit = (policy) => {
-        setFormData({
-            ...policy,
-            examples: policy.examples.join('\n')
-        })
-        setEditing(policy._id)
-        setShowForm(true)
-    }
-
-    const handleDelete = async (id) => {
-        if (!confirm('Are you sure you want to delete this policy?')) return
-        try {
-            await deletePolicy(id)
-            fetchPolicies()
-        } catch (error) {
-            console.error('Failed to delete policy:', error)
-        }
-    }
-
-    const categories = ['hate_speech', 'harassment', 'spam', 'nsfw', 'violence', 'misinformation', 'self_harm', 'illegal']
-    const severities = ['low', 'medium', 'high', 'critical']
-
-    if (loading) {
-        return <div className="loading-container"><div className="spinner"></div></div>
+    const startEdit = (policy) => {
+        setEditingId(policy._id)
+        setFormData(policy)
     }
 
     return (
-        <div className="policy-manager">
-            <div className="page-header">
-                <h2>Policy Manager</h2>
-                <p>Manage content moderation policies</p>
+        <div className="space-y-8 animate-fade-in pb-10">
+            <div className="flex justify-between items-end border-b border-white/10 pb-6">
+                <div>
+                    <h2 className="text-3xl font-bold text-white mb-2 uppercase tracking-tighter">Policy Protocol</h2>
+                    <p className="text-text-secondary font-mono text-xs">// CONFIGURE_MODERATION_RULES</p>
+                </div>
+                <button
+                    onClick={() => { setEditingId(null); setFormData(initialFormState); document.getElementById('policy-form').scrollIntoView({ behavior: 'smooth' }); }}
+                    className="btn-primary-new flex items-center gap-2"
+                >
+                    <Plus className="w-4 h-4" /> New Policy
+                </button>
             </div>
 
-            <button
-                className="btn btn-primary"
-                style={{ marginBottom: '1.5rem' }}
-                onClick={() => { setShowForm(!showForm); setEditing(null); setFormData(emptyPolicy); }}
-            >
-                {showForm ? '✕ Cancel' : '+ Add Policy'}
-            </button>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Form Section */}
+                <div id="policy-form" className="lg:col-span-1">
+                    <div className="card-premium p-6 sticky top-6">
+                        <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4 uppercase tracking-wide">
+                            {editingId ? <Edit2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                            {editingId ? 'Edit Configuration' : 'New Definition'}
+                        </h3>
 
-            {showForm && (
-                <form onSubmit={handleSubmit} className="card" style={{ marginBottom: '1.5rem' }}>
-                    <h3 style={{ marginBottom: '1rem' }}>{editing ? 'Edit Policy' : 'New Policy'}</h3>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Policy ID</label>
+                                <input
+                                    type="text"
+                                    value={formData.policyId}
+                                    onChange={e => setFormData({ ...formData, policyId: e.target.value })}
+                                    className="input-premium font-mono"
+                                    placeholder="POL-000"
+                                    required
+                                />
+                            </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <div className="form-group">
-                            <label>Policy ID</label>
-                            <input
-                                type="text"
-                                value={formData.policyId}
-                                onChange={(e) => setFormData({ ...formData, policyId: e.target.value })}
-                                placeholder="POL-XXX"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Title</label>
-                            <input
-                                type="text"
-                                value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="Policy title"
-                                required
-                            />
-                        </div>
+                            <div>
+                                <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Title</label>
+                                <input
+                                    type="text"
+                                    value={formData.title}
+                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                    className="input-premium"
+                                    placeholder="e.g. Hate Speech"
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Severity</label>
+                                    <select
+                                        value={formData.severity}
+                                        onChange={e => setFormData({ ...formData, severity: e.target.value })}
+                                        className="input-premium"
+                                    >
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="critical">Critical</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Action</label>
+                                    <select
+                                        value={formData.defaultAction}
+                                        onChange={e => setFormData({ ...formData, defaultAction: e.target.value })}
+                                        className="input-premium"
+                                    >
+                                        <option value="flag">Flag</option>
+                                        <option value="reject">Reject</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Description</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                    className="input-premium min-h-[120px] resize-none"
+                                    placeholder="Detailed policy description..."
+                                    required
+                                />
+                            </div>
+
+                            <div className="pt-4 flex gap-3">
+                                <button type="submit" className="flex-1 btn-primary-new">
+                                    {editingId ? 'Update' : 'Create'}
+                                </button>
+                                {editingId && (
+                                    <button
+                                        type="button"
+                                        onClick={() => { setEditingId(null); setFormData(initialFormState); }}
+                                        className="px-4 py-2 border border-white/20 text-text-secondary hover:text-white uppercase text-sm font-medium hover:bg-white/5 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                )}
+                            </div>
+                        </form>
                     </div>
+                </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-                        <div className="form-group">
-                            <label>Category</label>
-                            <select
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                            >
-                                {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Severity</label>
-                            <select
-                                value={formData.severity}
-                                onChange={(e) => setFormData({ ...formData, severity: e.target.value })}
-                            >
-                                {severities.map(s => <option key={s} value={s}>{s}</option>)}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Default Action</label>
-                            <select
-                                value={formData.defaultAction}
-                                onChange={(e) => setFormData({ ...formData, defaultAction: e.target.value })}
-                            >
-                                <option value="flag">Flag</option>
-                                <option value="reject">Reject</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            placeholder="Full policy description..."
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Examples (one per line)</label>
-                        <textarea
-                            value={formData.examples}
-                            onChange={(e) => setFormData({ ...formData, examples: e.target.value })}
-                            placeholder="Example violation 1&#10;Example violation 2"
-                        />
-                    </div>
-
-                    <button type="submit" className="btn btn-primary">
-                        {editing ? 'Update Policy' : 'Create Policy'}
-                    </button>
-                </form>
-            )}
-
-            <div className="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Severity</th>
-                            <th>Action</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {policies.map(policy => (
-                            <tr key={policy._id}>
-                                <td>{policy.policyId}</td>
-                                <td>{policy.title}</td>
-                                <td>{policy.category}</td>
-                                <td>
-                                    <span className={`badge ${policy.severity === 'critical' ? 'rejected' : policy.severity === 'high' ? 'flagged' : 'safe'}`}>
-                                        {policy.severity}
+                {/* List Section */}
+                <div className="lg:col-span-2 space-y-4">
+                    {policies.map(policy => (
+                        <div
+                            key={policy._id}
+                            className={`card-premium p-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between group
+                ${editingId === policy._id ? 'border-white bg-white/5' : ''}
+              `}
+                        >
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="font-mono text-xs px-2 py-1 bg-white/10 text-white border border-white/10">
+                                        {policy.policyId}
                                     </span>
-                                </td>
-                                <td>{policy.defaultAction}</td>
-                                <td>{policy.isActive ? '✅ Active' : '❌ Inactive'}</td>
-                                <td>
-                                    <button className="btn btn-secondary" style={{ marginRight: '0.5rem', padding: '0.5rem 0.75rem' }} onClick={() => handleEdit(policy)}>
-                                        Edit
-                                    </button>
-                                    <button className="btn btn-danger" style={{ padding: '0.5rem 0.75rem' }} onClick={() => handleDelete(policy._id)}>
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                    <h4 className="font-bold text-white text-lg tracking-tight">{policy.title}</h4>
+                                    {policy.severity === 'critical' && (
+                                        <span className="flex items-center gap-1 px-2 py-0.5 bg-red-500 text-black text-xs font-bold uppercase">
+                                            <AlertTriangle className="w-3 h-3" /> Critical
+                                        </span>
+                                    )}
+                                </div>
+                                <p className="text-text-secondary text-sm leading-relaxed mb-4 border-l-2 border-white/10 pl-3">
+                                    {policy.description}
+                                </p>
+                                <div className="flex gap-6 text-xs font-mono text-text-secondary uppercase tracking-wider">
+                                    <span className="flex items-center gap-2">
+                                        <Shield className="w-3 h-3" />
+                                        {policy.category}
+                                    </span>
+                                    <span className="flex items-center gap-2">
+                                        {policy.defaultAction === 'reject' ? <ShieldAlert className="w-3 h-3 text-red-500" /> : <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                                        <span className={policy.defaultAction === 'reject' ? 'text-red-500' : 'text-amber-500'}>
+                                            {policy.defaultAction}
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => startEdit(policy)}
+                                    className="p-2 hover:bg-white hover:text-black text-text-secondary transition-colors border border-transparent hover:border-white"
+                                    title="Edit"
+                                >
+                                    <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={async () => { if (confirm('Delete?')) { await deletePolicy(policy._id); fetchPolicies(); } }}
+                                    className="p-2 hover:bg-red-500 hover:text-black text-text-secondary transition-colors border border-transparent hover:border-red-500"
+                                    title="Delete"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )
