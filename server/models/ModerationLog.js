@@ -64,7 +64,10 @@ const moderationLogSchema = new mongoose.Schema({
     },
     reviewedAt: {
         type: Date
-    }
+    },
+    reviewNotes: {
+    type: String
+}
 }, {
     timestamps: true
 });

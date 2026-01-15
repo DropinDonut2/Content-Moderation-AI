@@ -9,7 +9,14 @@ router.get('/', async (req, res) => {
 
         const filter = {};
         if (verdict) filter.verdict = verdict;
+        if (category) filter.category = category;
         if (reviewStatus) filter.reviewStatus = reviewStatus;
+
+        if (startDate || endDate) {
+            filter.createdAt = {};
+            if (startDate) filter.createdAt.$gte = new Date(startDate);
+            if (endDate) filter.createdAt.$lte = new Date(endDate);
+        }
 
         const logs = await ModerationLog.find(filter)
             .sort({ createdAt: -1 })
@@ -67,7 +74,7 @@ router.patch('/:id/review', async (req, res) => {
                 reviewedAt: new Date()
             },
             { new: true }
-        );
+        ).populate('policyViolated');
 
         if (!log) {
             return res.status(404).json({ success: false, error: 'Log not found' });
