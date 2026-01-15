@@ -54,14 +54,20 @@ An advanced, AI-powered content moderation platform that automates initial conte
    ```
 
 3. **Install Dependencies**
+   The project is split into two parts. You must install dependencies for both.
+   
+   **Backend (Express + LangChain)**
    ```bash
-   # Backend
    cd server
    npm install
+   # This installs: express, mongoose, @langchain/openai, @langchain/core, cors, dotenv
+   ```
 
-   # Frontend
+   **Frontend (React + Tailwind)**
+   ```bash
    cd ../client
    npm install
+   # This installs: react, tailwindcss, lucide-react, recharts, axios
    ```
 
 4. **Seed Database** (Optional)
@@ -80,6 +86,13 @@ An advanced, AI-powered content moderation platform that automates initial conte
    cd client
    npm run dev
    ```
+
+## 📦 Key Packages Explained
+
+- **`tailwindcss`**: Utility-first CSS framework (configured in `client/tailwind.config.js`).
+- **`@langchain/openai`**: Library to interface with OpenRouter/OpenAI models (used in `server/services/moderationService.js`).
+- **`lucide-react`**: Icon library for the new monochrome UI (used across `client/src/components/`).
+- **`recharts`**: Charting library for the Analytics Dashboard.
 
 ## 📡 API Endpoints
 
