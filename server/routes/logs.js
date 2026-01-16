@@ -5,7 +5,7 @@ const ModerationLog = require('../models/ModerationLog');
 // GET /api/v1/logs - Get moderation history
 router.get('/', async (req, res) => {
     try {
-        const { verdict, reviewStatus, limit = 50, page = 1 } = req.query;
+        const { verdict, reviewStatus, limit = 50, page = 1, category, startDate, endDate } = req.query;
 
         const filter = {};
         if (verdict) filter.verdict = verdict;

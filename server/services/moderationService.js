@@ -179,13 +179,26 @@ const parseAIResponse = (aiResponse) => {
         const jsonMatch = aiResponse.match(/```(?:json)?\s*([\s\S]*?)```/);
         if (jsonMatch) {
             jsonStr = jsonMatch[1];
+        } else {
+            // Fallback: Try to find the JSON object boundaries
+            const firstOpen = aiResponse.indexOf('{');
+            const lastClose = aiResponse.lastIndexOf('}');
+            if (firstOpen !== -1 && lastClose !== -1) {
+                jsonStr = aiResponse.substring(firstOpen, lastClose + 1);
+            }
         }
 
         const parsed = JSON.parse(jsonStr.trim());
 
+        let category = parsed.category || null;
+        // If query returns "nsfw, illegal", take the first one
+        if (category && typeof category === 'string' && category.includes(',')) {
+            category = category.split(',')[0].trim();
+        }
+
         return {
             verdict: parsed.verdict || 'flagged',
-            category: parsed.category || null,
+            category: category,
             confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0.5,
             policyViolated: parsed.policyViolated || null,
             reasoning: parsed.reasoning || 'Unable to parse AI reasoning'
