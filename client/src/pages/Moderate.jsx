@@ -28,15 +28,14 @@ function Moderate() {
         { id: 'personas', label: 'Personas', icon: <Drama size={16} /> }
     ]
 
-    // Socket.io connection logic remains same...
+    // Socket.io connection
     useEffect(() => {
-        const socket = io('http://localhost:5001') // Updated port to 5001
+        const socket = io('http://localhost:5000') 
 
         socket.on('connect', () => {
             console.log('🔌 Connected to server')
         })
 
-        // Listen for new content
         socket.on('newContent', (data) => {
             console.log('📥 New content received:', data)
             fetchContent()
@@ -120,37 +119,103 @@ function Moderate() {
     return (
         <div className="space-y-8 animate-fade-in pb-10">
             {/* Header */}
-            <div className="flex justify-between items-end border-b border-white/10 pb-6">
+            <div 
+                className="flex justify-between items-end pb-6"
+                style={{ borderBottom: '1px solid var(--border-color)' }}
+            >
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2 uppercase tracking-tighter">Content Moderation</h2>
-                    <p className="text-text-secondary font-mono text-xs">// REVIEW_AND_MODERATE_ENTITIES</p>
+                    <h2 
+                        className="text-3xl font-bold mb-2 uppercase tracking-tighter"
+                        style={{ color: 'var(--text-primary)' }}
+                    >
+                        Content Moderation
+                    </h2>
+                    <p className="font-mono text-xs" style={{ color: 'var(--text-secondary)' }}>
+                        // REVIEW_AND_MODERATE_ENTITIES
+                    </p>
                 </div>
             </div>
 
             {/* Stats Overview */}
             {stats && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="card-premium p-4">
-                        <div className="text-[10px] uppercase text-text-secondary font-bold tracking-widest mb-1">Characters Pending</div>
-                        <div className="text-2xl font-bold text-amber-500 font-mono">
+                    <div 
+                        className="p-4"
+                        style={{ 
+                            backgroundColor: 'var(--bg-card)',
+                            border: '1px solid var(--border-color)'
+                        }}
+                    >
+                        <div 
+                            className="text-[10px] uppercase font-bold tracking-widest mb-1"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Characters Pending
+                        </div>
+                        <div 
+                            className="text-2xl font-bold font-mono"
+                            style={{ color: 'var(--flagged-text)' }}
+                        >
                             {stats.characters?.pending || 0}
                         </div>
                     </div>
-                    <div className="card-premium p-4">
-                        <div className="text-[10px] uppercase text-text-secondary font-bold tracking-widest mb-1">Storylines Pending</div>
-                        <div className="text-2xl font-bold text-amber-500 font-mono">
+                    <div 
+                        className="p-4"
+                        style={{ 
+                            backgroundColor: 'var(--bg-card)',
+                            border: '1px solid var(--border-color)'
+                        }}
+                    >
+                        <div 
+                            className="text-[10px] uppercase font-bold tracking-widest mb-1"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Storylines Pending
+                        </div>
+                        <div 
+                            className="text-2xl font-bold font-mono"
+                            style={{ color: 'var(--flagged-text)' }}
+                        >
                             {stats.storylines?.pending || 0}
                         </div>
                     </div>
-                    <div className="card-premium p-4">
-                        <div className="text-[10px] uppercase text-text-secondary font-bold tracking-widest mb-1">Personas Pending</div>
-                        <div className="text-2xl font-bold text-amber-500 font-mono">
+                    <div 
+                        className="p-4"
+                        style={{ 
+                            backgroundColor: 'var(--bg-card)',
+                            border: '1px solid var(--border-color)'
+                        }}
+                    >
+                        <div 
+                            className="text-[10px] uppercase font-bold tracking-widest mb-1"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Personas Pending
+                        </div>
+                        <div 
+                            className="text-2xl font-bold font-mono"
+                            style={{ color: 'var(--flagged-text)' }}
+                        >
                             {stats.personas?.pending || 0}
                         </div>
                     </div>
-                    <div className="card-premium p-4 border-red-500/20 bg-red-500/5">
-                        <div className="text-[10px] uppercase text-red-400 font-bold tracking-widest mb-1">Total Impact</div>
-                        <div className="text-2xl font-bold text-red-500 font-mono">
+                    <div 
+                        className="p-4"
+                        style={{ 
+                            backgroundColor: 'var(--rejected-bg)',
+                            border: '1px solid var(--rejected-border)'
+                        }}
+                    >
+                        <div 
+                            className="text-[10px] uppercase font-bold tracking-widest mb-1"
+                            style={{ color: 'var(--rejected-text)' }}
+                        >
+                            Total Pending
+                        </div>
+                        <div 
+                            className="text-2xl font-bold font-mono"
+                            style={{ color: 'var(--rejected-text)' }}
+                        >
                             {(stats.characters?.pending || 0) +
                                 (stats.storylines?.pending || 0) +
                                 (stats.personas?.pending || 0)}
@@ -162,26 +227,33 @@ function Moderate() {
             {/* Tabs & Filters */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 {/* Tabs */}
-                <div className="flex gap-2 p-1 bg-zinc-900/50 border border-white/10 rounded-lg">
+                <div 
+                    className="flex gap-2 p-1 rounded-lg"
+                    style={{ 
+                        backgroundColor: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
-                            className={`
-                                flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all uppercase tracking-wider
-                                ${activeTab === tab.id
-                                    ? 'bg-white text-black shadow-sm'
-                                    : 'text-text-secondary hover:text-white hover:bg-white/5'
-                                }
-                            `}
+                            className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all uppercase tracking-wider"
+                            style={{
+                                backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent',
+                                color: activeTab === tab.id ? 'var(--bg-primary)' : 'var(--text-secondary)'
+                            }}
                             onClick={() => handleTabChange(tab.id)}
                         >
                             {tab.icon}
                             {tab.label}
                             {stats && getTabStats(tab.id).pending > 0 && (
-                                <span className={`
-                                    ml-1 px-1.5 py-0.5 rounded text-[10px] font-mono
-                                    ${activeTab === tab.id ? 'bg-black text-white' : 'bg-amber-500 text-black'}
-                                `}>
+                                <span 
+                                    className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-mono"
+                                    style={{
+                                        backgroundColor: activeTab === tab.id ? 'var(--bg-primary)' : 'var(--flagged-text)',
+                                        color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--bg-primary)'
+                                    }}
+                                >
                                     {getTabStats(tab.id).pending}
                                 </span>
                             )}
@@ -203,7 +275,7 @@ function Moderate() {
                             <option value="rejected">Rejected</option>
                             <option value="all">All Status</option>
                         </select>
-                        <Clock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+                        <Clock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }} />
                     </div>
 
                     <div className="relative group">
@@ -216,7 +288,7 @@ function Moderate() {
                             <option value="false">SFW Only</option>
                             <option value="true">NSFW Only</option>
                         </select>
-                        <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+                        <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }} />
                     </div>
                 </div>
             </div>
@@ -231,19 +303,35 @@ function Moderate() {
 
             {/* Pagination */}
             {pagination.pages > 1 && (
-                <div className="flex justify-center items-center gap-4 pt-6 border-t border-white/10">
+                <div 
+                    className="flex justify-center items-center gap-4 pt-6"
+                    style={{ borderTop: '1px solid var(--border-color)' }}
+                >
                     <button
-                        className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-white/10 hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-white"
+                        className="px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
+                        style={{ 
+                            border: '1px solid var(--border-color)',
+                            color: 'var(--text-primary)',
+                            backgroundColor: 'transparent'
+                        }}
                         disabled={pagination.page <= 1}
                         onClick={() => setPagination(p => ({ ...p, page: p.page - 1 }))}
                     >
                         Previous
                     </button>
-                    <span className="text-xs font-mono text-text-secondary">
+                    <span 
+                        className="text-xs font-mono"
+                        style={{ color: 'var(--text-secondary)' }}
+                    >
                         PAGE {pagination.page} / {pagination.pages}
                     </span>
                     <button
-                        className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-white/10 hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-white"
+                        className="px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
+                        style={{ 
+                            border: '1px solid var(--border-color)',
+                            color: 'var(--text-primary)',
+                            backgroundColor: 'transparent'
+                        }}
                         disabled={pagination.page >= pagination.pages}
                         onClick={() => setPagination(p => ({ ...p, page: p.page + 1 }))}
                     >

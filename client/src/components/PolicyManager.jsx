@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { getPolicies, updatePolicy, deletePolicy, createPolicy } from '../services/api'
 import { Plus, Edit2, Trash2, AlertTriangle, ShieldAlert, Shield, ShieldCheck } from 'lucide-react'
 
-// Move initial state outside component to prevent reference error
 const initialFormState = {
     policyId: '',
     title: '',
@@ -55,12 +54,32 @@ function PolicyManager() {
         setFormData(policy)
     }
 
+    const getSeverityStyle = (severity) => {
+        switch (severity) {
+            case 'critical': return { color: 'var(--rejected-text)', bg: 'var(--rejected-bg)' }
+            case 'high': return { color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)' }
+            case 'medium': return { color: 'var(--flagged-text)', bg: 'var(--flagged-bg)' }
+            default: return { color: 'var(--safe-text)', bg: 'var(--safe-bg)' }
+        }
+    }
+
     return (
         <div className="space-y-8 animate-fade-in pb-10">
-            <div className="flex justify-between items-end border-b border-white/10 pb-6">
+            {/* Header */}
+            <div 
+                className="flex justify-between items-end pb-6"
+                style={{ borderBottom: '1px solid var(--border-color)' }}
+            >
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2 uppercase tracking-tighter">Policy Protocol</h2>
-                    <p className="text-text-secondary font-mono text-xs">// CONFIGURE_MODERATION_RULES</p>
+                    <h2 
+                        className="text-3xl font-bold mb-2 uppercase tracking-tighter"
+                        style={{ color: 'var(--text-primary)' }}
+                    >
+                        Policy Protocol
+                    </h2>
+                    <p className="font-mono text-xs" style={{ color: 'var(--text-secondary)' }}>
+                        // CONFIGURE_MODERATION_RULES
+                    </p>
                 </div>
                 <button
                     onClick={() => { setEditingId(null); setFormData(initialFormState); document.getElementById('policy-form').scrollIntoView({ behavior: 'smooth' }); }}
@@ -73,15 +92,32 @@ function PolicyManager() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Form Section */}
                 <div id="policy-form" className="lg:col-span-1">
-                    <div className="card-premium p-6 sticky top-6">
-                        <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4 uppercase tracking-wide">
+                    <div 
+                        className="p-6 sticky top-6"
+                        style={{ 
+                            backgroundColor: 'var(--bg-card)',
+                            border: '1px solid var(--border-color)'
+                        }}
+                    >
+                        <h3 
+                            className="text-lg font-bold mb-6 flex items-center gap-2 pb-4 uppercase tracking-wide"
+                            style={{ 
+                                color: 'var(--text-primary)',
+                                borderBottom: '1px solid var(--border-color)'
+                            }}
+                        >
                             {editingId ? <Edit2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                             {editingId ? 'Edit Configuration' : 'New Definition'}
                         </h3>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Policy ID</label>
+                                <label 
+                                    className="block text-xs uppercase font-bold mb-2"
+                                    style={{ color: 'var(--text-secondary)' }}
+                                >
+                                    Policy ID
+                                </label>
                                 <input
                                     type="text"
                                     value={formData.policyId}
@@ -93,7 +129,12 @@ function PolicyManager() {
                             </div>
 
                             <div>
-                                <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Title</label>
+                                <label 
+                                    className="block text-xs uppercase font-bold mb-2"
+                                    style={{ color: 'var(--text-secondary)' }}
+                                >
+                                    Title
+                                </label>
                                 <input
                                     type="text"
                                     value={formData.title}
@@ -106,7 +147,12 @@ function PolicyManager() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Severity</label>
+                                    <label 
+                                        className="block text-xs uppercase font-bold mb-2"
+                                        style={{ color: 'var(--text-secondary)' }}
+                                    >
+                                        Severity
+                                    </label>
                                     <select
                                         value={formData.severity}
                                         onChange={e => setFormData({ ...formData, severity: e.target.value })}
@@ -119,7 +165,12 @@ function PolicyManager() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Action</label>
+                                    <label 
+                                        className="block text-xs uppercase font-bold mb-2"
+                                        style={{ color: 'var(--text-secondary)' }}
+                                    >
+                                        Action
+                                    </label>
                                     <select
                                         value={formData.defaultAction}
                                         onChange={e => setFormData({ ...formData, defaultAction: e.target.value })}
@@ -132,7 +183,12 @@ function PolicyManager() {
                             </div>
 
                             <div>
-                                <label className="block text-xs uppercase text-text-secondary font-bold mb-2">Description</label>
+                                <label 
+                                    className="block text-xs uppercase font-bold mb-2"
+                                    style={{ color: 'var(--text-secondary)' }}
+                                >
+                                    Description
+                                </label>
                                 <textarea
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -150,7 +206,7 @@ function PolicyManager() {
                                     <button
                                         type="button"
                                         onClick={() => { setEditingId(null); setFormData(initialFormState); }}
-                                        className="px-4 py-2 border border-white/20 text-text-secondary hover:text-white uppercase text-sm font-medium hover:bg-white/5 transition-colors"
+                                        className="btn-secondary px-4 py-2"
                                     >
                                         Cancel
                                     </button>
@@ -162,60 +218,120 @@ function PolicyManager() {
 
                 {/* List Section */}
                 <div className="lg:col-span-2 space-y-4">
-                    {policies.map(policy => (
-                        <div
-                            key={policy._id}
-                            className={`card-premium p-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between group
-                ${editingId === policy._id ? 'border-white bg-white/5' : ''}
-              `}
-                        >
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <span className="font-mono text-xs px-2 py-1 bg-white/10 text-white border border-white/10">
-                                        {policy.policyId}
-                                    </span>
-                                    <h4 className="font-bold text-white text-lg tracking-tight">{policy.title}</h4>
-                                    {policy.severity === 'critical' && (
-                                        <span className="flex items-center gap-1 px-2 py-0.5 bg-red-500 text-black text-xs font-bold uppercase">
-                                            <AlertTriangle className="w-3 h-3" /> Critical
-                                        </span>
-                                    )}
-                                </div>
-                                <p className="text-text-secondary text-sm leading-relaxed mb-4 border-l-2 border-white/10 pl-3">
-                                    {policy.description}
-                                </p>
-                                <div className="flex gap-6 text-xs font-mono text-text-secondary uppercase tracking-wider">
-                                    <span className="flex items-center gap-2">
-                                        <Shield className="w-3 h-3" />
-                                        {policy.category}
-                                    </span>
-                                    <span className="flex items-center gap-2">
-                                        {policy.defaultAction === 'reject' ? <ShieldAlert className="w-3 h-3 text-red-500" /> : <ShieldCheck className="w-3 h-3 text-amber-500" />}
-                                        <span className={policy.defaultAction === 'reject' ? 'text-red-500' : 'text-amber-500'}>
-                                            {policy.defaultAction}
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => startEdit(policy)}
-                                    className="p-2 hover:bg-white hover:text-black text-text-secondary transition-colors border border-transparent hover:border-white"
-                                    title="Edit"
-                                >
-                                    <Edit2 className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={async () => { if (confirm('Delete?')) { await deletePolicy(policy._id); fetchPolicies(); } }}
-                                    className="p-2 hover:bg-red-500 hover:text-black text-text-secondary transition-colors border border-transparent hover:border-red-500"
-                                    title="Delete"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
-                            </div>
+                    {loading ? (
+                        <div className="flex justify-center py-20">
+                            <div className="spinner"></div>
                         </div>
-                    ))}
+                    ) : (
+                        policies.map(policy => {
+                            const severityStyle = getSeverityStyle(policy.severity)
+                            return (
+                                <div
+                                    key={policy._id}
+                                    className="p-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between group transition-all"
+                                    style={{ 
+                                        backgroundColor: 'var(--bg-card)',
+                                        border: editingId === policy._id 
+                                            ? '1px solid var(--accent-primary)' 
+                                            : '1px solid var(--border-color)'
+                                    }}
+                                >
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <span 
+                                                className="font-mono text-xs px-2 py-1"
+                                                style={{ 
+                                                    backgroundColor: 'var(--bg-secondary)',
+                                                    color: 'var(--text-primary)',
+                                                    border: '1px solid var(--border-color)'
+                                                }}
+                                            >
+                                                {policy.policyId}
+                                            </span>
+                                            <h4 
+                                                className="font-bold text-lg tracking-tight"
+                                                style={{ color: 'var(--text-primary)' }}
+                                            >
+                                                {policy.title}
+                                            </h4>
+                                            {policy.severity === 'critical' && (
+                                                <span 
+                                                    className="flex items-center gap-1 px-2 py-0.5 text-xs font-bold uppercase"
+                                                    style={{ 
+                                                        backgroundColor: severityStyle.bg,
+                                                        color: severityStyle.color
+                                                    }}
+                                                >
+                                                    <AlertTriangle className="w-3 h-3" /> Critical
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p 
+                                            className="text-sm leading-relaxed mb-4 pl-3"
+                                            style={{ 
+                                                color: 'var(--text-secondary)',
+                                                borderLeft: '2px solid var(--border-color)'
+                                            }}
+                                        >
+                                            {policy.description}
+                                        </p>
+                                        <div 
+                                            className="flex gap-6 text-xs font-mono uppercase tracking-wider"
+                                            style={{ color: 'var(--text-secondary)' }}
+                                        >
+                                            <span className="flex items-center gap-2">
+                                                <Shield className="w-3 h-3" />
+                                                {policy.category}
+                                            </span>
+                                            <span className="flex items-center gap-2">
+                                                {policy.defaultAction === 'reject' 
+                                                    ? <ShieldAlert className="w-3 h-3" style={{ color: 'var(--rejected-text)' }} /> 
+                                                    : <ShieldCheck className="w-3 h-3" style={{ color: 'var(--flagged-text)' }} />
+                                                }
+                                                <span style={{ 
+                                                    color: policy.defaultAction === 'reject' 
+                                                        ? 'var(--rejected-text)' 
+                                                        : 'var(--flagged-text)' 
+                                                }}>
+                                                    {policy.defaultAction}
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => startEdit(policy)}
+                                            className="p-2 transition-colors"
+                                            style={{ 
+                                                color: 'var(--text-secondary)',
+                                                border: '1px solid transparent'
+                                            }}
+                                            title="Edit"
+                                        >
+                                            <Edit2 className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={async () => { 
+                                                if (confirm('Delete?')) { 
+                                                    await deletePolicy(policy._id)
+                                                    fetchPolicies()
+                                                } 
+                                            }}
+                                            className="p-2 transition-colors hover:bg-red-500/10"
+                                            style={{ 
+                                                color: 'var(--text-secondary)',
+                                                border: '1px solid transparent'
+                                            }}
+                                            title="Delete"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    )}
                 </div>
             </div>
         </div>
