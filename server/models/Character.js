@@ -90,9 +90,10 @@ const characterSchema = new mongoose.Schema({
         aiVerdict: String,
         aiReasoning: String,
         aiConfidence: Number,
+        offendingSnippet: String, // Added field
         moderatedAt: Date
     },
-    
+
     // Review
     reviewedBy: {
         type: String

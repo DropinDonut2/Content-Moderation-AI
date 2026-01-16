@@ -49,6 +49,7 @@ You MUST respond with valid JSON only, no other text:
   "category": "category_name or null if safe",
   "confidence": 0.0-1.0,
   "policyViolated": "POL-XXX or null if safe",
+  "activeSnippet": "The specific quote/sentence violating the policy (max 100 chars), or null",
   "reasoning": "Brief explanation of your decision"
 }}
 
@@ -62,7 +63,8 @@ You MUST respond with valid JSON only, no other text:
 2. Consider context when evaluating content
 3. If unsure, use "flagged" with lower confidence
 4. Always cite the specific policy violated
-5. Provide clear reasoning for your decision`;
+5. Provide clear reasoning
+6. QUOTE the exact part of the text activeSnippet`;
 
     const humanTemplate = `Analyze this content for policy violations:
 
@@ -98,7 +100,11 @@ const moderateContent = async ({ content, contentId, contentType, userId, contex
     let parsedResponse;
     try {
         const response = await chain.invoke({ content });
+        console.log("------------------------------------------------------------------");
+        console.log("RAW AI RESPONSE:", response.content);
+        console.log("------------------------------------------------------------------");
         parsedResponse = parseAIResponse(response.content);
+        console.log("PARSED RESPONSE:", parsedResponse);
     } catch (error) {
         console.error('LangChain invocation error:', error);
         parsedResponse = {
@@ -147,6 +153,7 @@ const moderateContent = async ({ content, contentId, contentType, userId, contex
         confidence: parsedResponse.confidence,
         policyViolated: policyViolated?._id,
         policyDetails,
+        offendingSnippet: parsedResponse.activeSnippet, // Map new field
         reasoning: parsedResponse.reasoning,
         aiModel: process.env.AI_MODEL || 'anthropic/claude-3-haiku',
         aiResponseTime: responseTime,
@@ -201,6 +208,7 @@ const parseAIResponse = (aiResponse) => {
             category: category,
             confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0.5,
             policyViolated: parsed.policyViolated || null,
+            activeSnippet: parsed.activeSnippet || null, // Pass through the new field
             reasoning: parsed.reasoning || 'Unable to parse AI reasoning'
         };
     } catch (error) {

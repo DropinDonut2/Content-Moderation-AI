@@ -54,6 +54,7 @@ Respond in JSON format:
 {
     "verdict": "safe" | "flagged" | "rejected",
     "confidence": 0.0-1.0,
+    "activeSnippet": "EXACT QUOTE of the most offensive sentence/phrase (REQUIRED if flagged, max 100 chars)",
     "reasoning": "Brief explanation of your analysis",
     "summary": "One-line summary for quick human review",
     "categories": [
@@ -83,6 +84,10 @@ Respond in JSON format:
             throw new Error('Failed to parse AI response');
         }
 
+        console.log("------------------------------------------------__");
+        console.log("AI RAW JSON:", jsonMatch[0]);
+        console.log("------------------------------------------------__");
+
         const result = JSON.parse(jsonMatch[0]);
 
         return {
@@ -94,6 +99,7 @@ Respond in JSON format:
                 aiSummary: result.summary,
                 categories: result.categories || [],
                 flaggedPolicies: result.flaggedPolicies || [],
+                offendingSnippet: result.activeSnippet || null, // Added field
                 nsfw: result.nsfw || false,
                 nsfwReason: result.nsfwReason || null,
                 recommendedAction: result.recommendedAction,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, AlertTriangle, Check, BookOpen, User } from 'lucide-react';
+import { Save, AlertTriangle, BookOpen, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SubmitContent = () => {
@@ -41,6 +41,71 @@ const SubmitContent = () => {
         }));
     };
 
+    const [importText, setImportText] = useState('');
+
+    const parseContentDump = () => {
+        if (!importText) return;
+
+        const newFormData = { ...formData };
+        const sections = [
+            { key: 'rawCharacterList', header: 'Character List:' },
+            { key: 'rawPersonaList', header: 'Persona List:' },
+            { key: 'firstMessage', header: 'First Message:' },
+            { key: 'promptPlot', header: 'Prompt Plot:' },
+            { key: 'plot', header: 'Plot:' },
+            { key: 'plotSummary', header: 'Plot Summary:' },
+            { key: 'promptGuideline', header: 'Guidelines:' },
+            { key: 'promptGuideline', header: 'Prompt Guideline:' },
+            { key: 'reminder', header: 'Reminder:' },
+            { key: 'changeLog', header: 'Change Log:' },
+            { key: 'description', header: 'Description:' },
+            { key: 'descriptionSummary', header: 'Description Summary:' },
+            { key: 'promptDescription', header: 'Prompt Description:' },
+            { key: 'exampleDialogue', header: 'Example Dialogue:' },
+            { key: 'avatar', header: 'Avatar:' },
+            { key: 'avatar', header: 'Media:' },
+            { key: 'title', header: 'Character Name:' },
+            { key: 'title', header: 'Name:' }
+        ];
+
+        // Normalize new lines
+        const cleanDump = importText.replace(/\r\n/g, '\n');
+
+        // Find headers
+        const foundHeaders = [];
+        sections.forEach(sec => {
+            const index = cleanDump.indexOf(sec.header);
+            if (index !== -1) {
+                foundHeaders.push({ ...sec, index });
+            }
+        });
+
+        // Heuristic: If content starts before any header, assume it is the Title (if short enough)
+        foundHeaders.sort((a, b) => a.index - b.index);
+
+        if (foundHeaders.length > 0 && foundHeaders[0].index > 0) {
+            const potentialTitle = cleanDump.substring(0, foundHeaders[0].index).trim();
+            if (potentialTitle && potentialTitle.length < 100) {
+                newFormData.title = potentialTitle;
+            }
+        }
+
+        foundHeaders.forEach((header, i) => {
+            const start = header.index + header.header.length;
+            const nextHeader = foundHeaders[i + 1];
+            const end = nextHeader ? nextHeader.index : cleanDump.length;
+
+            const content = cleanDump.substring(start, end).trim();
+            if (content) {
+                newFormData[header.key] = content;
+            }
+        });
+
+        setFormData(newFormData);
+        setImportText('');
+        // We could add a toast here, but for now we just clear the box
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -56,13 +121,9 @@ const SubmitContent = () => {
 
             const payload = {
                 ...formData,
-                // Map common fields if necessary
                 name: formData.title, // 'title' input maps to 'name' for characters
-
-                // Defaults
                 user: 'manual_admin',
                 visibility: 'private',
-                // Generate temporary IDs based on type
                 storylineId: contentType === 'storyline' ? `story_${Date.now()}` : undefined,
                 characterId: contentType === 'character' ? `char_${Date.now()}` : undefined,
             };
@@ -106,8 +167,8 @@ const SubmitContent = () => {
                     <button
                         onClick={() => setContentType('storyline')}
                         className={`flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase transition-all ${contentType === 'storyline'
-                                ? 'bg-white text-black shadow-sm'
-                                : 'text-text-secondary hover:text-white'
+                            ? 'bg-white text-black shadow-sm'
+                            : 'text-text-secondary hover:text-white'
                             }`}
                     >
                         <BookOpen size={16} />
@@ -116,14 +177,40 @@ const SubmitContent = () => {
                     <button
                         onClick={() => setContentType('character')}
                         className={`flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase transition-all ${contentType === 'character'
-                                ? 'bg-white text-black shadow-sm'
-                                : 'text-text-secondary hover:text-white'
+                            ? 'bg-white text-black shadow-sm'
+                            : 'text-text-secondary hover:text-white'
                             }`}
                     >
                         <User size={16} />
                         Character
                     </button>
                 </div>
+            </div>
+
+            {/* Smart Import Section */}
+            <div className="bg-bg-card border border-white/10 p-4 space-y-3">
+                <div className="flex justify-between items-center">
+                    <h3 className="text-sm font-bold uppercase text-white flex items-center gap-2">
+                        <BookOpen size={14} className="text-green-500" />
+                        Smart Content Import
+                    </h3>
+                    <button
+                        type="button"
+                        onClick={parseContentDump}
+                        className="text-xs bg-white text-black px-3 py-1 font-bold uppercase hover:bg-gray-200 transition-colors"
+                    >
+                        Parse & Fill
+                    </button>
+                </div>
+                <p className="text-xs text-text-secondary font-mono">
+                    Paste your content dump here. We support headers like "Character List:", "First Message:", "Plot:", etc.
+                </p>
+                <textarea
+                    value={importText}
+                    onChange={(e) => setImportText(e.target.value)}
+                    className="input-premium h-24 font-mono text-xs w-full bg-black/50"
+                    placeholder={`Example format:\n\nCharacter List:\nAlice, Bob...\n\nPlot:\nThe story begins...`}
+                />
             </div>
 
             {error && (

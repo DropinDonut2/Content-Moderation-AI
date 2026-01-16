@@ -125,6 +125,7 @@ const storylineSchema = new mongoose.Schema({
         aiVerdict: String,
         aiReasoning: String,
         aiConfidence: Number,
+        offendingSnippet: String, // Added field
         moderatedAt: Date
     },
 

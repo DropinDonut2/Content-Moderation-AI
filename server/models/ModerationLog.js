@@ -39,6 +39,10 @@ const moderationLogSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Policy'
     },
+    offendingSnippet: {
+        type: String,
+        default: null
+    },
     policyDetails: {
         policyId: String,
         title: String,
@@ -60,7 +64,7 @@ const moderationLogSchema = new mongoose.Schema({
         default: 'pending'
     },
     reviewedBy: {
-        type: String  
+        type: String
     },
     reviewedAt: {
         type: Date

@@ -198,6 +198,18 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     </div>
                                 )}
 
+                                {mod.offendingSnippet && (
+                                    <div className="mb-6 animate-fade-in">
+                                        <h4 className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                            <AlertTriangle size={12} />
+                                            Flagged Segment
+                                        </h4>
+                                        <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-lg text-xs font-mono text-red-200/90 italic border-l-2 border-l-red-500/50">
+                                            "{mod.offendingSnippet}"
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div>
                                     <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">Full Analysis</h4>
                                     <div className="p-4 bg-zinc-950 border border-white/10 rounded-lg text-xs font-mono text-text-secondary leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
