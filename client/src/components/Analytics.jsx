@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getLogs } from '../services/api'
+import { TrendingUp, Shield, CheckCircle2, XCircle } from 'lucide-react'
 
 function Analytics() {
     const [stats, setStats] = useState({
@@ -25,7 +26,9 @@ function Analytics() {
             }, {})
 
             const byCategory = logs.reduce((acc, log) => {
-                if (log.category) acc[log.category] = (acc[log.category] || 0) + 1
+                if (log.category) {
+                    acc[log.category] = (acc[log.category] || 0) + 1
+                }
                 return acc
             }, {})
 
@@ -33,7 +36,12 @@ function Analytics() {
                 ? logs.reduce((sum, log) => sum + log.confidence, 0) / logs.length
                 : 0
 
-            setStats({ byVerdict, byCategory, total: logs.length, avgConfidence })
+            setStats({
+                byVerdict,
+                byCategory,
+                total: logs.length,
+                avgConfidence
+            })
         } catch (error) {
             console.error('Failed to fetch analytics:', error)
         } finally {
@@ -41,10 +49,21 @@ function Analytics() {
         }
     }
 
+    const getBarWidth = (count, max) => `${(count / max) * 100}%`
+
+    const getVerdictColor = (verdict) => {
+        switch (verdict) {
+            case 'safe': return 'var(--safe-text)'
+            case 'flagged': return 'var(--flagged-text)'
+            case 'rejected': return 'var(--rejected-text)'
+            default: return 'var(--text-secondary)'
+        }
+    }
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="w-10 h-10 border-4 border-accent-primary border-t-transparent rounded-full animate-spin"></div>
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="spinner"></div>
             </div>
         )
     }
@@ -54,87 +73,245 @@ function Analytics() {
 
     return (
         <div className="space-y-8 animate-fade-in pb-10">
-            <div className="flex justify-between items-end">
+            {/* Header */}
+            <div 
+                className="flex justify-between items-end pb-6"
+                style={{ borderBottom: '1px solid var(--border-color)' }}
+            >
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">Detailed Analytics</h2>
-                    <p className="text-text-secondary">Deep dive into moderation statistics</p>
+                    <h2 
+                        className="text-3xl font-bold mb-2 uppercase tracking-tighter"
+                        style={{ color: 'var(--text-primary)' }}
+                    >
+                        Analytics
+                    </h2>
+                    <p className="font-mono text-xs" style={{ color: 'var(--text-secondary)' }}>
+                        // CONTENT_MODERATION_INSIGHTS
+                    </p>
                 </div>
             </div>
 
-            {/* Top Stats Row */}
+            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="card-premium p-6 flex flex-col items-center justify-center text-center">
-                    <div className="text-text-secondary text-xs uppercase font-bold tracking-wider mb-2">Total Processed</div>
-                    <div className="text-4xl font-bold text-white">{stats.total}</div>
+                <div 
+                    className="p-6 transition-all"
+                    style={{ 
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
+                    <div className="flex justify-between items-start mb-4">
+                        <span 
+                            className="text-xs font-bold uppercase tracking-wider"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Total Moderated
+                        </span>
+                        <TrendingUp size={20} style={{ color: 'var(--text-secondary)' }} />
+                    </div>
+                    <div 
+                        className="text-3xl font-bold font-mono"
+                        style={{ color: 'var(--text-primary)' }}
+                    >
+                        {stats.total}
+                    </div>
                 </div>
-                <div className="card-premium p-6 flex flex-col items-center justify-center text-center">
-                    <div className="text-text-secondary text-xs uppercase font-bold tracking-wider mb-2">Avg Confidence</div>
-                    <div className="text-4xl font-bold text-accent-primary">{(stats.avgConfidence * 100).toFixed(1)}%</div>
+
+                <div 
+                    className="p-6 transition-all"
+                    style={{ 
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
+                    <div className="flex justify-between items-start mb-4">
+                        <span 
+                            className="text-xs font-bold uppercase tracking-wider"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Avg Confidence
+                        </span>
+                        <Shield size={20} style={{ color: 'var(--text-secondary)' }} />
+                    </div>
+                    <div 
+                        className="text-3xl font-bold font-mono"
+                        style={{ color: 'var(--text-primary)' }}
+                    >
+                        {(stats.avgConfidence * 100).toFixed(1)}%
+                    </div>
                 </div>
-                <div className="card-premium p-6 flex flex-col items-center justify-center text-center border-green-500/20 bg-green-500/5">
-                    <div className="text-green-400/80 text-xs uppercase font-bold tracking-wider mb-2">Safe Rate</div>
-                    <div className="text-4xl font-bold text-green-400">
+
+                <div 
+                    className="p-6 transition-all"
+                    style={{ 
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
+                    <div className="flex justify-between items-start mb-4">
+                        <span 
+                            className="text-xs font-bold uppercase tracking-wider"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Safe Rate
+                        </span>
+                        <CheckCircle2 size={20} style={{ color: 'var(--safe-text)' }} />
+                    </div>
+                    <div 
+                        className="text-3xl font-bold font-mono"
+                        style={{ color: 'var(--safe-text)' }}
+                    >
                         {stats.total > 0 ? ((stats.byVerdict.safe || 0) / stats.total * 100).toFixed(1) : 0}%
                     </div>
                 </div>
-                <div className="card-premium p-6 flex flex-col items-center justify-center text-center border-red-500/20 bg-red-500/5">
-                    <div className="text-red-400/80 text-xs uppercase font-bold tracking-wider mb-2">Rejection Rate</div>
-                    <div className="text-4xl font-bold text-red-400">
+
+                <div 
+                    className="p-6 transition-all"
+                    style={{ 
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
+                    <div className="flex justify-between items-start mb-4">
+                        <span 
+                            className="text-xs font-bold uppercase tracking-wider"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Rejection Rate
+                        </span>
+                        <XCircle size={20} style={{ color: 'var(--rejected-text)' }} />
+                    </div>
+                    <div 
+                        className="text-3xl font-bold font-mono"
+                        style={{ color: 'var(--rejected-text)' }}
+                    >
                         {stats.total > 0 ? ((stats.byVerdict.rejected || 0) / stats.total * 100).toFixed(1) : 0}%
                     </div>
                 </div>
             </div>
 
-            {/* Charts Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Verdicts */}
-                <div className="card-premium p-6">
-                    <h3 className="text-lg font-bold text-white mb-6">Verdict Distribution</h3>
-                    <div className="space-y-4">
-                        {Object.entries(stats.byVerdict).map(([verdict, count]) => (
-                            <div key={verdict}>
-                                <div className="flex justify-between text-sm mb-2">
-                                    <span className="text-text-primary capitalize font-medium">{verdict}</span>
-                                    <span className="text-text-secondary">{count} ({((count / stats.total) * 100).toFixed(1)}%)</span>
+                <div 
+                    className="p-6"
+                    style={{ 
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
+                    <h3 
+                        className="text-sm font-bold mb-6 pb-4 uppercase tracking-wider"
+                        style={{ 
+                            color: 'var(--text-primary)',
+                            borderBottom: '1px solid var(--border-color)'
+                        }}
+                    >
+                        Verdicts Distribution
+                    </h3>
+                    
+                    {Object.entries(stats.byVerdict).length > 0 ? (
+                        <div className="space-y-4">
+                            {Object.entries(stats.byVerdict).map(([verdict, count]) => (
+                                <div key={verdict}>
+                                    <div className="flex justify-between mb-2">
+                                        <span 
+                                            className="capitalize text-sm font-medium"
+                                            style={{ color: 'var(--text-primary)' }}
+                                        >
+                                            {verdict}
+                                        </span>
+                                        <span 
+                                            className="font-mono text-sm font-bold"
+                                            style={{ color: getVerdictColor(verdict) }}
+                                        >
+                                            {count}
+                                        </span>
+                                    </div>
+                                    <div 
+                                        className="h-2 rounded overflow-hidden"
+                                        style={{ backgroundColor: 'var(--bg-secondary)' }}
+                                    >
+                                        <div 
+                                            className="h-full rounded transition-all duration-300"
+                                            style={{ 
+                                                width: getBarWidth(count, maxVerdictCount),
+                                                backgroundColor: getVerdictColor(verdict)
+                                            }} 
+                                        />
+                                    </div>
                                 </div>
-                                <div className="h-2 bg-bg-secondary rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full transition-all duration-500 ${verdict === 'safe' ? 'bg-green-500' :
-                                                verdict === 'flagged' ? 'bg-amber-500' : 'bg-red-500'
-                                            }`}
-                                        style={{ width: `${(count / maxVerdictCount) * 100}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                        ))}
-                        {Object.keys(stats.byVerdict).length === 0 && (
-                            <div className="text-center text-text-secondary py-10">No data available</div>
-                        )}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div 
+                            className="text-center py-8"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            No data available
+                        </div>
+                    )}
                 </div>
 
                 {/* Categories */}
-                <div className="card-premium p-6">
-                    <h3 className="text-lg font-bold text-white mb-6">Top Violations</h3>
-                    <div className="space-y-4">
-                        {Object.entries(stats.byCategory).map(([category, count]) => (
-                            <div key={category}>
-                                <div className="flex justify-between text-sm mb-2">
-                                    <span className="text-text-primary capitalize font-medium">{category.replace('_', ' ')}</span>
-                                    <span className="text-text-secondary">{count}</span>
+                <div 
+                    className="p-6"
+                    style={{ 
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
+                    <h3 
+                        className="text-sm font-bold mb-6 pb-4 uppercase tracking-wider"
+                        style={{ 
+                            color: 'var(--text-primary)',
+                            borderBottom: '1px solid var(--border-color)'
+                        }}
+                    >
+                        Violation Categories
+                    </h3>
+                    
+                    {Object.entries(stats.byCategory).length > 0 ? (
+                        <div className="space-y-4">
+                            {Object.entries(stats.byCategory).map(([category, count]) => (
+                                <div key={category}>
+                                    <div className="flex justify-between mb-2">
+                                        <span 
+                                            className="text-sm font-medium"
+                                            style={{ color: 'var(--text-primary)' }}
+                                        >
+                                            {category.replace('_', ' ')}
+                                        </span>
+                                        <span 
+                                            className="font-mono text-sm font-bold"
+                                            style={{ color: 'var(--text-primary)' }}
+                                        >
+                                            {count}
+                                        </span>
+                                    </div>
+                                    <div 
+                                        className="h-2 rounded overflow-hidden"
+                                        style={{ backgroundColor: 'var(--bg-secondary)' }}
+                                    >
+                                        <div 
+                                            className="h-full rounded transition-all duration-300"
+                                            style={{ 
+                                                width: getBarWidth(count, maxCategoryCount),
+                                                backgroundColor: 'var(--flagged-text)'
+                                            }} 
+                                        />
+                                    </div>
                                 </div>
-                                <div className="h-2 bg-bg-secondary rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-accent-primary rounded-full transition-all duration-500"
-                                        style={{ width: `${(count / maxCategoryCount) * 100}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                        ))}
-                        {Object.keys(stats.byCategory).length === 0 && (
-                            <div className="text-center text-text-secondary py-10">No violations detected</div>
-                        )}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div 
+                            className="text-center py-8"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            No violations detected
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

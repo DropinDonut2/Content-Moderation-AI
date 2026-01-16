@@ -6,34 +6,79 @@
   :root {
     /* Default Dark Mode (Data Terminal Theme) */
     --bg-primary: #09090b;
-    /* zinc-950 */
     --bg-secondary: #18181b;
-    /* zinc-900 */
     --bg-card: #000000;
-    /* black */
+    --bg-hover: rgba(255, 255, 255, 0.05);
     --text-primary: #ffffff;
     --text-secondary: #a1a1aa;
-    /* zinc-400 */
+    --text-muted: #71717a;
     --border-color: rgba(255, 255, 255, 0.1);
     --border-hover: rgba(255, 255, 255, 0.3);
     --accent-primary: #ffffff;
+    --accent-secondary: #3b82f6;
+    
+    /* Status Colors */
+    --safe-bg: rgba(34, 197, 94, 0.15);
+    --safe-text: #4ade80;
+    --safe-border: rgba(34, 197, 94, 0.3);
+    
+    --flagged-bg: rgba(245, 158, 11, 0.15);
+    --flagged-text: #fbbf24;
+    --flagged-border: rgba(245, 158, 11, 0.3);
+    
+    --rejected-bg: rgba(239, 68, 68, 0.15);
+    --rejected-text: #f87171;
+    --rejected-border: rgba(239, 68, 68, 0.3);
+    
+    /* Sidebar */
+    --sidebar-bg: #000000;
+    --sidebar-text: #a1a1aa;
+    --sidebar-text-active: #000000;
+    --sidebar-bg-active: #ffffff;
+    
+    /* Input */
+    --input-bg: #000000;
+    --input-border: rgba(255, 255, 255, 0.2);
+    --input-focus: #ffffff;
   }
 
   /* Light Mode Override */
   .light-mode {
-    --bg-primary: #ffffff;
+    --bg-primary: #fafafa;
     --bg-secondary: #f4f4f5;
-    /* zinc-100 */
     --bg-card: #ffffff;
-    --text-primary: #09090b;
-    /* zinc-950 */
+    --bg-hover: rgba(0, 0, 0, 0.03);
+    --text-primary: #18181b;
     --text-secondary: #52525b;
-    /* zinc-600 */
+    --text-muted: #a1a1aa;
     --border-color: #e4e4e7;
-    /* zinc-200 */
     --border-hover: #a1a1aa;
-    /* zinc-400 */
-    --accent-primary: #09090b;
+    --accent-primary: #18181b;
+    --accent-secondary: #2563eb;
+    
+    /* Status Colors - Light Mode */
+    --safe-bg: rgba(34, 197, 94, 0.1);
+    --safe-text: #16a34a;
+    --safe-border: rgba(34, 197, 94, 0.3);
+    
+    --flagged-bg: rgba(245, 158, 11, 0.1);
+    --flagged-text: #d97706;
+    --flagged-border: rgba(245, 158, 11, 0.3);
+    
+    --rejected-bg: rgba(239, 68, 68, 0.1);
+    --rejected-text: #dc2626;
+    --rejected-border: rgba(239, 68, 68, 0.3);
+    
+    /* Sidebar - Light Mode */
+    --sidebar-bg: #18181b;
+    --sidebar-text: #a1a1aa;
+    --sidebar-text-active: #18181b;
+    --sidebar-bg-active: #ffffff;
+    
+    /* Input - Light Mode */
+    --input-bg: #ffffff;
+    --input-border: #e4e4e7;
+    --input-focus: #18181b;
   }
 
   body {
@@ -42,6 +87,19 @@
     @apply antialiased font-mono;
     font-feature-settings: "rlig" 1, "calt" 1;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Base text colors that respond to theme */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+  }
+
+  p, span, div {
+    color: inherit;
+  }
+
+  a {
+    color: var(--accent-secondary);
   }
 }
 
@@ -63,26 +121,266 @@
     border-color: var(--border-hover);
   }
 
-  /* Buttons - Minimalist */
+  /* Buttons - Primary */
   .btn-primary-new {
-    @apply bg-white text-black font-medium px-4 py-2 rounded-none uppercase tracking-wide transition-all duration-200 hover:bg-zinc-200 hover:translate-y-[-1px] active:translate-y-[0px] disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    @apply font-medium px-4 py-2 rounded-none uppercase tracking-wide transition-all duration-200 hover:opacity-90 hover:translate-y-[-1px] active:translate-y-[0px] disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  /* Inputs - Boxy */
+  /* Buttons - Secondary */
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    @apply font-medium px-4 py-2 rounded-none uppercase tracking-wide transition-all duration-200 hover:border-current disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Inputs - Themed */
   .input-premium {
-    @apply w-full bg-black border border-white/20 rounded-none px-4 py-3 text-text-primary placeholder-text-secondary transition-all duration-200 focus:outline-none focus:border-white focus:ring-0;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-primary);
+    @apply w-full rounded-none px-4 py-3 placeholder-text-secondary transition-all duration-200 focus:outline-none focus:ring-0;
+  }
+
+  .input-premium:focus {
+    border-color: var(--input-focus);
+  }
+
+  .input-premium::placeholder {
+    color: var(--text-muted);
+  }
+
+  /* Status Badges */
+  .badge-safe {
+    background-color: var(--safe-bg);
+    color: var(--safe-text);
+    border: 1px solid var(--safe-border);
+    @apply px-2 py-1 text-xs font-bold uppercase tracking-wide;
+  }
+
+  .badge-flagged {
+    background-color: var(--flagged-bg);
+    color: var(--flagged-text);
+    border: 1px solid var(--flagged-border);
+    @apply px-2 py-1 text-xs font-bold uppercase tracking-wide;
+  }
+
+  .badge-rejected {
+    background-color: var(--rejected-bg);
+    color: var(--rejected-text);
+    border: 1px solid var(--rejected-border);
+    @apply px-2 py-1 text-xs font-bold uppercase tracking-wide;
+  }
+
+  /* Content Preview Box */
+  .content-preview {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    @apply p-4 font-mono text-sm leading-relaxed;
+  }
+
+  /* Table Styles */
+  .table-header {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    @apply text-xs uppercase tracking-wider font-bold;
+  }
+
+  .table-row {
+    border-bottom: 1px solid var(--border-color);
+    @apply transition-colors;
+  }
+
+  .table-row:hover {
+    background-color: var(--bg-hover);
+  }
+
+  /* Stats Card */
+  .stats-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    @apply p-6 transition-all duration-200;
+  }
+
+  .stats-card:hover {
+    border-color: var(--border-hover);
+  }
+
+  .stats-value {
+    color: var(--text-primary);
+    @apply text-3xl font-bold font-mono;
+  }
+
+  .stats-label {
+    color: var(--text-secondary);
+    @apply text-xs uppercase tracking-wider;
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+  }
+
+  .light-mode .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    @apply max-h-[90vh] overflow-auto;
+  }
+
+  /* Tabs */
+  .tab-button {
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+    @apply px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all;
+  }
+
+  .tab-button:hover {
+    color: var(--text-primary);
+    border-color: var(--border-color);
+  }
+
+  .tab-button.active {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
+  }
+
+  /* Empty State */
+  .empty-state {
+    color: var(--text-secondary);
+    border: 1px dashed var(--border-color);
+    background-color: var(--bg-hover);
+    @apply py-20 text-center;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    border: 2px solid var(--border-color);
+    border-top-color: var(--accent-primary);
+    @apply w-8 h-8 rounded-full animate-spin;
+  }
+
+  /* Scrollable Content Area */
+  .content-scroll {
+    @apply max-h-64 overflow-y-auto;
+  }
+
+  /* Highlight Text */
+  .highlight-warning {
+    background-color: var(--flagged-bg);
+    color: var(--flagged-text);
+    @apply px-1;
+  }
+
+  .highlight-danger {
+    background-color: var(--rejected-bg);
+    color: var(--rejected-text);
+    @apply px-1;
+  }
+
+  /* Confidence Bar */
+  .confidence-bar {
+    background-color: var(--bg-secondary);
+    @apply h-2 w-full;
+  }
+
+  .confidence-fill {
+    @apply h-full transition-all duration-300;
+  }
+
+  /* Quick Action Buttons */
+  .action-approve {
+    background-color: var(--safe-bg);
+    color: var(--safe-text);
+    border: 1px solid var(--safe-border);
+    @apply px-4 py-2 font-bold uppercase text-xs tracking-wide transition-all hover:opacity-80;
+  }
+
+  .action-reject {
+    background-color: var(--rejected-bg);
+    color: var(--rejected-text);
+    border: 1px solid var(--rejected-border);
+    @apply px-4 py-2 font-bold uppercase text-xs tracking-wide transition-all hover:opacity-80;
+  }
+
+  .action-skip {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    @apply px-4 py-2 font-bold uppercase text-xs tracking-wide transition-all hover:border-current;
+}
+
+  .action-skip:hover {
+      color: var(--text-primary);
   }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Themed */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-bg-primary;
+  background-color: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/20 hover:bg-white/40;
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--border-hover);
+}
+
+/* Focus Visible for Accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: var(--flagged-border); }
+  50% { border-color: var(--flagged-text); }
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+/* Print Styles for Reports */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .card-premium {
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
 }

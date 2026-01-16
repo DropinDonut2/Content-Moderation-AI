@@ -1,39 +1,50 @@
-function StatsCard({ title, value, icon, color = 'default', subtitle }) {
-    // Minimalist Palette - Only B&W by default, color only for critical status
-    const colorStyles = {
-        default: 'border-white/10 text-white',
-        primary: 'border-white/10 text-white',
-        success: 'border-green-500/20 text-green-400',
-        warning: 'border-amber-500/20 text-amber-400',
-        danger: 'border-red-500/20 text-red-500',
-    };
-
-    const isColor = color === 'success' || color === 'danger' || color === 'warning';
+function StatsCard({ title, value, icon, subtitle, color = "default" }) {
+    const getAccentColor = () => {
+        switch (color) {
+            case 'success': return 'var(--safe-text)'
+            case 'warning': return 'var(--flagged-text)'
+            case 'danger': return 'var(--rejected-text)'
+            default: return 'var(--text-primary)'
+        }
+    }
 
     return (
-        <div className={`
-      relative p-6 border bg-black transition-all duration-200
-      hover:border-white/30 group
-      ${colorStyles[color]}
-    `}>
+        <div 
+            className="p-6 transition-all duration-200 hover:translate-y-[-2px]"
+            style={{ 
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-color)'
+            }}
+        >
             <div className="flex justify-between items-start mb-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-text-secondary group-hover:text-white transition-colors">
+                <span 
+                    className="text-xs font-bold uppercase tracking-wider"
+                    style={{ color: 'var(--text-secondary)' }}
+                >
                     {title}
-                </p>
-                <div className={`opacity-50 group-hover:opacity-100 transition-opacity ${isColor ? '' : 'text-white'}`}>
+                </span>
+                <span style={{ color: 'var(--text-secondary)' }}>
                     {icon}
-                </div>
+                </span>
             </div>
-
-            <h3 className="text-3xl font-bold tracking-tighter font-mono mb-1">{value}</h3>
-
+            
+            <div 
+                className="text-3xl font-bold font-mono mb-2"
+                style={{ color: getAccentColor() }}
+            >
+                {value}
+            </div>
+            
             {subtitle && (
-                <p className="text-[10px] uppercase tracking-widest text-text-secondary font-mono border-t border-white/5 pt-2 mt-2">
+                <div 
+                    className="text-[10px] uppercase tracking-widest"
+                    style={{ color: 'var(--text-muted)' }}
+                >
                     {subtitle}
-                </p>
+                </div>
             )}
         </div>
-    );
+    )
 }
 
-export default StatsCard;
+export default StatsCard

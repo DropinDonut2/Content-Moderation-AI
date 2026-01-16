@@ -1,17 +1,36 @@
 import { useState } from 'react'
 import { CheckCircle2, XCircle, AlertTriangle, ChevronDown, ChevronUp, User, Layout, FileText, Bot, BookOpen, Theater } from 'lucide-react'
 
-
 function ContentCard({ log, onReview }) {
     const [expanded, setExpanded] = useState(false)
 
-    const verdictConfig = {
-        safe: { color: 'text-green-400', border: 'border-l-green-500', icon: <CheckCircle2 size={16} /> },
-        flagged: { color: 'text-amber-400', border: 'border-l-amber-500', icon: <AlertTriangle size={16} /> },
-        rejected: { color: 'text-red-500', border: 'border-l-red-500', icon: <XCircle size={16} /> }
+    const getVerdictStyle = (verdict) => {
+        switch (verdict) {
+            case 'safe':
+                return { 
+                    borderColor: 'var(--safe-border)', 
+                    color: 'var(--safe-text)',
+                    bg: 'var(--safe-bg)',
+                    icon: <CheckCircle2 size={16} />
+                }
+            case 'rejected':
+                return { 
+                    borderColor: 'var(--rejected-border)', 
+                    color: 'var(--rejected-text)',
+                    bg: 'var(--rejected-bg)',
+                    icon: <XCircle size={16} />
+                }
+            default:
+                return { 
+                    borderColor: 'var(--flagged-border)', 
+                    color: 'var(--flagged-text)',
+                    bg: 'var(--flagged-bg)',
+                    icon: <AlertTriangle size={16} />
+                }
+        }
     }
 
-    const config = verdictConfig[log.verdict] || verdictConfig['flagged']
+    const verdictStyle = getVerdictStyle(log.verdict)
 
     const getTypeIcon = (type) => {
         switch (type) {
@@ -23,29 +42,60 @@ function ContentCard({ log, onReview }) {
     }
 
     return (
-        <div className={`card-premium border-l-4 ${config.border}`}>
+        <div 
+            className="border-l-4 transition-all duration-200 hover:translate-y-[-2px]"
+            style={{ 
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                borderLeftWidth: '4px',
+                borderLeftColor: verdictStyle.borderColor
+            }}
+        >
             <div className="p-4 flex flex-col gap-4">
                 {/* Header Row */}
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                        <span className={`flex items-center gap-2 px-2 py-1 bg-white/5 border border-white/10 font-mono text-xs uppercase tracking-wider font-bold ${config.color}`}>
-                            {config.icon} {log.verdict}
+                        <span 
+                            className="flex items-center gap-2 px-2 py-1 font-mono text-xs uppercase tracking-wider font-bold"
+                            style={{ 
+                                backgroundColor: verdictStyle.bg,
+                                color: verdictStyle.color,
+                                border: `1px solid ${verdictStyle.borderColor}`
+                            }}
+                        >
+                            {verdictStyle.icon} {log.verdict}
                         </span>
-                        <span className="font-mono text-xs text-text-secondary">
+                        <span 
+                            className="font-mono text-xs"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
                             ID: {log.contentId || log._id.slice(-8)}
                         </span>
                     </div>
-                    <div className="text-xs text-text-secondary font-mono">
+                    <div 
+                        className="text-xs font-mono"
+                        style={{ color: 'var(--text-secondary)' }}
+                    >
                         {new Date(log.createdAt).toLocaleString()}
                     </div>
                 </div>
 
                 {/* Content Preview */}
                 <div>
-                    <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-wider text-text-secondary">
+                    <div 
+                        className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-wider"
+                        style={{ color: 'var(--text-secondary)' }}
+                    >
                         {getTypeIcon(log.contentType)} {log.contentType} Content
                     </div>
-                    <div className={`text-sm font-mono text-text-primary leading-relaxed bg-black p-3 border border-white/10 ${expanded ? '' : 'line-clamp-3'}`}>
+                    <div 
+                        className={`text-sm font-mono leading-relaxed p-3 ${expanded ? '' : 'line-clamp-3'}`}
+                        style={{ 
+                            backgroundColor: 'var(--bg-secondary)',
+                            border: '1px solid var(--border-color)',
+                            color: 'var(--text-primary)'
+                        }}
+                    >
                         {log.content}
                     </div>
                 </div>
@@ -53,7 +103,8 @@ function ContentCard({ log, onReview }) {
                 {/* Toggle Expand */}
                 <button
                     onClick={() => setExpanded(!expanded)}
-                    className="text-xs uppercase font-bold tracking-widest text-text-secondary hover:text-white flex items-center gap-1 self-start"
+                    className="text-xs uppercase font-bold tracking-widest flex items-center gap-1 self-start transition-colors"
+                    style={{ color: 'var(--text-secondary)' }}
                 >
                     {expanded ? (
                         <>Less <ChevronUp size={12} /></>
@@ -63,22 +114,53 @@ function ContentCard({ log, onReview }) {
                 </button>
 
                 {/* AI Insight Section */}
-                <div className="pt-3 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div 
+                    className="pt-3 grid grid-cols-1 md:grid-cols-2 gap-4"
+                    style={{ borderTop: '1px solid var(--border-color)' }}
+                >
                     <div>
-                        <span className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Confidence Score</span>
-                        <div className="w-full bg-white/10 h-1.5 mb-1">
+                        <span 
+                            className="block text-[10px] uppercase font-bold mb-1"
+                            style={{ color: 'var(--text-secondary)' }}
+                        >
+                            Confidence Score
+                        </span>
+                        <div 
+                            className="w-full h-1.5 mb-1"
+                            style={{ backgroundColor: 'var(--border-color)' }}
+                        >
                             <div
-                                className={`h-full ${log.verdict === 'safe' ? 'bg-green-500' : log.verdict === 'rejected' ? 'bg-red-500' : 'bg-amber-500'}`}
-                                style={{ width: `${log.confidence * 100}%` }}
+                                className="h-full"
+                                style={{ 
+                                    width: `${log.confidence * 100}%`,
+                                    backgroundColor: verdictStyle.color
+                                }}
                             ></div>
                         </div>
-                        <span className="text-xs font-mono text-white">{(log.confidence * 100).toFixed(1)}%</span>
+                        <span 
+                            className="text-xs font-mono"
+                            style={{ color: 'var(--text-primary)' }}
+                        >
+                            {(log.confidence * 100).toFixed(1)}%
+                        </span>
                     </div>
 
                     {log.policyViolated && (
                         <div>
-                            <span className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Violation</span>
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/10 text-red-500 text-xs font-bold uppercase border border-red-500/20">
+                            <span 
+                                className="block text-[10px] uppercase font-bold mb-1"
+                                style={{ color: 'var(--text-secondary)' }}
+                            >
+                                Violation
+                            </span>
+                            <span 
+                                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold uppercase"
+                                style={{ 
+                                    backgroundColor: 'var(--rejected-bg)',
+                                    color: 'var(--rejected-text)',
+                                    border: '1px solid var(--rejected-border)'
+                                }}
+                            >
                                 <AlertTriangle size={10} /> {log.policyViolated.title}
                             </span>
                         </div>
@@ -87,22 +169,25 @@ function ContentCard({ log, onReview }) {
 
                 {/* Action Buttons */}
                 {log.reviewStatus === 'pending' && (
-                    <div className="flex gap-3 mt-2 pt-4 border-t border-white/10">
+                    <div 
+                        className="flex gap-3 mt-2 pt-4"
+                        style={{ borderTop: '1px solid var(--border-color)' }}
+                    >
                         <button
                             onClick={() => onReview(log._id, 'approved')}
-                            className="flex-1 py-2 bg-green-500 text-black font-bold text-xs uppercase hover:bg-green-400 transition-colors"
+                            className="action-approve flex-1 py-2"
                         >
                             Approve
                         </button>
                         <button
                             onClick={() => onReview(log._id, 'rejected')}
-                            className="flex-1 py-2 bg-red-500 text-black font-bold text-xs uppercase hover:bg-red-400 transition-colors"
+                            className="action-reject flex-1 py-2"
                         >
                             Reject
                         </button>
                         <button
                             onClick={() => onReview(log._id, 'ignored')}
-                            className="px-4 py-2 border border-white/10 text-text-secondary hover:text-white hover:bg-white/5 font-bold text-xs uppercase transition-colors"
+                            className="action-skip px-4 py-2"
                         >
                             Ignore
                         </button>
@@ -110,8 +195,14 @@ function ContentCard({ log, onReview }) {
                 )}
 
                 {log.reviewStatus !== 'pending' && (
-                    <div className="mt-2 pt-2 border-t border-white/10 text-xs font-mono text-text-secondary uppercase">
-                        Review Status: <span className="text-white font-bold">{log.reviewStatus}</span>
+                    <div 
+                        className="mt-2 pt-2 text-xs font-mono uppercase"
+                        style={{ 
+                            borderTop: '1px solid var(--border-color)',
+                            color: 'var(--text-secondary)'
+                        }}
+                    >
+                        Review Status: <span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>{log.reviewStatus}</span>
                     </div>
                 )}
             </div>
