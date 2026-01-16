@@ -57,7 +57,17 @@ const storylineSchema = new mongoose.Schema({
     firstMessage: {
         type: String
     },
-    
+
+    // Advanced Prompts (New)
+    promptPlot: { type: String },
+    plot: { type: String },
+    plotSummary: { type: String },
+    promptGuideline: { type: String },
+    reminder: { type: String },
+    changeLog: { type: String },
+    rawCharacterList: { type: String },
+    rawPersonaList: { type: String },
+
     // Related Characters
     characters: [{
         characterId: String,

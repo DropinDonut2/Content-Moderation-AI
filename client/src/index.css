@@ -3,9 +3,45 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Default Dark Mode (Data Terminal Theme) */
+    --bg-primary: #09090b;
+    /* zinc-950 */
+    --bg-secondary: #18181b;
+    /* zinc-900 */
+    --bg-card: #000000;
+    /* black */
+    --text-primary: #ffffff;
+    --text-secondary: #a1a1aa;
+    /* zinc-400 */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-hover: rgba(255, 255, 255, 0.3);
+    --accent-primary: #ffffff;
+  }
+
+  /* Light Mode Override */
+  .light-mode {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f4f4f5;
+    /* zinc-100 */
+    --bg-card: #ffffff;
+    --text-primary: #09090b;
+    /* zinc-950 */
+    --text-secondary: #52525b;
+    /* zinc-600 */
+    --border-color: #e4e4e7;
+    /* zinc-200 */
+    --border-hover: #a1a1aa;
+    /* zinc-400 */
+    --accent-primary: #09090b;
+  }
+
   body {
-    @apply bg-bg-primary text-text-primary antialiased font-mono;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    @apply antialiased font-mono;
     font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
@@ -16,13 +52,15 @@
     @apply max-w-7xl mx-auto px-6 py-8;
   }
 
-  /* Cards - Strict Borders, No Shadows */
+  /* Cards */
   .card-premium {
-    @apply bg-bg-card border border-white/10 rounded-none shadow-none transition-all duration-200;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    @apply rounded-none shadow-none transition-all duration-200;
   }
 
   .card-premium:hover {
-    @apply border-white/30;
+    border-color: var(--border-hover);
   }
 
   /* Buttons - Minimalist */

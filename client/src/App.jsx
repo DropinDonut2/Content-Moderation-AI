@@ -5,7 +5,9 @@ import ReviewQueue from './components/ReviewQueue'
 import PolicyManager from './components/PolicyManager'
 import Moderate from './pages/Moderate'
 import Analytics from './components/Analytics'
-import { LayoutDashboard, Shield, ClipboardList, PenTool, BarChart3, User, ChevronLeft, ChevronRight } from 'lucide-react'
+import SubmitContent from './pages/SubmitContent'
+import ThemeToggle from './components/ThemeToggle'
+import { LayoutDashboard, Shield, ClipboardList, PenTool, BarChart3, User, ChevronLeft, ChevronRight, PlusCircle } from 'lucide-react'
 
 function App() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -18,6 +20,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/moderate" element={<Moderate />} />
+                        <Route path="/submit" element={<SubmitContent />} />
                         <Route path="/review" element={<ReviewQueue />} />
                         <Route path="/policies" element={<PolicyManager />} />
                         <Route path="/analytics" element={<Analytics />} />
@@ -33,6 +36,7 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
 
     const navItems = [
         { to: "/", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+        { to: "/submit", icon: <PlusCircle size={18} />, label: "Submit Content" },
         { to: "/moderate", icon: <PenTool size={18} />, label: "Moderate" },
         { to: "/review", icon: <ClipboardList size={18} />, label: "Queue" },
         { to: "/policies", icon: <Shield size={18} />, label: "Policies" },
@@ -89,7 +93,7 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
 
             {/* Footer */}
             <div className="mt-auto border-t border-white/10">
-                <div className={`p-6 ${isCollapsed ? 'flex justify-center' : ''}`}>
+                <div className={`p-6 transition-all duration-300 ${isCollapsed ? 'flex flex-col items-center gap-4' : 'flex items-center justify-between'}`}>
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-white/10 flex items-center justify-center text-white shrink-0">
                             <User size={16} />
@@ -101,6 +105,7 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
                             </div>
                         )}
                     </div>
+                    <ThemeToggle />
                 </div>
             </div>
         </nav>

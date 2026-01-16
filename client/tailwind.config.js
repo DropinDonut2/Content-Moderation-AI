@@ -8,13 +8,13 @@ export default {
         extend: {
             colors: {
                 bg: {
-                    primary: '#09090b', // zinc-950
-                    secondary: '#18181b', // zinc-900
-                    card: '#000000', // pure black
+                    primary: 'var(--bg-primary)',
+                    secondary: 'var(--bg-secondary)',
+                    card: 'var(--bg-card)',
                 },
                 text: {
-                    primary: '#ffffff',
-                    secondary: '#a1a1aa', // zinc-400
+                    primary: 'var(--text-primary)',
+                    secondary: 'var(--text-secondary)',
                 }
             },
             fontFamily: {

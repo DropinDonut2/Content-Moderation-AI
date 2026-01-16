@@ -8,7 +8,8 @@ An advanced, AI-powered content moderation platform that automates initial conte
 - **🛡️ Policy Protocol** — Centralized rule management for consistent enforcement.
 - **📊 Real-Time Analytics** — Live dashboard with volume, latency, and verdict distribution metrics.
 - **👁️ Review Queue** — Manual oversight workflow for flagged/uncertain content.
-- **🎨 Minimalist UI** — High-contrast "Data Terminal" aesthetic (Black & White) using Tailwind CSS.
+- **🎨 Minimalist UI** — High-contrast "Data Terminal" aesthetic (B&W) with **Light/Dark Mode toggle**.
+- **📝 Manual Submission** — Interface for creating/testing Storylines and Characters with immediate AI analysis.
 - **📈 Detailed Logging** — Full audit trail of all AI decisions and human reviews.
 
 ## 🛠️ Tech Stack

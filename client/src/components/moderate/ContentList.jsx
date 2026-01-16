@@ -1,249 +1,129 @@
+import { Archive, Bot } from 'lucide-react'
+
 function ContentList({ type, items, loading, onItemClick }) {
     if (loading) {
-        return <div className="loading-container"><div className="spinner"></div></div>
-    }
-
-    if (!items || items.length === 0) {
         return (
-            <div className="empty-state card">
-                <div className="icon">📭</div>
-                <p>No {type} found with current filters</p>
+            <div className="flex justify-center items-center py-20">
+                <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
             </div>
         )
     }
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'pending': return { bg: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b' }
-            case 'approved': return { bg: 'rgba(34, 197, 94, 0.2)', color: '#22c55e' }
-            case 'flagged': return { bg: 'rgba(249, 115, 22, 0.2)', color: '#f97316' }
-            case 'rejected': return { bg: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }
-            default: return { bg: 'rgba(107, 114, 128, 0.2)', color: '#6b7280' }
-        }
-    }
-
-    const getPriorityBadge = (priority) => {
-        if (!priority) return null
-        const colors = {
-            critical: '#ef4444',
-            high: '#f97316',
-            medium: '#f59e0b',
-            low: '#22c55e'
-        }
+    if (!items || items.length === 0) {
         return (
-            <span className="priority-badge" style={{ borderColor: colors[priority], color: colors[priority] }}>
-                {priority}
-            </span>
+            <div className="card-premium p-12 flex flex-col items-center text-center text-text-secondary">
+                <Archive size={48} className="mb-4 opacity-50" />
+                <p className="font-mono text-sm uppercase tracking-wide">No {type} found with current filters</p>
+            </div>
         )
     }
 
+    const getStatusStyle = (status) => {
+        switch (status) {
+            case 'pending': return 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+            case 'approved': return 'bg-green-500/10 text-green-500 border-green-500/20'
+            case 'flagged': return 'bg-orange-500/10 text-orange-500 border-orange-500/20'
+            case 'rejected': return 'bg-red-500/10 text-red-500 border-red-500/20'
+            default: return 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20'
+        }
+    }
+
+    const getPriorityStyle = (priority) => {
+        if (!priority) return null
+        switch (priority) {
+            case 'critical': return 'text-red-500 border-red-500'
+            case 'high': return 'text-orange-500 border-orange-500'
+            case 'medium': return 'text-amber-500 border-amber-500'
+            case 'low': return 'text-green-500 border-green-500'
+            default: return 'text-zinc-500 border-zinc-500'
+        }
+    }
+
     return (
-        <div className="content-list">
+        <div className="flex flex-col gap-3">
             {items.map(item => {
                 const id = item.characterId || item.storylineId || item.personaId || item._id
                 const name = item.name || item.title
                 const mod = item.moderationResult || {}
-                const statusStyle = getStatusColor(item.moderationStatus)
+                const statusClass = getStatusStyle(item.moderationStatus)
+                const priorityClass = getPriorityStyle(mod.humanReviewPriority)
 
                 return (
-                    <div key={id} className="content-item" onClick={() => onItemClick(item)}>
+                    <div
+                        key={id}
+                        onClick={() => onItemClick(item)}
+                        className="group relative flex flex-col md:flex-row gap-4 p-4 bg-zinc-900/40 border border-white/5 hover:border-white/20 hover:bg-zinc-900/60 rounded-lg cursor-pointer transition-all duration-200"
+                    >
                         {/* Left: Avatar/Cover */}
-                        <div className="item-visual">
-                            <img 
-                                src={item.avatar || item.cover || `https://placehold.co/60x60/7c3aed/white?text=${name?.charAt(0)}`}
+                        <div className="shrink-0">
+                            <img
+                                src={item.avatar || item.cover || `https://placehold.co/60x60/1a1a1a/white?text=${name?.charAt(0)}`}
                                 alt={name}
+                                className="w-16 h-16 rounded-md object-cover border border-white/5 bg-zinc-800"
                             />
                         </div>
 
                         {/* Middle: Info */}
-                        <div className="item-info">
-                            <div className="item-header">
-                                <h3>{name}</h3>
-                                <span className="item-id">{id}</span>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-baseline gap-3 mb-1">
+                                <h3 className="text-white font-bold truncate pr-2 group-hover:text-blue-400 transition-colors">{name}</h3>
+                                <span className="font-mono text-xs text-text-secondary hidden sm:inline-block">{id}</span>
                             </div>
-                            <p className="item-user">by {item.user}</p>
-                            
+                            <p className="text-xs text-text-secondary mb-2">by <span className="text-white">{item.user}</span></p>
+
                             {/* AI Summary if available */}
                             {mod.aiSummary && (
-                                <p className="ai-summary">🤖 {mod.aiSummary}</p>
+                                <div className="flex items-start gap-2 bg-black/40 p-2 rounded border border-white/5 mb-2">
+                                    <Bot size={14} className="mt-0.5 text-text-secondary shrink-0" />
+                                    <p className="text-xs text-text-primary line-clamp-1">{mod.aiSummary}</p>
+                                </div>
                             )}
-                            
-                            <div className="item-tags">
+
+                            <div className="flex flex-wrap gap-1.5">
                                 {item.tags?.slice(0, 3).map((tag, i) => (
-                                    <span key={i} className="mini-tag">{tag}</span>
+                                    <span key={i} className="px-2 py-0.5 bg-white/5 rounded text-[10px] text-text-secondary border border-white/5 uppercase tracking-wide">
+                                        {tag}
+                                    </span>
                                 ))}
-                                {item.tags?.length > 3 && <span className="mini-tag">+{item.tags.length - 3}</span>}
+                                {item.tags?.length > 3 && (
+                                    <span className="px-2 py-0.5 bg-white/5 rounded text-[10px] text-text-secondary border border-white/5 uppercase tracking-wide">
+                                        +{item.tags.length - 3}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
                         {/* Right: Status & Actions */}
-                        <div className="item-status">
-                            <span className="status-badge" style={{ backgroundColor: statusStyle.bg, color: statusStyle.color }}>
+                        <div className="flex flex-row md:flex-col items-center md:items-end gap-2 md:min-w-[140px] pl-0 md:pl-4 md:border-l md:border-white/5">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusClass}`}>
                                 {item.moderationStatus}
                             </span>
-                            
-                            {item.nsfw && <span className="nsfw-badge">🔞 NSFW</span>}
-                            
-                            {mod.humanReviewPriority && getPriorityBadge(mod.humanReviewPriority)}
-                            
+
+                            {item.nsfw && (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-500 border border-red-500/20">
+                                    NSFW
+                                </span>
+                            )}
+
+                            {priorityClass && (
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${priorityClass}`}>
+                                    {mod.humanReviewPriority} Priority
+                                </span>
+                            )}
+
                             {mod.aiVerdict && (
-                                <span className="ai-verdict">
+                                <span className="text-[10px] font-mono text-text-secondary mt-auto">
                                     AI: {mod.aiVerdict} ({Math.round((mod.aiConfidence || 0) * 100)}%)
                                 </span>
                             )}
-                            
-                            <span className="view-btn">View →</span>
+
+                            <span className="hidden md:inline-flex text-xs font-bold text-white items-center opacity-0 group-hover:opacity-100 transition-opacity mt-2">
+                                Review detail →
+                            </span>
                         </div>
                     </div>
                 )
             })}
-
-            <style>{`
-                .content-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.75rem;
-                }
-
-                .content-item {
-                    display: grid;
-                    grid-template-columns: 60px 1fr auto;
-                    gap: 1rem;
-                    padding: 1rem;
-                    background: var(--bg-card);
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius);
-                    cursor: pointer;
-                    transition: var(--transition);
-                    align-items: center;
-                }
-
-                .content-item:hover {
-                    border-color: var(--accent-primary);
-                    transform: translateX(4px);
-                }
-
-                .item-visual img {
-                    width: 60px;
-                    height: 60px;
-                    border-radius: 8px;
-                    object-fit: cover;
-                }
-
-                .item-info {
-                    min-width: 0;
-                }
-
-                .item-header {
-                    display: flex;
-                    align-items: baseline;
-                    gap: 0.75rem;
-                    margin-bottom: 0.25rem;
-                }
-
-                .item-header h3 {
-                    margin: 0;
-                    font-size: 1rem;
-                    font-weight: 600;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-
-                .item-id {
-                    font-family: monospace;
-                    font-size: 0.75rem;
-                    color: var(--text-secondary);
-                }
-
-                .item-user {
-                    margin: 0 0 0.5rem 0;
-                    font-size: 0.8125rem;
-                    color: var(--text-secondary);
-                }
-
-                .ai-summary {
-                    margin: 0 0 0.5rem 0;
-                    font-size: 0.8125rem;
-                    color: var(--text-primary);
-                    background: var(--bg-secondary);
-                    padding: 0.5rem 0.75rem;
-                    border-radius: 6px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-
-                .item-tags {
-                    display: flex;
-                    gap: 0.375rem;
-                    flex-wrap: wrap;
-                }
-
-                .mini-tag {
-                    background: var(--bg-secondary);
-                    padding: 0.25rem 0.5rem;
-                    border-radius: 4px;
-                    font-size: 0.6875rem;
-                    color: var(--text-secondary);
-                }
-
-                .item-status {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-end;
-                    gap: 0.5rem;
-                    min-width: 120px;
-                }
-
-                .status-badge {
-                    padding: 0.375rem 0.75rem;
-                    border-radius: 9999px;
-                    font-size: 0.6875rem;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                }
-
-                .nsfw-badge {
-                    background: rgba(239, 68, 68, 0.2);
-                    color: #ef4444;
-                    padding: 0.25rem 0.5rem;
-                    border-radius: 4px;
-                    font-size: 0.6875rem;
-                }
-
-                .priority-badge {
-                    border: 1px solid;
-                    padding: 0.25rem 0.5rem;
-                    border-radius: 4px;
-                    font-size: 0.6875rem;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                }
-
-                .ai-verdict {
-                    font-size: 0.6875rem;
-                    color: var(--text-secondary);
-                }
-
-                .view-btn {
-                    color: var(--accent-primary);
-                    font-size: 0.8125rem;
-                    font-weight: 500;
-                }
-
-                @media (max-width: 768px) {
-                    .content-item {
-                        grid-template-columns: 50px 1fr;
-                    }
-                    .item-status {
-                        grid-column: 1 / -1;
-                        flex-direction: row;
-                        flex-wrap: wrap;
-                        justify-content: flex-start;
-                    }
-                }
-            `}</style>
         </div>
     )
 }

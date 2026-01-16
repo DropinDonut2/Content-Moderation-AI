@@ -14,10 +14,10 @@ const autoModerateContent = async (contentType, content) => {
     try {
         // Get active policies
         const policies = await Policy.find({ isActive: true });
-        
+
         // Build content string based on type
         let contentToAnalyze = '';
-        
+
         switch (contentType) {
             case 'character':
                 contentToAnalyze = buildCharacterContent(content);
@@ -33,7 +33,7 @@ const autoModerateContent = async (contentType, content) => {
         }
 
         // Build policy context
-        const policyContext = policies.map(p => 
+        const policyContext = policies.map(p =>
             `- ${p.policyId}: ${p.title} (${p.category}, ${p.severity}) - ${p.description}`
         ).join('\n');
 
@@ -76,7 +76,7 @@ Respond in JSON format:
         });
 
         const responseText = response.choices[0].message.content;
-        
+
         // Parse JSON from response
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
@@ -84,7 +84,7 @@ Respond in JSON format:
         }
 
         const result = JSON.parse(jsonMatch[0]);
-        
+
         return {
             success: true,
             moderationResult: {
@@ -110,7 +110,7 @@ Respond in JSON format:
 
     } catch (error) {
         console.error('Auto-moderation error:', error);
-        
+
         // Return a safe default that requires human review
         return {
             success: false,
@@ -163,7 +163,7 @@ TAGS: ${char.tags?.join(', ') || 'None'}
  */
 const buildStorylineContent = (story) => {
     const charNames = story.characters?.map(c => c.name).join(', ') || 'None';
-    
+
     return `
 STORYLINE TITLE: ${story.title || 'N/A'}
 USER: ${story.user || 'N/A'}
@@ -174,10 +174,29 @@ MONETIZED: ${story.monetized ? 'Yes' : 'No'}
 DESCRIPTION:
 ${story.description || 'No description'}
 
+PLOT SUMMARY:
+${story.plotSummary || 'No summary'}
+
+PLOT:
+${story.plot || 'No plot'}
+
+PROMPT PLOT:
+${story.promptPlot || 'No prompt plot'}
+
 FIRST MESSAGE:
 ${story.firstMessage || 'No first message'}
 
-CHARACTERS INVOLVED: ${charNames}
+CHARACTER LIST (RAW):
+${story.rawCharacterList || charNames}
+
+PERSONA LIST (RAW):
+${story.rawPersonaList || 'None'}
+
+GUIDELINES:
+${story.promptGuideline || 'None'}
+
+REMINDER:
+${story.reminder || 'None'}
 
 TAGS: ${story.tags?.join(', ') || 'None'}
 `.trim();
