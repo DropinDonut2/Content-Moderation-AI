@@ -56,11 +56,11 @@ const moderationLogSchema = new mongoose.Schema({
     },
     reviewStatus: {
         type: String,
-        enum: ['pending', 'approved', 'rejected', 'ignored', 'overridden'],
+        enum: ['pending', 'approved', 'rejected', 'overridden', 'ignored'],
         default: 'pending'
     },
     reviewedBy: {
-        type: mongoose.Schema.Types.ObjectId
+        type: String  
     },
     reviewedAt: {
         type: Date

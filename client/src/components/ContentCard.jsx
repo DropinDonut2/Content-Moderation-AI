@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { CheckCircle2, XCircle, AlertTriangle, ChevronDown, ChevronUp, User, Layout, FileText, Bot } from 'lucide-react'
+import { CheckCircle2, XCircle, AlertTriangle, ChevronDown, ChevronUp, User, Layout, FileText, Bot, BookOpen, Theater } from 'lucide-react'
+
 
 function ContentCard({ log, onReview }) {
     const [expanded, setExpanded] = useState(false)

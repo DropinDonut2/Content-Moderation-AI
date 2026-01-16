@@ -5,7 +5,7 @@ const ModerationLog = require('../models/ModerationLog');
 // GET /api/v1/logs - Get moderation history
 router.get('/', async (req, res) => {
     try {
-        const { verdict, reviewStatus, limit = 50, page = 1, category, startDate, endDate } = req.query;
+        const { verdict, category, reviewStatus, startDate, endDate, limit = 50, page = 1 } = req.query;
 
         const filter = {};
         if (verdict) filter.verdict = verdict;
@@ -57,6 +57,8 @@ router.get('/:id', async (req, res) => {
 // PATCH /api/v1/logs/:id/review - Submit human review
 router.patch('/:id/review', async (req, res) => {
     try {
+        console.log('Review request:', req.params.id, req.body); 
+
         const { reviewStatus, reviewedBy } = req.body;
 
         if (!['approved', 'rejected', 'ignored'].includes(reviewStatus)) {
@@ -82,6 +84,7 @@ router.patch('/:id/review', async (req, res) => {
 
         res.json({ success: true, data: log });
     } catch (error) {
+        console.error('Review error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
