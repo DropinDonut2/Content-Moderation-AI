@@ -1,0 +1,126 @@
+const mongoose = require('mongoose');
+
+const personaSchema = new mongoose.Schema({
+    // Primary Information
+    personaId: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    user: {
+        type: String,
+        required: true
+    },
+    languageCode: {
+        type: String,
+        default: 'en'
+    },
+    advancedMode: {
+        type: Boolean,
+        default: false
+    },
+    secretMode: {
+        type: Boolean,
+        default: false
+    },
+    visibility: {
+        type: String,
+        enum: ['public', 'private', 'hidden'],
+        default: 'hidden'
+    },
+    nsfw: {
+        type: Boolean,
+        default: false
+    },
+
+    // Details
+    description: {
+        type: String
+    },
+    descriptionSummary: {
+        type: String
+    },
+    promptDescription: {
+        type: String
+    },
+    exampleDialogue: {
+        type: String
+    },
+
+    // Media
+    avatar: {
+        type: String
+    },
+    gallery: [{
+        type: String
+    }],
+
+    // Tags
+    tags: [{
+        type: String
+    }],
+
+    // Statistics
+    statistics: {
+        uses: { type: Number, default: 0 }
+    },
+
+    // Moderation
+    moderationStatus: {
+        type: String,
+        enum: ['pending', 'approved', 'flagged', 'rejected'],
+        default: 'pending'
+    },
+    moderationResult: {
+        categories: [{
+            category: String,
+            flagged: Boolean,
+            confidence: Number
+        }],
+        aiVerdict: String,
+        aiReasoning: String,
+        aiConfidence: Number,
+        moderatedAt: Date
+    },
+
+    // Review
+    reviewedBy: {
+        type: String
+    },
+    reviewedAt: {
+        type: Date
+    },
+    reviewNotes: {
+        type: String
+    },
+    rejectionReason: {
+        type: String
+    },
+
+    // Flags
+    flags: {
+        isNsfw: { type: Boolean, default: false },
+        hasViolence: { type: Boolean, default: false },
+        hasHateSpeech: { type: Boolean, default: false },
+        needsManualReview: { type: Boolean, default: false }
+    },
+
+    // System Information
+    version: {
+        type: Number,
+        default: 1
+    }
+}, {
+    timestamps: true
+});
+
+// Indexes
+personaSchema.index({ moderationStatus: 1 });
+personaSchema.index({ user: 1 });
+personaSchema.index({ createdAt: -1 });
+
+module.exports = mongoose.model('Persona', personaSchema);

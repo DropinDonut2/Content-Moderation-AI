@@ -12,7 +12,7 @@ const moderationLogSchema = new mongoose.Schema({
     contentType: {
         type: String,
         required: true,
-        enum: ['post', 'comment', 'message']
+        enum: ['post', 'comment', 'message', 'character', 'storyline', 'persona', 'bot']
     },
     userId: {
         type: String
@@ -56,18 +56,18 @@ const moderationLogSchema = new mongoose.Schema({
     },
     reviewStatus: {
         type: String,
-        enum: ['pending', 'approved', 'overridden'],
+        enum: ['pending', 'approved', 'rejected', 'overridden', 'ignored'],
         default: 'pending'
     },
     reviewedBy: {
-        type: mongoose.Schema.Types.ObjectId
+        type: String  
     },
     reviewedAt: {
         type: Date
     },
     reviewNotes: {
-    type: String
-}
+        type: String
+    }
 }, {
     timestamps: true
 });

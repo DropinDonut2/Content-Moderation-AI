@@ -20,7 +20,7 @@ function Dashboard() {
         try {
             const [overviewRes, timeSeriesRes, categoriesRes] = await Promise.all([
                 getAnalyticsOverview(),
-                getAnalyticsTimeSeries(30),
+                getAnalyticsTimeSeries({ days: 30 }),
                 getAnalyticsCategories()
             ])
 
