@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import PolicyImport from './PolicyImport'
 import { getPolicies, updatePolicy, deletePolicy, createPolicy } from '../services/api'
-import { Plus, Edit2, Trash2, AlertTriangle, ShieldAlert, Shield, ShieldCheck } from 'lucide-react'
+import { Plus, Edit2, Trash2, AlertTriangle, ShieldAlert, Shield, ShieldCheck, Upload } from 'lucide-react'
+
 
 const initialFormState = {
     policyId: '',
@@ -16,7 +18,7 @@ function PolicyManager() {
     const [loading, setLoading] = useState(true)
     const [editingId, setEditingId] = useState(null)
     const [formData, setFormData] = useState(initialFormState)
-
+    const [showImport, setShowImport] = useState(false)
     useEffect(() => {
         fetchPolicies()
     }, [])
@@ -81,14 +83,45 @@ function PolicyManager() {
                         // CONFIGURE_MODERATION_RULES
                     </p>
                 </div>
-                <button
-                    onClick={() => { setEditingId(null); setFormData(initialFormState); document.getElementById('policy-form').scrollIntoView({ behavior: 'smooth' }); }}
-                    className="btn-primary-new flex items-center gap-2"
-                >
-                    <Plus className="w-4 h-4" /> New Policy
-                </button>
-            </div>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setShowImport(!showImport)}
+                        className="btn-secondary flex items-center gap-2 px-4 py-2"
+                        style={{ 
+                                backgroundColor: showImport ? 'var(--accent-primary)' : 'var(--bg-secondary)',
+                                color: showImport ? 'var(--bg-primary)' : 'var(--text-primary)',
+                                border: '1px solid var(--border-color)'
+                            }}
+                        >
+                            <Upload className="w-4 h-4" />
+                            Import
+                        </button>
+                        <button
+                            onClick={() => { setEditingId(null); setFormData(initialFormState); document.getElementById('policy-form').scrollIntoView({ behavior: 'smooth' }); }}
+                            className="btn-primary-new flex items-center gap-2"
+                        >
+                            <Plus className="w-4 h-4" /> New Policy
+                        </button>
+                    </div>
+                    </div>
+                        {showImport && (
+                            <div 
+                                className="p-6 rounded-lg animate-fade-in"
+                                style={{ 
+                                    backgroundColor: 'var(--bg-card)',
+                                    border: '1px solid var(--border-color)'
+                                }}
+                            >
+                                <PolicyImport onImportComplete={() => {
+                                    fetchPolicies()
+                                    setShowImport(false)
+                                }} />
+                            </div>
+                        )}
 
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Form Section */}
                 <div id="policy-form" className="lg:col-span-1">

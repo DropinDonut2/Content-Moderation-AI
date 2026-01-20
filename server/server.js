@@ -11,6 +11,7 @@ const policyRoutes = require('./routes/policies');
 const logRoutes = require('./routes/logs');
 const analyticsRoutes = require('./routes/analytics');
 const contentRoutes = require('./routes/content');
+const policyImportRoutes = require('./routes/policyImport');
 
 const app = express();
 const server = http.createServer(app);
@@ -28,10 +29,10 @@ app.set('io', io);
 
 // Socket.io connection handler
 io.on('connection', (socket) => {
-    console.log('👤 Client connected:', socket.id);
+    console.log(' Client connected:', socket.id);
 
     socket.on('disconnect', () => {
-        console.log('👤 Client disconnected:', socket.id);
+        console.log(' Client disconnected:', socket.id);
     });
 });
 
@@ -65,6 +66,7 @@ app.use('/api/v1/policies', policyRoutes);
 app.use('/api/v1/logs', logRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/content', contentRoutes);
+app.use('/api/v1/policies/import', policyImportRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
