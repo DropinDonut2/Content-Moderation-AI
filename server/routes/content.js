@@ -174,6 +174,20 @@ router.post('/storylines/:id/moderate', async (req, res) => {
         const storyline = await Storyline.findOne({ storylineId: req.params.id }) || await Storyline.findById(req.params.id);
         if (!storyline) return res.status(404).json({ success: false, error: 'Storyline not found' });
 
+        const storyData = storyline.toObject();
+        console.log('═══════════════════════════════════════════════════');
+        console.log(' STORYLINE DATA BEING MODERATED:');
+        console.log('═══════════════════════════════════════════════════');
+        console.log('Title:', storyData.title);
+        console.log('Has personaSnapshots:', !!storyData.personaSnapshots);
+        console.log('Persona count:', storyData.personaSnapshots?.length || 0);
+        console.log('Has characterSnapshots:', !!storyData.characterSnapshots);
+        console.log('Character count:', storyData.characterSnapshots?.length || 0);
+        console.log('Plot length:', storyData.plot?.length || 0);
+        console.log('FirstMessage length:', storyData.firstMessage?.length || 0);
+        console.log('All keys:', Object.keys(storyData));
+        console.log('═══════════════════════════════════════════════════');
+
         const moderationResult = await autoModerateContent('storyline', storyline.toObject());
         storyline.moderationResult = moderationResult.moderationResult;
         storyline.flags = { ...storyline.flags, ...moderationResult.flags };

@@ -58,7 +58,7 @@ const storylineSchema = new mongoose.Schema({
         type: String
     },
 
-    // Advanced Prompts (New)
+    // Advanced Prompts
     promptPlot: { type: String },
     plot: { type: String },
     plotSummary: { type: String },
@@ -83,37 +83,33 @@ const storylineSchema = new mongoose.Schema({
         role: String
     }],
 
+    // Character Snapshots (for JSON imports)
+    characterSnapshots: [{
+        type: mongoose.Schema.Types.Mixed
+    }],
+
+    // Persona Snapshots (for JSON imports)
+    personaSnapshots: [{
+        type: mongoose.Schema.Types.Mixed
+    }],
+
+    // Tag Snapshots (for JSON imports)
+    tagSnapshots: [{
+        type: mongoose.Schema.Types.Mixed
+    }],
+
     // Media
     cover: {
-        type: String  // URL to cover image
+        type: mongoose.Schema.Types.Mixed  // Can be string URL or object with url property
     },
     gallery: [{
-        type: String
+        type: mongoose.Schema.Types.Mixed
     }],
 
     // Tags
     tags: [{
         type: String
     }],
-
-    // Full JSON Import Snapshots (for Isekai Zero format)
-    characterSnapshots: {
-        type: mongoose.Schema.Types.Mixed,
-        default: []
-    },
-    personaSnapshots: {
-        type: mongoose.Schema.Types.Mixed,
-        default: []
-    },
-    tagSnapshots: {
-        type: mongoose.Schema.Types.Mixed,
-        default: []
-    },
-    importSource: {
-        type: String,
-        enum: ['manual', 'json_import', 'api'],
-        default: 'manual'
-    },
 
     // Statistics
     statistics: {
@@ -129,38 +125,66 @@ const storylineSchema = new mongoose.Schema({
         context: { type: Number, default: 0 }
     },
 
-    // Moderation
+    // Moderation Status
     moderationStatus: {
         type: String,
         enum: ['pending', 'approved', 'flagged', 'rejected'],
         default: 'pending'
     },
+
+    // =============================================
+    // MODERATION RESULT - Updated with new fields
+    // =============================================
     moderationResult: {
+        // AI Verdict
+        aiVerdict: { type: String },  // 'safe', 'flagged', 'rejected'
+        aiConfidence: { type: Number },
+        aiReasoning: { type: String },
+        aiSummary: { type: String },
+
+        // NEW: Highlighted Issues with field-specific quotes
+        highlightedIssues: [{
+            field: { type: String },      // e.g., 'plotSummary', 'firstMessage'
+            quote: { type: String },       // Exact problematic text
+            policy: { type: String },      // e.g., 'POL-005'
+            policyTitle: { type: String }, // e.g., 'Child Safety'
+            severity: { type: String },    // 'critical', 'high', 'medium', 'low'
+            reason: { type: String }       // Why it violates the policy
+        }],
+
+        // NEW: Field-by-field analysis status
+        fieldAnalysis: {
+            type: mongoose.Schema.Types.Mixed,
+            default: {}
+        },
+
+        // Categories flagged
         categories: [{
-            category: String,
-            flagged: Boolean,
-            confidence: Number
+            category: { type: String },
+            flagged: { type: Boolean },
+            confidence: { type: Number },
+            details: { type: String }
         }],
-        aiVerdict: String,
-        aiReasoning: String,
-        aiSummary: String,
-        aiConfidence: Number,
-        offendingSnippet: String,
-        nsfw: Boolean,
-        nsfwReason: String,
-        imageModerationResults: [{
-            imageType: String,
-            name: String,
-            safe: Boolean,
-            concerns: String
-        }],
-        flaggedPolicies: [String],
-        recommendedAction: String,
-        humanReviewPriority: String,
-        moderatedAt: Date
+
+        // Policy violations
+        flaggedPolicies: [{ type: String }],
+
+        // Legacy: Single offending snippet (for backwards compatibility)
+        offendingSnippet: { type: String },
+
+        // NSFW detection
+        nsfw: { type: Boolean },
+        nsfwReason: { type: String },
+
+        // Recommendation
+        recommendedAction: { type: String },  // 'approve', 'review', 'reject'
+        humanReviewPriority: { type: String }, // 'low', 'medium', 'high', 'critical'
+
+        // Timestamp
+        moderatedAt: { type: Date }
     },
 
-    // Review
+    // Review Information
     reviewedBy: {
         type: String
     },
@@ -179,7 +203,35 @@ const storylineSchema = new mongoose.Schema({
         isNsfw: { type: Boolean, default: false },
         hasViolence: { type: Boolean, default: false },
         hasHateSpeech: { type: Boolean, default: false },
-        needsManualReview: { type: Boolean, default: false }
+        hasChildSafetyConcern: { type: Boolean, default: false },
+        needsManualReview: { type: Boolean, default: false },
+        hasFieldErrors: { type: Boolean, default: false },
+        hasFieldWarnings: { type: Boolean, default: false },
+        highlightedIssueCount: { type: Number, default: 0 }
+    },
+
+    // Suggestions for creator
+    suggestionsForCreator: [{
+        type: { type: String },     // 'error', 'warning', 'info'
+        field: { type: String },
+        issue: { type: String },
+        quote: { type: String },
+        suggestion: { type: String },
+        source: { type: String }    // 'ai_moderation', 'field_validation'
+    }],
+
+    // Field validation results
+    fieldValidation: {
+        isValid: { type: Boolean },
+        hasWarnings: { type: Boolean },
+        issues: [{ type: mongoose.Schema.Types.Mixed }],
+        warnings: [{ type: mongoose.Schema.Types.Mixed }],
+        all: [{ type: mongoose.Schema.Types.Mixed }]
+    },
+
+    // Import source tracking
+    importSource: {
+        type: String  // e.g., 'json_import', 'manual', 'api'
     },
 
     // Change History
@@ -195,7 +247,8 @@ const storylineSchema = new mongoose.Schema({
         default: 1
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    strict: false  // Allow additional fields not in schema (flexibility for new data)
 });
 
 // Indexes
@@ -203,5 +256,7 @@ storylineSchema.index({ moderationStatus: 1 });
 storylineSchema.index({ user: 1 });
 storylineSchema.index({ createdAt: -1 });
 storylineSchema.index({ title: 'text', description: 'text' });
+storylineSchema.index({ 'flags.needsManualReview': 1 });
+storylineSchema.index({ 'moderationResult.aiVerdict': 1 });
 
 module.exports = mongoose.model('Storyline', storylineSchema);
