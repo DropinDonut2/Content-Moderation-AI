@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import SuggestionsPanel from './SuggestionsPanel'
 import { reviewCharacter, reviewStoryline, reviewPersona, rerunModeration } from '../../services/api'
 import {
     X, AlertTriangle, Shield, Check, XCircle, RotateCw, Bot,
@@ -289,6 +290,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         {mod.aiReasoning}
                                     </div>
                                 </div>
+                   
                             </>
                         ) : (
                             <div

@@ -51,55 +51,69 @@ const SubmitContent = () => {
     const [importText, setImportText] = useState('');
 
     const parseContentDump = () => {
-        if (!importText) return;
+        if (!importText.trim()) return;
 
         const newFormData = { ...formData };
+        
         const sections = [
-            { key: 'rawCharacterList', header: 'Character List:' },
-            { key: 'rawPersonaList', header: 'Persona List:' },
-            { key: 'firstMessage', header: 'First Message:' },
-            { key: 'promptPlot', header: 'Prompt Plot:' },
-            { key: 'plot', header: 'Plot:' },
-            { key: 'plotSummary', header: 'Plot Summary:' },
-            { key: 'promptGuideline', header: 'Guidelines:' },
-            { key: 'promptGuideline', header: 'Prompt Guideline:' },
-            { key: 'reminder', header: 'Reminder:' },
-            { key: 'changeLog', header: 'Change Log:' },
-            { key: 'description', header: 'Description:' },
-            { key: 'descriptionSummary', header: 'Description Summary:' },
-            { key: 'promptDescription', header: 'Prompt Description:' },
-            { key: 'exampleDialogue', header: 'Example Dialogue:' },
-            { key: 'avatar', header: 'Avatar:' },
-            { key: 'avatar', header: 'Media:' },
-            { key: 'title', header: 'Character Name:' },
-            { key: 'title', header: 'Name:' }
+            { key: 'title', headers: ['Title:', 'Name:', 'Character Name:', 'Storyline Title:'] },
+            { key: 'rawCharacterList', headers: ['Character List:', 'Characters:', 'Char List:'] },
+            { key: 'rawPersonaList', headers: ['Persona List:', 'Personas:', 'Persona:'] },
+            { key: 'firstMessage', headers: ['First Message:', 'Opening:', 'Greeting:', 'Initial Message:'] },
+            { key: 'promptPlot', headers: ['Prompt Plot:', 'Plot Prompt:'] },
+            { key: 'plot', headers: ['Plot:', 'Story:', 'Scenario:'] },
+            { key: 'plotSummary', headers: ['Plot Summary:', 'Summary:', 'Story Summary:'] },
+            { key: 'promptGuideline', headers: ['Guidelines:', 'Prompt Guideline:', 'Prompt Guidelines:', 'Guideline:'] },
+            { key: 'reminder', headers: ['Reminder:', 'Reminders:', 'Note:', 'Notes:'] },
+            { key: 'changeLog', headers: ['Change Log:', 'Changelog:', 'Changes:', 'Version History:'] },
+            { key: 'description', headers: ['Description:', 'Desc:', 'Bio:', 'Biography:'] },
+            { key: 'descriptionSummary', headers: ['Description Summary:', 'Short Description:', 'Summary:'] },
+            { key: 'promptDescription', headers: ['Prompt Description:', 'System Prompt:', 'Prompt:'] },
+            { key: 'exampleDialogue', headers: ['Example Dialogue:', 'Example Dialog:', 'Dialogue:', 'Dialog:', 'Sample Dialogue:', 'Examples:'] },
+            { key: 'avatar', headers: ['Avatar:', 'Media:', 'Image:', 'Cover:', 'Cover URL:', 'Image URL:', 'Avatar URL:'] },
         ];
 
-        // Normalize new lines
         const cleanDump = importText.replace(/\r\n/g, '\n');
 
-        // Find headers
         const foundHeaders = [];
         sections.forEach(sec => {
-            const index = cleanDump.indexOf(sec.header);
-            if (index !== -1) {
-                foundHeaders.push({ ...sec, index });
-            }
+            sec.headers.forEach(header => {
+                const lowerDump = cleanDump.toLowerCase();
+                const lowerHeader = header.toLowerCase();
+                const index = lowerDump.indexOf(lowerHeader);
+                
+                if (index !== -1) {
+                    foundHeaders.push({ 
+                        key: sec.key, 
+                        header: header,
+                        index: index,
+                        headerLength: header.length
+                    });
+                }
+            });
         });
 
-        // Heuristic: If content starts before any header, assume it is the Title (if short enough)
-        foundHeaders.sort((a, b) => a.index - b.index);
+        const seenKeys = new Set();
+        const uniqueHeaders = foundHeaders
+            .sort((a, b) => a.index - b.index)
+            .filter(h => {
+                if (seenKeys.has(h.key)) return false;
+                seenKeys.add(h.key);
+                return true;
+            });
 
-        if (foundHeaders.length > 0 && foundHeaders[0].index > 0) {
-            const potentialTitle = cleanDump.substring(0, foundHeaders[0].index).trim();
-            if (potentialTitle && potentialTitle.length < 100) {
+        uniqueHeaders.sort((a, b) => a.index - b.index);
+
+        if (uniqueHeaders.length > 0 && uniqueHeaders[0].index > 0) {
+            const potentialTitle = cleanDump.substring(0, uniqueHeaders[0].index).trim();
+            if (potentialTitle && potentialTitle.length < 100 && !newFormData.title) {
                 newFormData.title = potentialTitle;
             }
         }
 
-        foundHeaders.forEach((header, i) => {
-            const start = header.index + header.header.length;
-            const nextHeader = foundHeaders[i + 1];
+        uniqueHeaders.forEach((header, i) => {
+            const start = header.index + header.headerLength;
+            const nextHeader = uniqueHeaders[i + 1];
             const end = nextHeader ? nextHeader.index : cleanDump.length;
 
             const content = cleanDump.substring(start, end).trim();
@@ -110,7 +124,8 @@ const SubmitContent = () => {
 
         setFormData(newFormData);
         setImportText('');
-        // We could add a toast here, but for now we just clear the box
+        
+        console.log('Parsed fields:', Object.keys(newFormData).filter(k => newFormData[k]));
     };
 
     const handleSubmit = async (e) => {
@@ -119,7 +134,6 @@ const SubmitContent = () => {
         setError(null);
 
         try {
-            // Basic validation
             if (!formData.title) throw new Error("Title/Name is required");
 
             const endpoint = contentType === 'storyline'
@@ -128,7 +142,7 @@ const SubmitContent = () => {
 
             const payload = {
                 ...formData,
-                name: formData.title, // 'title' input maps to 'name' for characters
+                name: formData.title,
                 user: 'manual_admin',
                 visibility: 'private',
                 storylineId: contentType === 'storyline' ? `story_${Date.now()}` : undefined,
@@ -163,30 +177,32 @@ const SubmitContent = () => {
     return (
         <div className="space-y-6 animate-fade-in pb-20">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-6">
+            <div className="flex items-center justify-between pb-6" style={{ borderBottom: '1px solid var(--border-color)' }}>
                 <div>
                     <h1 className="text-3xl font-bold uppercase tracking-tighter">Submit Content</h1>
-                    <p className="text-text-secondary font-mono text-sm mt-1">// MANUAL_ENTRY: {contentType.toUpperCase()}</p>
+                    <p className="font-mono text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>// MANUAL_ENTRY: {contentType.toUpperCase()}</p>
                 </div>
 
                 {/* Type Toggle */}
-                <div className="flex bg-bg-secondary border border-white/10 p-1 rounded-none">
+                <div className="flex p-1 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
                     <button
                         onClick={() => setContentType('storyline')}
-                        className={`flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase transition-all ${contentType === 'storyline'
-                            ? 'bg-white text-black shadow-sm'
-                            : 'text-text-secondary hover:text-white'
-                            }`}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase transition-all"
+                        style={{
+                            backgroundColor: contentType === 'storyline' ? 'var(--accent-primary)' : 'transparent',
+                            color: contentType === 'storyline' ? 'var(--bg-primary)' : 'var(--text-secondary)'
+                        }}
                     >
                         <BookOpen size={16} />
                         Storyline
                     </button>
                     <button
                         onClick={() => setContentType('character')}
-                        className={`flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase transition-all ${contentType === 'character'
-                            ? 'bg-white text-black shadow-sm'
-                            : 'text-text-secondary hover:text-white'
-                            }`}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase transition-all"
+                        style={{
+                            backgroundColor: contentType === 'character' ? 'var(--accent-primary)' : 'transparent',
+                            color: contentType === 'character' ? 'var(--bg-primary)' : 'var(--text-secondary)'
+                        }}
                     >
                         <User size={16} />
                         Character

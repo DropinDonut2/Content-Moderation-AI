@@ -153,4 +153,30 @@ export const getAnalyticsCategories = async () => {
     return response.data;
 };
 
+// ============ POLICY IMPORT (NEW) ============
+
+export const importPoliciesFromUrl = async (url) => {
+    const response = await api.post('/policies/import/url', { url });
+    return response.data;
+};
+
+export const importPoliciesFromHtml = async (html) => {
+    const response = await api.post('/policies/import/html', { html });
+    return response.data;
+};
+
+export const importPoliciesFromFile = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/policies/import/file', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+};
+
+export const savePolicies = async (policies, mode = 'merge') => {
+    const response = await api.post('/policies/import/save', { policies, mode });
+    return response.data;
+};
+
 export default api;

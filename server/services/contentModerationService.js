@@ -6,6 +6,132 @@ const openai = new OpenAI({
     apiKey: process.env.OPENROUTER_API_KEY
 });
 
+// ADD: Field validation function (add after your imports)
+const validateFields = (contentType, content) => {
+    const issues = [];
+    const warnings = [];
+
+    // Title/Name check
+    const name = content.name || content.title;
+    if (!name || name.trim().length === 0) {
+        issues.push({
+            field: 'name/title',
+            severity: 'error',
+            message: 'Title/Name is required',
+            suggestion: 'Add a descriptive title for your content'
+        });
+    } else if (/^(untitled|test|asdf|placeholder|new|draft)/i.test(name.trim())) {
+        warnings.push({
+            field: 'name/title',
+            severity: 'warning',
+            message: 'Title appears to be a placeholder',
+            suggestion: 'Replace placeholder title with a proper name'
+        });
+    }
+
+    // Description check
+    const description = content.description || '';
+    if (description && description.length < 50) {
+        warnings.push({
+            field: 'description',
+            severity: 'warning',
+            message: `Description is too short (${description.length} chars, minimum recommended: 50)`,
+            suggestion: 'Add more detail to help users understand your content'
+        });
+    }
+
+    // NSFW + Minor conflict check
+    if (content.nsfw === true) {
+        const allText = [
+            content.description,
+            content.promptDescription,
+            content.exampleDialogue,
+            content.plot,
+            content.firstMessage
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const minorPatterns = [
+            /\bage[d]?\s*:?\s*(\d|1[0-7])\b/i,
+            /\b(\d|1[0-7])\s*years?\s*old\b/i,
+            /\bloli\b/i,
+            /\bshota\b/i,
+            /\bschool\s*girl\b/i,
+            /\bschool\s*boy\b/i
+        ];
+
+        for (const pattern of minorPatterns) {
+            if (pattern.test(allText)) {
+                issues.push({
+                    field: 'nsfw',
+                    severity: 'critical',
+                    message: 'NSFW content appears to reference minors',
+                    suggestion: 'Remove minor references or uncheck NSFW'
+                });
+                break;
+            }
+        }
+    }
+
+    // Check if content appears NSFW but not tagged
+    if (!content.nsfw) {
+        const allText = [
+            content.description,
+            content.promptDescription,
+            content.exampleDialogue,
+            content.plot,
+            content.firstMessage
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const nsfwIndicators = [
+            /\b(sex|sexual|erotic|nude|naked)\b/i,
+            /\b(fuck|cock|pussy|dick)\b/i,
+            /\b(moan|orgasm|climax)\b/i,
+            /\b(bdsm|bondage|fetish|kink)\b/i
+        ];
+
+        if (nsfwIndicators.some(p => p.test(allText))) {
+            issues.push({
+                field: 'nsfw',
+                severity: 'warning',
+                message: 'Content appears to contain adult themes but NSFW is not checked',
+                suggestion: 'Enable the NSFW tag if this content is for adults (18+)'
+            });
+        }
+    }
+
+    // Storyline-specific
+    if (contentType === 'storyline') {
+        if (!content.firstMessage || content.firstMessage.trim().length < 20) {
+            warnings.push({
+                field: 'firstMessage',
+                severity: 'warning',
+                message: 'First message is empty or very short',
+                suggestion: 'Add an opening message to start the story'
+            });
+        }
+    }
+
+    // Character-specific
+    if (contentType === 'character') {
+        if (!content.exampleDialogue) {
+            warnings.push({
+                field: 'exampleDialogue',
+                severity: 'warning',
+                message: 'No example dialogue provided',
+                suggestion: 'Add example dialogue to show how the character speaks'
+            });
+        }
+    }
+
+    return {
+        isValid: !issues.some(i => i.severity === 'error' || i.severity === 'critical'),
+        hasWarnings: warnings.length > 0,
+        issues,
+        warnings,
+        all: [...issues, ...warnings]
+    };
+};
+
 /**
  * Auto-moderate content (Character, Storyline, or Persona)
  * Returns AI analysis without making final decision
@@ -106,11 +232,26 @@ Respond in JSON format:
                 humanReviewPriority: result.humanReviewPriority,
                 moderatedAt: new Date()
             },
+            detectedLanguage: result.detectedLanguage || 'Unknown',
+            suggestionsForCreator: [
+                ...(result.suggestionsForCreator || []),
+                ...validation.all.map(v => ({
+                    type: v.severity === 'critical' ? 'error' : v.severity,
+                    field: v.field,
+                    issue: v.message,
+                    suggestion: v.suggestion,
+                    source: 'field_validation'
+                }))
+            ],
+            fieldValidation: validation,
+
             flags: {
                 isNsfw: result.nsfw || false,
                 hasViolence: result.categories?.some(c => c.category === 'violence' && c.flagged) || false,
                 hasHateSpeech: result.categories?.some(c => c.category === 'hate_speech' && c.flagged) || false,
-                needsManualReview: result.verdict !== 'safe'
+                needsManualReview: result.verdict !== 'safe',
+                hasFieldErrors: !validation.isValid,
+        hasFieldWarnings: validation.hasWarnings
             }
         };
 
