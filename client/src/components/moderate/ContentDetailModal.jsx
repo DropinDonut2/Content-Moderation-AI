@@ -80,39 +80,39 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
     const statusStyle = getStatusStyle(item.moderationStatus)
 
     const modalContent = (
-        <div 
+        <div
             className="fixed inset-0 flex items-center justify-center p-4"
-            style={{ 
-                backgroundColor: 'rgba(0, 0, 0, 0.85)', 
+            style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.85)',
                 backdropFilter: 'blur(4px)',
                 zIndex: 99999
             }}
             onClick={onClose}
         >
-            <div 
+            <div
                 className="w-full max-w-6xl h-[92vh] flex flex-col shadow-2xl rounded-xl overflow-hidden"
-                style={{ 
+                style={{
                     backgroundColor: 'var(--bg-card)',
                     border: '1px solid var(--border-color)'
                 }}
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}
-                <div 
+                <div
                     className="flex justify-between items-center px-6 py-4 shrink-0"
-                    style={{ 
+                    style={{
                         borderBottom: '1px solid var(--border-color)',
                         backgroundColor: 'var(--bg-secondary)'
                     }}
                 >
                     <div>
-                        <h2 
+                        <h2
                             className="text-xl font-bold"
                             style={{ color: 'var(--text-primary)' }}
                         >
                             {item.name || item.title}
                         </h2>
-                        <span 
+                        <span
                             className="font-mono text-xs"
                             style={{ color: 'var(--text-secondary)' }}
                         >
@@ -120,9 +120,9 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                         </span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <span 
+                        <span
                             className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-                            style={{ 
+                            style={{
                                 backgroundColor: statusStyle.bg,
                                 color: statusStyle.color,
                                 border: `1px solid ${statusStyle.border}`
@@ -131,9 +131,9 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                             {item.moderationStatus}
                         </span>
                         {item.nsfw && (
-                            <span 
+                            <span
                                 className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2"
-                                style={{ 
+                                style={{
                                     backgroundColor: 'var(--rejected-bg)',
                                     color: 'var(--rejected-text)',
                                     border: '1px solid var(--rejected-border)'
@@ -156,15 +156,15 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                 <div className="flex-1 grid grid-cols-1 lg:grid-cols-[380px_1fr] overflow-hidden min-h-0">
 
                     {/* LEFT: AI Analysis Panel */}
-                    <div 
+                    <div
                         className="p-5 overflow-y-auto flex flex-col gap-4"
-                        style={{ 
+                        style={{
                             backgroundColor: 'var(--bg-secondary)',
                             borderRight: '1px solid var(--border-color)'
                         }}
                     >
                         <div className="flex justify-between items-center">
-                            <h3 
+                            <h3
                                 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2"
                                 style={{ color: 'var(--text-primary)' }}
                             >
@@ -172,7 +172,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                             </h3>
                             <button
                                 className="px-3 py-1.5 text-xs font-bold rounded flex items-center gap-2 transition-colors"
-                                style={{ 
+                                style={{
                                     border: '1px solid var(--border-color)',
                                     color: 'var(--text-primary)',
                                     backgroundColor: 'transparent'
@@ -187,14 +187,14 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
                         {mod.aiVerdict ? (
                             <>
-                                <div 
+                                <div
                                     className="p-3 rounded-lg"
-                                    style={{ 
+                                    style={{
                                         backgroundColor: 'var(--bg-card)',
                                         border: '1px solid var(--border-color)'
                                     }}
                                 >
-                                    <p 
+                                    <p
                                         className="text-sm leading-relaxed"
                                         style={{ color: 'var(--text-primary)' }}
                                     >
@@ -203,40 +203,40 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3">
-                                    <div 
+                                    <div
                                         className="p-3 rounded-lg text-center"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--bg-card)',
                                             border: '1px solid var(--border-color)'
                                         }}
                                     >
-                                        <span 
+                                        <span
                                             className="block text-[10px] uppercase font-bold tracking-widest mb-1"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
                                             Verdict
                                         </span>
-                                        <span 
+                                        <span
                                             className="block font-bold text-sm"
                                             style={{ color: getStatusStyle(mod.aiVerdict).color }}
                                         >
                                             {mod.aiVerdict?.toUpperCase()}
                                         </span>
                                     </div>
-                                    <div 
+                                    <div
                                         className="p-3 rounded-lg text-center"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--bg-card)',
                                             border: '1px solid var(--border-color)'
                                         }}
                                     >
-                                        <span 
+                                        <span
                                             className="block text-[10px] uppercase font-bold tracking-widest mb-1"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
                                             Confidence
                                         </span>
-                                        <span 
+                                        <span
                                             className="block font-bold text-sm"
                                             style={{ color: 'var(--text-primary)' }}
                                         >
@@ -247,7 +247,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
                                 {mod.flaggedPolicies && mod.flaggedPolicies.length > 0 && (
                                     <div>
-                                        <h4 
+                                        <h4
                                             className="text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
@@ -255,10 +255,10 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
                                             {mod.flaggedPolicies.map((pol, i) => (
-                                                <span 
-                                                    key={i} 
+                                                <span
+                                                    key={i}
                                                     className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider"
-                                                    style={{ 
+                                                    style={{
                                                         backgroundColor: 'var(--rejected-bg)',
                                                         color: 'var(--rejected-text)',
                                                         border: '1px solid var(--rejected-border)'
@@ -291,7 +291,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 </div>
                             </>
                         ) : (
-                            <div 
+                            <div
                                 className="flex flex-col items-center justify-center py-8 text-center space-y-4"
                                 style={{ color: 'var(--text-secondary)' }}
                             >
@@ -310,27 +310,27 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
                         {/* Review Panel */}
                         {isPending && (
-                            <div 
+                            <div
                                 className="mt-auto rounded-lg p-4 space-y-3"
-                                style={{ 
+                                style={{
                                     backgroundColor: 'var(--bg-card)',
                                     border: '1px solid var(--border-color)'
                                 }}
                             >
-                                <h4 
+                                <h4
                                     className="text-sm font-bold uppercase tracking-wider pb-2"
-                                    style={{ 
+                                    style={{
                                         color: 'var(--text-primary)',
                                         borderBottom: '1px solid var(--border-color)'
                                     }}
                                 >
                                     Your Decision
                                 </h4>
-                                
+
                                 {error && (
-                                    <div 
+                                    <div
                                         className="p-2 text-xs rounded"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--rejected-bg)',
                                             color: 'var(--rejected-text)',
                                             border: '1px solid var(--rejected-border)'
@@ -372,7 +372,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     </button>
                                     <button
                                         className="flex flex-col items-center justify-center p-2 rounded transition-colors disabled:opacity-50"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--flagged-bg)',
                                             color: 'var(--flagged-text)',
                                             border: '1px solid var(--flagged-border)'
@@ -397,12 +397,12 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                     </div>
 
                     {/* RIGHT: Content Details */}
-                    <div 
+                    <div
                         className="flex flex-col overflow-hidden min-h-0"
                         style={{ backgroundColor: 'var(--bg-card)' }}
                     >
                         {/* Tabs */}
-                        <div 
+                        <div
                             className="flex px-6 shrink-0"
                             style={{ borderBottom: '1px solid var(--border-color)' }}
                         >
@@ -427,13 +427,13 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 <div className="space-y-6 animate-fade-in">
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         <div className="space-y-1">
-                                            <span 
+                                            <span
                                                 className="block text-xs uppercase font-bold tracking-widest"
                                                 style={{ color: 'var(--text-secondary)' }}
                                             >
                                                 User
                                             </span>
-                                            <span 
+                                            <span
                                                 className="block font-mono text-sm"
                                                 style={{ color: 'var(--text-primary)' }}
                                             >
@@ -441,13 +441,13 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             </span>
                                         </div>
                                         <div className="space-y-1">
-                                            <span 
+                                            <span
                                                 className="block text-xs uppercase font-bold tracking-widest"
                                                 style={{ color: 'var(--text-secondary)' }}
                                             >
                                                 Visibility
                                             </span>
-                                            <span 
+                                            <span
                                                 className="block font-mono text-sm"
                                                 style={{ color: 'var(--text-primary)' }}
                                             >
@@ -455,13 +455,13 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             </span>
                                         </div>
                                         <div className="space-y-1">
-                                            <span 
+                                            <span
                                                 className="block text-xs uppercase font-bold tracking-widest"
                                                 style={{ color: 'var(--text-secondary)' }}
                                             >
                                                 NSFW
                                             </span>
-                                            <span 
+                                            <span
                                                 className="block font-mono text-sm"
                                                 style={{ color: item.nsfw ? 'var(--rejected-text)' : 'var(--safe-text)' }}
                                             >
@@ -471,16 +471,16 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <h4 
+                                        <h4
                                             className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
-                                            style={{ 
+                                            style={{
                                                 color: 'var(--text-secondary)',
                                                 borderBottom: '1px solid var(--border-color)'
                                             }}
                                         >
                                             <FileText size={14} /> Description
                                         </h4>
-                                        <p 
+                                        <p
                                             className="text-sm leading-relaxed"
                                             style={{ color: 'var(--text-primary)' }}
                                         >
@@ -488,20 +488,44 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         </p>
                                     </div>
 
+                                    {item.plot && (
+                                        <div className="space-y-2">
+                                            <h4
+                                                className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
+                                                style={{
+                                                    color: 'var(--text-secondary)',
+                                                    borderBottom: '1px solid var(--border-color)'
+                                                }}
+                                            >
+                                                <Layers size={14} /> Plot
+                                            </h4>
+                                            <div
+                                                className="p-3 rounded-lg text-sm whitespace-pre-wrap max-h-60 overflow-y-auto"
+                                                style={{
+                                                    backgroundColor: 'var(--bg-secondary)',
+                                                    border: '1px solid var(--border-color)',
+                                                    color: 'var(--text-primary)'
+                                                }}
+                                            >
+                                                {item.plot}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {item.firstMessage && (
                                         <div className="space-y-2">
-                                            <h4 
+                                            <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
-                                                style={{ 
+                                                style={{
                                                     color: 'var(--text-secondary)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
                                             >
                                                 <MessageSquare size={14} /> First Message
                                             </h4>
-                                            <div 
+                                            <div
                                                 className="p-3 rounded-lg text-sm font-mono whitespace-pre-wrap"
-                                                style={{ 
+                                                style={{
                                                     backgroundColor: 'var(--bg-secondary)',
                                                     border: '1px solid var(--border-color)',
                                                     color: 'var(--text-primary)'
@@ -514,9 +538,9 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
                                     {item.tags && item.tags.length > 0 && (
                                         <div className="space-y-2">
-                                            <h4 
+                                            <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
-                                                style={{ 
+                                                style={{
                                                     color: 'var(--text-secondary)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
@@ -525,10 +549,10 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             </h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {item.tags.map((tag, i) => (
-                                                    <span 
-                                                        key={i} 
+                                                    <span
+                                                        key={i}
                                                         className="px-3 py-1 rounded-full text-xs"
-                                                        style={{ 
+                                                        style={{
                                                             backgroundColor: 'var(--bg-secondary)',
                                                             color: 'var(--text-secondary)',
                                                             border: '1px solid var(--border-color)'
@@ -547,15 +571,15 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 <div className="space-y-6 animate-fade-in">
                                     {item.avatar && (
                                         <div>
-                                            <h4 
+                                            <h4
                                                 className="text-xs font-bold uppercase tracking-widest mb-3"
                                                 style={{ color: 'var(--text-secondary)' }}
                                             >
                                                 Avatar
                                             </h4>
-                                            <img 
-                                                src={item.avatar} 
-                                                alt="Avatar" 
+                                            <img
+                                                src={item.avatar}
+                                                alt="Avatar"
                                                 className="max-w-xs rounded-lg shadow-lg"
                                                 style={{ border: '1px solid var(--border-color)' }}
                                             />
@@ -563,22 +587,22 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     )}
                                     {item.cover && (
                                         <div>
-                                            <h4 
+                                            <h4
                                                 className="text-xs font-bold uppercase tracking-widest mb-3"
                                                 style={{ color: 'var(--text-secondary)' }}
                                             >
                                                 Cover Image
                                             </h4>
-                                            <img 
-                                                src={item.cover} 
-                                                alt="Cover" 
+                                            <img
+                                                src={item.cover}
+                                                alt="Cover"
                                                 className="w-full max-w-2xl rounded-lg shadow-lg"
                                                 style={{ border: '1px solid var(--border-color)' }}
                                             />
                                         </div>
                                     )}
                                     {(!item.avatar && !item.cover) && (
-                                        <div 
+                                        <div
                                             className="flex flex-col items-center justify-center py-16 opacity-50"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
@@ -591,63 +615,63 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
                             {activeTab === 'stats' && (
                                 <div className="grid grid-cols-3 gap-4 animate-fade-in">
-                                    <div 
+                                    <div
                                         className="p-5 rounded-lg text-center"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--bg-secondary)',
                                             border: '1px solid var(--border-color)'
                                         }}
                                     >
                                         <Eye size={22} className="mx-auto mb-2" style={{ color: 'var(--text-secondary)' }} />
-                                        <span 
+                                        <span
                                             className="block text-2xl font-bold font-mono mb-1"
                                             style={{ color: 'var(--text-primary)' }}
                                         >
                                             {item.statistics?.views || 0}
                                         </span>
-                                        <span 
+                                        <span
                                             className="block text-xs font-bold uppercase tracking-widest"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
                                             Views
                                         </span>
                                     </div>
-                                    <div 
+                                    <div
                                         className="p-5 rounded-lg text-center"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--bg-secondary)',
                                             border: '1px solid var(--border-color)'
                                         }}
                                     >
                                         <ThumbsUp size={22} className="mx-auto mb-2" style={{ color: 'var(--text-secondary)' }} />
-                                        <span 
+                                        <span
                                             className="block text-2xl font-bold font-mono mb-1"
                                             style={{ color: 'var(--text-primary)' }}
                                         >
                                             {item.statistics?.likes || 0}
                                         </span>
-                                        <span 
+                                        <span
                                             className="block text-xs font-bold uppercase tracking-widest"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
                                             Likes
                                         </span>
                                     </div>
-                                    <div 
+                                    <div
                                         className="p-5 rounded-lg text-center"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--bg-secondary)',
                                             border: '1px solid var(--border-color)'
                                         }}
                                     >
                                         <Activity size={22} className="mx-auto mb-2" style={{ color: 'var(--text-secondary)' }} />
-                                        <span 
+                                        <span
                                             className="block text-2xl font-bold font-mono mb-1"
                                             style={{ color: 'var(--text-primary)' }}
                                         >
                                             {item.statistics?.chats || item.statistics?.plays || item.statistics?.uses || 0}
                                         </span>
-                                        <span 
+                                        <span
                                             className="block text-xs font-bold uppercase tracking-widest"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
@@ -666,7 +690,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         { label: 'Created', value: new Date(item.createdAt).toLocaleString() },
                                         { label: 'Updated', value: new Date(item.updatedAt).toLocaleString() },
                                     ].map((row, i) => (
-                                        <div 
+                                        <div
                                             key={i}
                                             className="grid grid-cols-[120px_1fr] gap-4 p-3 transition-colors"
                                             style={{ borderBottom: '1px solid var(--border-color)' }}
@@ -677,14 +701,14 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     ))}
                                     {item.reviewedBy && (
                                         <>
-                                            <div 
+                                            <div
                                                 className="grid grid-cols-[120px_1fr] gap-4 p-3"
                                                 style={{ borderBottom: '1px solid var(--border-color)' }}
                                             >
                                                 <span style={{ color: 'var(--text-secondary)' }}>Reviewed By</span>
                                                 <span style={{ color: 'var(--flagged-text)', fontWeight: 'bold' }}>{item.reviewedBy}</span>
                                             </div>
-                                            <div 
+                                            <div
                                                 className="grid grid-cols-[120px_1fr] gap-4 p-3"
                                                 style={{ borderBottom: '1px solid var(--border-color)' }}
                                             >

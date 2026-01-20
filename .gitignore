@@ -25,3 +25,6 @@ Thumbs.db
 
 # Testing
 coverage/
+
+# vite config
+vite.config.js  

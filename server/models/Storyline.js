@@ -96,6 +96,25 @@ const storylineSchema = new mongoose.Schema({
         type: String
     }],
 
+    // Full JSON Import Snapshots (for Isekai Zero format)
+    characterSnapshots: {
+        type: mongoose.Schema.Types.Mixed,
+        default: []
+    },
+    personaSnapshots: {
+        type: mongoose.Schema.Types.Mixed,
+        default: []
+    },
+    tagSnapshots: {
+        type: mongoose.Schema.Types.Mixed,
+        default: []
+    },
+    importSource: {
+        type: String,
+        enum: ['manual', 'json_import', 'api'],
+        default: 'manual'
+    },
+
     // Statistics
     statistics: {
         views: { type: Number, default: 0 },
@@ -124,8 +143,20 @@ const storylineSchema = new mongoose.Schema({
         }],
         aiVerdict: String,
         aiReasoning: String,
+        aiSummary: String,
         aiConfidence: Number,
-        offendingSnippet: String, // Added field
+        offendingSnippet: String,
+        nsfw: Boolean,
+        nsfwReason: String,
+        imageModerationResults: [{
+            imageType: String,
+            name: String,
+            safe: Boolean,
+            concerns: String
+        }],
+        flaggedPolicies: [String],
+        recommendedAction: String,
+        humanReviewPriority: String,
         moderatedAt: Date
     },
 

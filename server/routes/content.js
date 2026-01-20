@@ -3,7 +3,7 @@ const router = express.Router();
 const Character = require('../models/Character');
 const Storyline = require('../models/Storyline');
 const Persona = require('../models/Persona');
-const { autoModerateContent } = require('../services/contentModerationService');
+const { autoModerateContent, autoModerateFullJson, buildFullJsonContent, extractImageUrls } = require('../services/contentModerationService');
 
 // ============ CHARACTERS ============
 
@@ -50,7 +50,7 @@ router.post('/characters', async (req, res) => {
         const characterData = req.body;
         console.log('🤖 Auto-moderating new character:', characterData.name);
         const moderationResult = await autoModerateContent('character', characterData);
-        
+
         const character = new Character({
             ...characterData,
             moderationStatus: 'pending',
@@ -153,7 +153,7 @@ router.post('/storylines', async (req, res) => {
         const storylineData = req.body;
         console.log('🤖 Auto-moderating new storyline:', storylineData.title);
         const moderationResult = await autoModerateContent('storyline', storylineData);
-        
+
         const storyline = new Storyline({
             ...storylineData,
             moderationStatus: 'pending',
@@ -254,7 +254,7 @@ router.post('/personas', async (req, res) => {
         const personaData = req.body;
         console.log('🤖 Auto-moderating new persona:', personaData.name);
         const moderationResult = await autoModerateContent('persona', personaData);
-        
+
         const persona = new Persona({
             ...personaData,
             moderationStatus: 'pending',
@@ -377,6 +377,160 @@ router.get('/stats', async (req, res) => {
         };
 
         res.json({ success: true, data: { characters: formatStats(charStats), storylines: formatStats(storyStats), personas: formatStats(personaStats) } });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============ JSON IMPORT ============
+
+// POST /api/v1/content/import-json - Import and moderate full JSON (Isekai Zero format)
+router.post('/import-json', async (req, res) => {
+    try {
+        const jsonData = req.body;
+
+        // Validate JSON has required structure
+        const data = jsonData.data || jsonData;
+        if (!data.title && !data.characterSnapshots) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid JSON format. Expected storyline data with title or characterSnapshots.'
+            });
+        }
+
+        console.log('📥 Importing JSON storyline:', data.title || 'Untitled');
+        console.log(`   - Characters: ${data.characterSnapshots?.length || 0}`);
+        console.log(`   - Personas: ${data.personaSnapshots?.length || 0}`);
+        console.log(`   - Tags: ${data.tagSnapshots?.length || 0}`);
+
+        // Check for images
+        const images = extractImageUrls(jsonData);
+        console.log(`   - Images found: ${images.length}`);
+
+        // Run full JSON moderation with multimodal support
+        const includeImages = req.query.includeImages !== 'false';
+        console.log('🤖 Starting AI moderation...');
+        const moderationResult = await autoModerateFullJson(jsonData, { includeImages });
+        console.log('✅ AI moderation complete:', moderationResult.success ? 'SUCCESS' : 'FAILED');
+
+        if (!moderationResult.success) {
+            console.error('❌ Moderation error:', moderationResult.error);
+        }
+
+        // Extract tag names for simple tags array
+        const tagNames = data.tagSnapshots
+            ?.filter(t => !t.deleted)
+            ?.map(t => t.name) || [];
+
+        // Create storyline document with full snapshots AND text content
+        const storyline = new Storyline({
+            storylineId: data._id || `import_${Date.now()}`,
+            title: data.title || 'Imported Storyline',
+            user: data.creatorUsername || data._userId || 'json_import',
+            nsfw: data.nsfw || false,
+            visibility: data.visibility || 'hidden',
+
+            // Store cover URL
+            cover: data.cover?.url || null,
+
+            // === STORYLINE TEXT CONTENT (was missing!) ===
+            description: data.description || '',
+            plot: data.plot || '',
+            plotSummary: data.plotSummary || '',
+            firstMessage: data.firstMessage || '',
+            promptPlot: data.promptPlot || '',
+            promptGuideline: data.promptGuideline || '',
+            reminder: data.reminder || '',
+
+            // Store full snapshots
+            characterSnapshots: data.characterSnapshots || [],
+            personaSnapshots: data.personaSnapshots || [],
+            tagSnapshots: data.tagSnapshots || [],
+            tags: tagNames,
+
+            // Mark import source
+            importSource: 'json_import',
+
+            // Moderation results
+            moderationStatus: moderationResult.moderationResult?.aiVerdict === 'safe' ? 'approved' : 'pending',
+            moderationResult: moderationResult.moderationResult,
+            flags: { ...moderationResult.flags }
+        });
+
+        await storyline.save();
+
+        // Emit socket event
+        if (req.app.get('io')) {
+            req.app.get('io').emit('newContent', {
+                type: 'storyline',
+                source: 'json_import',
+                data: storyline
+            });
+        }
+
+        res.status(201).json({
+            success: true,
+            data: storyline,
+            moderation: moderationResult.moderationResult,
+            meta: moderationResult.meta || {},
+            preview: {
+                title: data.title,
+                characterCount: data.characterSnapshots?.length || 0,
+                personaCount: data.personaSnapshots?.length || 0,
+                tagCount: data.tagSnapshots?.length || 0,
+                imageCount: images.length,
+                imagesAnalyzed: moderationResult.meta?.imagesAnalyzed || 0
+            }
+        });
+
+    } catch (error) {
+        console.error('JSON Import error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST /api/v1/content/preview-json - Preview JSON without saving
+router.post('/preview-json', async (req, res) => {
+    try {
+        const jsonData = req.body;
+        const data = jsonData.data || jsonData;
+
+        // Extract preview info
+        const images = extractImageUrls(jsonData);
+        const textPreview = buildFullJsonContent(jsonData);
+
+        const tagNames = data.tagSnapshots
+            ?.filter(t => !t.deleted)
+            ?.map(t => ({ name: t.name, type: t.type, nsfw: t.nsfw || false })) || [];
+
+        const characterPreviews = data.characterSnapshots?.map(c => ({
+            name: c.name,
+            nsfw: c.nsfw || false,
+            status: c.status,
+            hasDescription: !!c.description,
+            descriptionLength: c.description?.length || 0,
+            tagCount: c.tagSnapshots?.length || 0,
+            hasAvatar: !!c.cover?.url
+        })) || [];
+
+        res.json({
+            success: true,
+            preview: {
+                title: data.title || 'Untitled',
+                status: data.status,
+                nsfw: data.nsfw || false,
+                hasCover: !!data.cover?.url,
+                coverUrl: data.cover?.url || null,
+                characterCount: data.characterSnapshots?.length || 0,
+                personaCount: data.personaSnapshots?.length || 0,
+                tagCount: tagNames.length,
+                imageCount: images.length,
+                estimatedTextLength: textPreview.length,
+                tags: tagNames.slice(0, 20),
+                characters: characterPreviews
+            }
+        });
+
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }

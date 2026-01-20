@@ -234,9 +234,311 @@ TAGS: ${persona.tags?.join(', ') || 'None'}
 `.trim();
 };
 
+/**
+ * Build content string from full Isekai Zero-style JSON import
+ * Extracts all relevant fields for comprehensive moderation
+ */
+const buildFullJsonContent = (json) => {
+    // Handle wrapper if present (e.g., { code, status, data })
+    const data = json.data || json;
+
+    let content = '';
+
+    // === STORYLINE METADATA ===
+    content += `=== STORYLINE ===\n`;
+    content += `TITLE: ${data.title || 'N/A'}\n`;
+    content += `STATUS: ${data.status || 'N/A'}\n`;
+    content += `NSFW FLAG: ${data.nsfw ? 'Yes' : 'No'}\n`;
+
+    if (data.cover?.url) {
+        content += `COVER IMAGE: ${data.cover.url}\n`;
+    }
+
+    // Storyline-level tags
+    if (data.tagSnapshots && data.tagSnapshots.length > 0) {
+        const tagNames = data.tagSnapshots
+            .filter(t => !t.deleted)
+            .map(t => `${t.name}${t.nsfw ? ' (NSFW)' : ''}`)
+            .join(', ');
+        content += `TAGS: ${tagNames}\n`;
+    }
+
+    content += '\n';
+
+    // === STORYLINE TEXT CONTENT ===
+    if (data.description) {
+        content += `DESCRIPTION:\n${data.description}\n\n`;
+    }
+
+    if (data.plot) {
+        const plot = data.plot.length > 5000
+            ? data.plot.substring(0, 5000) + '... [TRUNCATED]'
+            : data.plot;
+        content += `PLOT:\n${plot}\n\n`;
+    }
+
+    if (data.plotSummary) {
+        content += `PLOT SUMMARY:\n${data.plotSummary}\n\n`;
+    }
+
+    if (data.firstMessage) {
+        const firstMsg = data.firstMessage.length > 2000
+            ? data.firstMessage.substring(0, 2000) + '... [TRUNCATED]'
+            : data.firstMessage;
+        content += `FIRST MESSAGE:\n${firstMsg}\n\n`;
+    }
+
+    if (data.promptPlot) {
+        const promptPlot = data.promptPlot.length > 3000
+            ? data.promptPlot.substring(0, 3000) + '... [TRUNCATED]'
+            : data.promptPlot;
+        content += `PROMPT PLOT:\n${promptPlot}\n\n`;
+    }
+
+    if (data.promptGuideline) {
+        content += `PROMPT GUIDELINE:\n${data.promptGuideline}\n\n`;
+    }
+
+    if (data.reminder) {
+        content += `REMINDER:\n${data.reminder}\n\n`;
+    }
+
+    // === CHARACTER SNAPSHOTS ===
+    if (data.characterSnapshots && data.characterSnapshots.length > 0) {
+        content += `=== CHARACTERS (${data.characterSnapshots.length}) ===\n\n`;
+
+        data.characterSnapshots.forEach((char, idx) => {
+            content += `--- CHARACTER ${idx + 1}: ${char.name || 'Unnamed'} ---\n`;
+            content += `STATUS: ${char.status || 'N/A'}\n`;
+            content += `NSFW: ${char.nsfw ? 'Yes' : 'No'}\n`;
+            content += `VISIBILITY: ${char.visibility || 'N/A'}\n`;
+
+            if (char.cover?.url) {
+                content += `AVATAR: ${char.cover.url}\n`;
+            }
+
+            if (char.descriptionSummary) {
+                content += `SUMMARY: ${char.descriptionSummary}\n`;
+            }
+
+            if (char.description) {
+                // Truncate very long descriptions to prevent token overflow
+                const desc = char.description.length > 3000
+                    ? char.description.substring(0, 3000) + '... [TRUNCATED]'
+                    : char.description;
+                content += `DESCRIPTION:\n${desc}\n`;
+            }
+
+            // Character tags
+            if (char.tagSnapshots && char.tagSnapshots.length > 0) {
+                const charTags = char.tagSnapshots
+                    .filter(t => !t.deleted)
+                    .map(t => t.name)
+                    .join(', ');
+                content += `TAGS: ${charTags}\n`;
+            }
+
+            content += '\n';
+        });
+    }
+
+    // === PERSONA SNAPSHOTS ===
+    if (data.personaSnapshots && data.personaSnapshots.length > 0) {
+        content += `=== PERSONAS (${data.personaSnapshots.length}) ===\n\n`;
+
+        data.personaSnapshots.forEach((persona, idx) => {
+            content += `--- PERSONA ${idx + 1}: ${persona.name || 'Unnamed'} ---\n`;
+            content += `STATUS: ${persona.status || 'N/A'}\n`;
+            content += `NSFW: ${persona.nsfw ? 'Yes' : 'No'}\n`;
+
+            if (persona.cover?.url) {
+                content += `AVATAR: ${persona.cover.url}\n`;
+            }
+
+            if (persona.descriptionSummary) {
+                content += `SUMMARY: ${persona.descriptionSummary}\n`;
+            }
+
+            if (persona.description) {
+                const desc = persona.description.length > 2000
+                    ? persona.description.substring(0, 2000) + '... [TRUNCATED]'
+                    : persona.description;
+                content += `DESCRIPTION:\n${desc}\n`;
+            }
+
+            if (persona.tagSnapshots && persona.tagSnapshots.length > 0) {
+                const personaTags = persona.tagSnapshots
+                    .filter(t => !t.deleted)
+                    .map(t => t.name)
+                    .join(', ');
+                content += `TAGS: ${personaTags}\n`;
+            }
+
+            content += '\n';
+        });
+    }
+
+    return content.trim();
+};
+
+/**
+ * Extract all image URLs from the JSON for multimodal analysis
+ */
+const extractImageUrls = (json) => {
+    const data = json.data || json;
+    const images = [];
+
+    // Storyline cover
+    if (data.cover?.url) {
+        images.push({ type: 'storyline_cover', url: data.cover.url });
+    }
+
+    // Character covers/avatars
+    if (data.characterSnapshots) {
+        data.characterSnapshots.forEach((char, idx) => {
+            if (char.cover?.url) {
+                images.push({
+                    type: 'character_avatar',
+                    name: char.name || `Character ${idx + 1}`,
+                    url: char.cover.url
+                });
+            }
+        });
+    }
+
+    // Persona covers
+    if (data.personaSnapshots) {
+        data.personaSnapshots.forEach((persona, idx) => {
+            if (persona.cover?.url) {
+                images.push({
+                    type: 'persona_avatar',
+                    name: persona.name || `Persona ${idx + 1}`,
+                    url: persona.cover.url
+                });
+            }
+        });
+    }
+
+    return images;
+};
+
+/**
+ * Auto-moderate full JSON import with optional multimodal image analysis
+ * This now uses the SAME moderation logic as manual entry for consistency
+ */
+const autoModerateFullJson = async (jsonContent, options = { includeImages: true }) => {
+    try {
+        const data = jsonContent.data || jsonContent;
+
+        console.log("🔍 Moderating full JSON import...");
+        console.log(`   - Title: ${data.title || 'Untitled'}`);
+        console.log(`   - Characters: ${data.characterSnapshots?.length || 0}`);
+        console.log(`   - Personas: ${data.personaSnapshots?.length || 0}`);
+
+        // Convert JSON data to storyline format that matches manual entry
+        // This ensures the SAME fields are analyzed
+        const storylineData = {
+            title: data.title || 'Imported Storyline',
+            user: data.creatorUsername || data._userId || 'json_import',
+            visibility: data.visibility || 'hidden',
+            nsfw: data.nsfw || false,
+            monetized: data.monetized || false,
+
+            // Main text content
+            description: data.description || '',
+            plot: data.plot || '',
+            plotSummary: data.plotSummary || '',
+            promptPlot: data.promptPlot || '',
+            firstMessage: data.firstMessage || '',
+            promptGuideline: data.promptGuideline || '',
+            reminder: data.reminder || '',
+
+            // Build character list from snapshots
+            rawCharacterList: data.characterSnapshots
+                ?.filter(c => !c.deleted)
+                ?.map(c => {
+                    let charInfo = `${c.name}`;
+                    if (c.description) {
+                        // Include full description for analysis
+                        charInfo += `:\n${c.description}`;
+                    }
+                    if (c.descriptionSummary) {
+                        charInfo += `\nSummary: ${c.descriptionSummary}`;
+                    }
+                    return charInfo;
+                })
+                ?.join('\n\n---\n\n') || '',
+
+            // Build persona list from snapshots
+            rawPersonaList: data.personaSnapshots
+                ?.filter(p => !p.deleted)
+                ?.map(p => {
+                    let personaInfo = `${p.name}`;
+                    if (p.description) {
+                        personaInfo += `:\n${p.description}`;
+                    }
+                    return personaInfo;
+                })
+                ?.join('\n\n---\n\n') || '',
+
+            // Tags from snapshots
+            tags: data.tagSnapshots
+                ?.filter(t => !t.deleted)
+                ?.map(t => t.name) || []
+        };
+
+        console.log(`   - Description length: ${storylineData.description?.length || 0}`);
+        console.log(`   - Plot length: ${storylineData.plot?.length || 0}`);
+        console.log(`   - Character text length: ${storylineData.rawCharacterList?.length || 0}`);
+
+        // Use the SAME moderation function as manual entry!
+        const moderationResult = await autoModerateContent('storyline', storylineData);
+
+        // Add image analysis if enabled and there are images
+        if (options.includeImages) {
+            const images = extractImageUrls(jsonContent);
+            if (images.length > 0) {
+                console.log(`   - Images found: ${images.length} (will analyze separately if needed)`);
+                // Add image metadata to the result
+                moderationResult.meta = {
+                    ...(moderationResult.meta || {}),
+                    imagesFound: images.length,
+                    imageUrls: images.slice(0, 5).map(i => ({ type: i.type, name: i.name }))
+                };
+            }
+        }
+
+        return moderationResult;
+
+    } catch (error) {
+        console.error('Full JSON moderation error:', error);
+
+        return {
+            success: false,
+            error: error.message,
+            moderationResult: {
+                aiVerdict: 'flagged',
+                aiConfidence: 0,
+                aiReasoning: `Auto-moderation failed: ${error.message}. Requires manual review.`,
+                aiSummary: 'AI analysis failed - needs human review',
+                categories: [],
+                recommendedAction: 'review',
+                humanReviewPriority: 'high',
+                moderatedAt: new Date()
+            },
+            flags: {
+                needsManualReview: true
+            }
+        };
+    }
+};
+
 module.exports = {
     autoModerateContent,
+    autoModerateFullJson,
     buildCharacterContent,
     buildStorylineContent,
-    buildPersonaContent
+    buildPersonaContent,
+    buildFullJsonContent,
+    extractImageUrls
 };
