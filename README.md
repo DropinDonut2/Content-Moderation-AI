@@ -128,3 +128,9 @@ The UI follows a **Strict Minimalist (B&W)** theme:
 ## License
 
 MIT
+
+
+## feature to add
+- **structured output**
+- **full analysis and recommendation**
+- **add json parse**

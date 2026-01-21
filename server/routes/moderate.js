@@ -1,30 +1,44 @@
 const express = require('express');
 const router = express.Router();
-const moderationService = require('../services/moderationService');
+const { autoModerateContent } = require('../services/contentModerationService');
 
 // POST /api/v1/moderate - Analyze content
 router.post('/', async (req, res) => {
     try {
         const { content, contentId, contentType, userId, context } = req.body;
 
-        if (!content || !contentId || !contentType) {
+        if (!content || !contentType) {
             return res.status(400).json({
                 success: false,
-                error: 'Missing required fields: content, contentId, contentType'
+                error: 'Missing required fields: content, contentType'
             });
         }
 
-        const result = await moderationService.moderateContent({
-            content,
+        // Prepare content for the new service (it expects an object)
+        let contentData = content;
+        if (typeof content === 'string') {
+            // Wrap simple string content into an object structure generic enough for analysis
+            contentData = {
+                description: content,
+                // Pass context if available as part of the analysis text
+                context: context || ''
+            };
+        }
+
+        // Use the new, better service (Claude 4.5 Sonnet + Tool Calling)
+        const result = await autoModerateContent(contentType, contentData);
+
+        // Enhance result with metadata that the old endpoint might expect (or for logging)
+        const responseData = {
+            ...result,
             contentId,
-            contentType,
             userId,
-            context
-        });
+            moderatedAt: new Date()
+        };
 
         res.json({
             success: true,
-            data: result
+            data: responseData
         });
     } catch (error) {
         console.error('Moderation error:', error);
