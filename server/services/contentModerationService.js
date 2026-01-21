@@ -132,8 +132,6 @@ const validateFields = (contentType, content) => {
     };
 };
 
-<<<<<<< Updated upstream
-=======
 // ============================================
 // IMPROVED AI MODERATION WITH FIELD HIGHLIGHTING
 // ============================================
@@ -221,7 +219,6 @@ const moderationTool = {
 // IMPROVED AI MODERATION WITH FIELD HIGHLIGHTING
 // ============================================
 
->>>>>>> Stashed changes
 /**
  * Auto-moderate content (Character, Storyline, or Persona)
  * Returns AI analysis without making final decision
@@ -261,29 +258,6 @@ ${policyContext}
 ## Content to Analyze:
 ${contentToAnalyze}
 
-<<<<<<< Updated upstream
-## Your Task:
-1. Analyze the content for any policy violations
-2. Check for: hate speech, harassment, NSFW content, violence, spam, misinformation, self-harm references, illegal content
-3. Determine if the content needs human review
-
-Respond in JSON format:
-{
-    "verdict": "safe" | "flagged" | "rejected",
-    "confidence": 0.0-1.0,
-    "activeSnippet": "EXACT QUOTE of the most offensive sentence/phrase (REQUIRED if flagged, max 100 chars)",
-    "reasoning": "Brief explanation of your analysis",
-    "summary": "One-line summary for quick human review",
-    "categories": [
-        { "category": "category_name", "flagged": true/false, "confidence": 0.0-1.0, "details": "specific concern" }
-    ],
-    "flaggedPolicies": ["POL-XXX"],
-    "nsfw": true/false,
-    "nsfwReason": "reason if nsfw",
-    "recommendedAction": "approve" | "review" | "reject",
-    "humanReviewPriority": "low" | "medium" | "high" | "critical"
-}`;
-=======
 ## YOUR TASK:
 1. Read each field carefully: firstMessage, promptPlot, plot, plotSummary, description, etc.
 2. Find ANY text segments that may violate the policies above
@@ -293,17 +267,10 @@ Respond in JSON format:
         console.log('🤖 Sending to AI for analysis...');
         console.log(`   Content type: ${contentType}`);
         console.log(`   Fields to analyze: ${Object.keys(fieldsToAnalyze).join(', ')}`);
->>>>>>> Stashed changes
 
         const response = await openai.chat.completions.create({
             model: process.env.AI_MODEL || 'anthropic/claude-4.5-sonnet',
             messages: [
-<<<<<<< Updated upstream
-                { role: 'system', content: 'You are a content moderation assistant. Always respond with valid JSON.' },
-                { role: 'user', content: prompt }
-            ],
-            temperature: 0.1
-=======
                 {
                     role: 'system',
                     content: 'You are a content moderation AI. usage of the submit_moderation_result tool is mandatory.'
@@ -315,26 +282,12 @@ Respond in JSON format:
             tool_choice: { type: "function", function: { name: "submit_moderation_result" } },
             temperature: 0.1,
             max_tokens: 4000
->>>>>>> Stashed changes
         });
 
         // --------------------------------------------------------
         // TOOL CALL PARSING
         // --------------------------------------------------------
 
-<<<<<<< Updated upstream
-        // Parse JSON from response
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-            throw new Error('Failed to parse AI response');
-        }
-
-        console.log("------------------------------------------------__");
-        console.log("AI RAW JSON:", jsonMatch[0]);
-        console.log("------------------------------------------------__");
-
-        const result = JSON.parse(jsonMatch[0]);
-=======
         const toolCall = response.choices[0].message.tool_calls?.[0];
 
         let result;
@@ -363,7 +316,6 @@ Respond in JSON format:
             severity: issue.severity || 'medium',
             reason: issue.reason || ''
         }));
->>>>>>> Stashed changes
 
         return {
             success: true,
@@ -372,11 +324,6 @@ Respond in JSON format:
                 aiConfidence: result.confidence,
                 aiReasoning: result.reasoning,
                 aiSummary: result.summary,
-<<<<<<< Updated upstream
-                categories: result.categories || [],
-                flaggedPolicies: result.flaggedPolicies || [],
-                offendingSnippet: result.activeSnippet || null, // Added field
-=======
 
                 // NEW: Field-specific highlighted issues
                 highlightedIssues: highlightedIssues,
@@ -387,19 +334,14 @@ Respond in JSON format:
                 flaggedPolicies: result.flaggedPolicies || [],
                 offendingSnippet: highlightedIssues[0]?.quote || null,
 
->>>>>>> Stashed changes
                 nsfw: result.nsfw || false,
                 nsfwReason: result.nsfwReason || null,
                 recommendedAction: result.recommendedAction,
                 humanReviewPriority: result.humanReviewPriority,
                 moderatedAt: new Date()
             },
-<<<<<<< Updated upstream
-            detectedLanguage: result.detectedLanguage || 'Unknown',
-=======
 
             // Suggestions for creator
->>>>>>> Stashed changes
             suggestionsForCreator: [
                 ...(result.suggestionsForCreator || []),
                 ...validation.all.map(v => ({
@@ -410,10 +352,6 @@ Respond in JSON format:
                     source: 'field_validation'
                 }))
             ],
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
             fieldValidation: validation,
 
             flags: {
@@ -422,7 +360,7 @@ Respond in JSON format:
                 hasHateSpeech: result.categories?.some(c => c.category === 'hate_speech' && c.flagged) || false,
                 needsManualReview: result.verdict !== 'safe',
                 hasFieldErrors: !validation.isValid,
-        hasFieldWarnings: validation.hasWarnings
+                hasFieldWarnings: validation.hasWarnings
             }
         };
 
@@ -517,9 +455,6 @@ REMINDER:
 ${story.reminder || 'None'}
 
 TAGS: ${story.tags?.join(', ') || 'None'}
-<<<<<<< Updated upstream
-`.trim();
-=======
 `;
 
     // Add character content if available
@@ -606,7 +541,6 @@ TAGS: ${story.tags?.join(', ') || 'None'}
     }
 
     return content.trim();
->>>>>>> Stashed changes
 };
 
 /**
