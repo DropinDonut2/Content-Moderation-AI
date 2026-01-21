@@ -1,0 +1,963 @@
+{
+    "code": 200,
+    "status": "success",
+    "data": {
+        "_id": "696fa4bf8c4722564b4a7ea2",
+        "status": "reviewing",
+        "name": "Botamon",
+        "_mediaIds": [
+            "696fa4bf8c4722564b4a7ea3",
+            "696fa4bf8c4722564b4a7ea4",
+            "696fa4bf8c4722564b4a7ea5",
+            "696fa4bf8c4722564b4a7ea6",
+            "696fa4bf8c4722564b4a7ea7",
+            "696fa4c48c4722564b4a7ef5",
+            "696fa4c48c4722564b4a7ef9"
+        ],
+        "cover": {
+            "url": "https://s3.alterworld.ai/uploads/cover/696fb4464c9fd158929ec4fb.webp",
+            "type": "image",
+            "compositionType": "cover",
+            "selectByAI": true,
+            "hidden": false,
+            "streaming": false,
+            "generationExpiry": null,
+            "_userId": "6967d71f20c0fa1b42f6f6f4",
+            "_galleryId": null,
+            "nsfw": false,
+            "flagged": false,
+            "moderated": false,
+            "_id": "696fb4464c9fd158929ec4fb",
+            "createdAt": "2026-01-20T16:58:51.357Z",
+            "updatedAt": "2026-01-20T16:58:51.357Z",
+            "__v": 0,
+            "id": "696fb4464c9fd158929ec4fb"
+        },
+        "descriptionSummary": "Digivolve, into Ultimate!",
+        "description": "name: Botamon\ngender: male\nRace: Digital Monster \nAppearance: Botamon is a small, black, slime-like newborn Digimon covered in thick fuzz, resembling a botamochi (Japanese rice ball), with bright yellow eyes, small ear-like nubs, and two tiny teeth visible in its mouth. \ndigivolution Line: Botamon- Koromon- Agumon- Greymon- Metalgreymon- Wargreymon- Omnimon",
+        "promptDescription": "name: Botamon\ngender: male\nRace: Digital Monster \nAppearance: Botamon is a small, black, slime-like newborn Digimon covered in thick fuzz, resembling a botamochi (Japanese rice ball), with bright yellow eyes, small ear-like nubs, and two tiny teeth visible in its mouth. \ndigivolution Line: Botamon- Koromon- Agumon- Greymon- Metalgreymon- Wargreymon- Omnimon.\n\nKoromon appearance: Koromon is a pink, ball-shaped Digimon with floppy ears, bright-red eyes and sharp teeth.\nAgumon appearance: Agumon is a small, orange, dinosaur-like Digimon resembling a baby T-Rex, with large green eyes, stubby tail, and three-clawed hands and feet, known for its fiery \"Pepper Breath\" attack and potential to evolve into powerful forms like Greymon. He's stout, bipedal, and typically depicted with bright orange skin.\nGreymon appearance:Greymon is a bipedal reptilian Digimon whose design carries elements of the Ceratosaurus and the classic monster Gomora. It has orange scales with blue stripes covering its body. It has three clawed fingers on its hands and three clawed toes on its feet, with claws protruding from its heels. It wears a dark brown rhinoceros beetle-like skull on its head.\nMetalGreymon appearance: MetalGreymon is a powerful, cyborg-like Digimon that evolves from Greymon, featuring mechanized parts like a Chrome Digizoid arm and chest missiles,\nWargreymon appearance: WarGreymon is a powerful dragon-humanoid Digimon covered in metallic orange and silver Chrome Digizoid armor, known for its distinctive helmet with horns, spiked shoulder pads, and iconic \"Dramon Killers\" (or Dramon Breakers) – large, clawed gauntlets used for powerful attacks. It has a reptilian yet humanoid body with orange scales and a fiery red mane, often carrying the Brave Shield, a shield formed from its back plates, emblazoned with the Crest of Courage. ",
+        "advancedMode": true,
+        "secretMode": false,
+        "visibility": "public",
+        "_userId": "6967d71f20c0fa1b42f6f6f4",
+        "_tagIds": [],
+        "version": 2,
+        "deleted": false,
+        "tagSnapshots": [],
+        "creatorUsername": "unlucky_qrow",
+        "tagNames": "",
+        "nsfw": false,
+        "flagged": false,
+        "moderated": true,
+        "languageCode": "en",
+        "availableLanguageCodes": [
+            "en"
+        ],
+        "_ttsVoiceIds": [],
+        "estimatedPromptTokens": 448,
+        "estimatedTotalTokens": 448,
+        "editedAt": "2026-01-20T16:58:51.521Z",
+        "createdAt": "2026-01-20T15:52:49.861Z",
+        "updatedAt": "2026-01-21T03:52:48.301Z",
+        "__v": 0,
+        "moderationResult": {
+            "flagged": false,
+            "categories": {
+                "harassment": false,
+                "harassment/threatening": false,
+                "sexual": false,
+                "hate": false,
+                "hate/threatening": false,
+                "illicit": false,
+                "illicit/violent": false,
+                "self-harm/intent": false,
+                "self-harm/instructions": false,
+                "self-harm": false,
+                "sexual/minors": false,
+                "violence": false,
+                "violence/graphic": false
+            },
+            "category_scores": {
+                "harassment": 0.0005765709440160247,
+                "harassment/threatening": 0.0007543439206676645,
+                "sexual": 0.00015247863912257493,
+                "hate": 0.000010391067562761452,
+                "hate/threatening": 0.00000288571183887091,
+                "illicit": 0.000014202364022997911,
+                "illicit/violent": 0.000013552078562406772,
+                "self-harm/intent": 0.0002148234988278738,
+                "self-harm/instructions": 0.000003169325442919291,
+                "self-harm": 0.0004555112476395559,
+                "sexual/minors": 0.000010229985472581487,
+                "violence": 0.08277082650565715,
+                "violence/graphic": 0.0035020513242039943
+            },
+            "category_applied_input_types": {
+                "harassment": [
+                    "text"
+                ],
+                "harassment/threatening": [
+                    "text"
+                ],
+                "sexual": [
+                    "text"
+                ],
+                "hate": [
+                    "text"
+                ],
+                "hate/threatening": [
+                    "text"
+                ],
+                "illicit": [
+                    "text"
+                ],
+                "illicit/violent": [
+                    "text"
+                ],
+                "self-harm/intent": [
+                    "text"
+                ],
+                "self-harm/instructions": [
+                    "text"
+                ],
+                "self-harm": [
+                    "text"
+                ],
+                "sexual/minors": [
+                    "text"
+                ],
+                "violence": [
+                    "text"
+                ],
+                "violence/graphic": [
+                    "text"
+                ]
+            },
+            "custom": {
+                "harassment": false,
+                "harassment/threatening": false,
+                "sexual": false,
+                "hate": false,
+                "hate/threatening": false,
+                "illicit": false,
+                "illicit/violent": false,
+                "self-harm/intent": false,
+                "self-harm/instructions": false,
+                "self-harm": false,
+                "sexual/minors": false,
+                "violence": false,
+                "violence/graphic": false
+            },
+            "customFlagged": false
+        },
+        "searchFields": {},
+        "tags": [],
+        "media": [
+            {
+                "_id": "696fa4bf8c4722564b4a7ea3",
+                "url": "https://s3.alterworld.ai/uploads/characters/696fa4bf8c4722564b4a7ea2/696fa4bf8c4722564b4a7ea3.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "description": "Botamon ",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "6967d71f20c0fa1b42f6f6f4",
+                "_galleryId": "696fa4d18c4722564b4a83a4",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-20T15:52:36.067Z",
+                "updatedAt": "2026-01-20T16:58:46.657Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0.00008830458477845481,
+                        "harassment/threatening": 0.000020027376671813928,
+                        "sexual": 0.0027788905419273728,
+                        "hate": 0.000013135179706526775,
+                        "hate/threatening": 0.0000012219076020491008,
+                        "illicit": 0.00004108485376346404,
+                        "illicit/violent": 0.00002571419797957771,
+                        "self-harm/intent": 0.000004469407144215697,
+                        "self-harm/instructions": 0.000002355261854303796,
+                        "self-harm": 0.00045908104511603316,
+                        "sexual/minors": 0.000016346470245419304,
+                        "violence": 0.0011978401309281443,
+                        "violence/graphic": 0.00002868540823874629
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [
+                            "text"
+                        ],
+                        "harassment/threatening": [
+                            "text"
+                        ],
+                        "sexual": [
+                            "text",
+                            "image"
+                        ],
+                        "hate": [
+                            "text"
+                        ],
+                        "hate/threatening": [
+                            "text"
+                        ],
+                        "illicit": [
+                            "text"
+                        ],
+                        "illicit/violent": [
+                            "text"
+                        ],
+                        "self-harm/intent": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm": [
+                            "text",
+                            "image"
+                        ],
+                        "sexual/minors": [
+                            "text"
+                        ],
+                        "violence": [
+                            "text",
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "text",
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            },
+            {
+                "_id": "696fa4bf8c4722564b4a7ea4",
+                "url": "https://s3.alterworld.ai/uploads/characters/696fa4bf8c4722564b4a7ea2/696fa4bf8c4722564b4a7ea4.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "description": "Koromon",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "6967d71f20c0fa1b42f6f6f4",
+                "_galleryId": "696fa4d18c4722564b4a83a4",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-20T15:52:36.511Z",
+                "updatedAt": "2026-01-20T16:58:46.659Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0.000023413582477639402,
+                        "harassment/threatening": 0.000003705296977158347,
+                        "sexual": 0.00003459916031782155,
+                        "hate": 0.0000041335397768930325,
+                        "hate/threatening": 4.936988949458183e-7,
+                        "illicit": 0.000012339457598623173,
+                        "illicit/violent": 0.0000036478537675800286,
+                        "self-harm/intent": 0.000005649793328376294,
+                        "self-harm/instructions": 0.0000018058518261159955,
+                        "self-harm": 0.0004587152898300176,
+                        "sexual/minors": 0.0000013007128466476034,
+                        "violence": 0.0012909458840963675,
+                        "violence/graphic": 0.00003150386940813393
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [
+                            "text"
+                        ],
+                        "harassment/threatening": [
+                            "text"
+                        ],
+                        "sexual": [
+                            "text",
+                            "image"
+                        ],
+                        "hate": [
+                            "text"
+                        ],
+                        "hate/threatening": [
+                            "text"
+                        ],
+                        "illicit": [
+                            "text"
+                        ],
+                        "illicit/violent": [
+                            "text"
+                        ],
+                        "self-harm/intent": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm": [
+                            "text",
+                            "image"
+                        ],
+                        "sexual/minors": [
+                            "text"
+                        ],
+                        "violence": [
+                            "text",
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "text",
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            },
+            {
+                "_id": "696fa4bf8c4722564b4a7ea5",
+                "url": "https://s3.alterworld.ai/uploads/characters/696fa4bf8c4722564b4a7ea2/696fa4bf8c4722564b4a7ea5.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "description": "Agumon",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "6967d71f20c0fa1b42f6f6f4",
+                "_galleryId": "696fa4d18c4722564b4a83a4",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-20T15:52:36.508Z",
+                "updatedAt": "2026-01-20T16:58:46.661Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0.000008220189478350845,
+                        "harassment/threatening": 0.0000024300240743279605,
+                        "sexual": 0.00004955359475635505,
+                        "hate": 0.0000013420013504783412,
+                        "hate/threatening": 1.8738753836511972e-7,
+                        "illicit": 0.000009314593042575101,
+                        "illicit/violent": 0.0000017231572752142392,
+                        "self-harm/intent": 0.000002796930302582677,
+                        "self-harm/instructions": 6.439037799292652e-7,
+                        "self-harm": 0.000015236754767429125,
+                        "sexual/minors": 0.0000020785170435063726,
+                        "violence": 0.010159335753013763,
+                        "violence/graphic": 0.00006361912109467577
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [
+                            "text"
+                        ],
+                        "harassment/threatening": [
+                            "text"
+                        ],
+                        "sexual": [
+                            "text",
+                            "image"
+                        ],
+                        "hate": [
+                            "text"
+                        ],
+                        "hate/threatening": [
+                            "text"
+                        ],
+                        "illicit": [
+                            "text"
+                        ],
+                        "illicit/violent": [
+                            "text"
+                        ],
+                        "self-harm/intent": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm": [
+                            "text",
+                            "image"
+                        ],
+                        "sexual/minors": [
+                            "text"
+                        ],
+                        "violence": [
+                            "text",
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "text",
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            },
+            {
+                "_id": "696fa4bf8c4722564b4a7ea6",
+                "url": "https://s3.alterworld.ai/uploads/characters/696fa4bf8c4722564b4a7ea2/696fa4bf8c4722564b4a7ea6.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "description": "Greymon",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "6967d71f20c0fa1b42f6f6f4",
+                "_galleryId": "696fa4d18c4722564b4a83a4",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-20T15:52:36.469Z",
+                "updatedAt": "2026-01-20T16:58:46.662Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0.000011061159714638084,
+                        "harassment/threatening": 0.000005649793328376294,
+                        "sexual": 0.00004802972318863164,
+                        "hate": 0.0000021782649863110498,
+                        "hate/threatening": 3.726639284186561e-7,
+                        "illicit": 0.000009915273115920183,
+                        "illicit/violent": 0.000002840974294610978,
+                        "self-harm/intent": 0.000003705296977158347,
+                        "self-harm/instructions": 8.80110037979258e-7,
+                        "self-harm": 0.000017130819343483194,
+                        "sexual/minors": 0.0000011478768127080353,
+                        "violence": 0.01629717912353344,
+                        "violence/graphic": 0.0015876537458761227
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [
+                            "text"
+                        ],
+                        "harassment/threatening": [
+                            "text"
+                        ],
+                        "sexual": [
+                            "text",
+                            "image"
+                        ],
+                        "hate": [
+                            "text"
+                        ],
+                        "hate/threatening": [
+                            "text"
+                        ],
+                        "illicit": [
+                            "text"
+                        ],
+                        "illicit/violent": [
+                            "text"
+                        ],
+                        "self-harm/intent": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm": [
+                            "text",
+                            "image"
+                        ],
+                        "sexual/minors": [
+                            "text"
+                        ],
+                        "violence": [
+                            "text",
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "text",
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            },
+            {
+                "_id": "696fa4bf8c4722564b4a7ea7",
+                "url": "https://s3.alterworld.ai/uploads/characters/696fa4bf8c4722564b4a7ea2/696fa4bf8c4722564b4a7ea7.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "description": "MetalGreymon",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "6967d71f20c0fa1b42f6f6f4",
+                "_galleryId": "696fa4d18c4722564b4a83a4",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-20T15:52:36.549Z",
+                "updatedAt": "2026-01-20T16:58:46.664Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0.000009915273115920183,
+                        "harassment/threatening": 0.000006814872211615988,
+                        "sexual": 0.000057031570707833595,
+                        "hate": 0.0000030718185454758057,
+                        "hate/threatening": 4.5659700648367735e-7,
+                        "illicit": 0.000020662982488383408,
+                        "illicit/violent": 0.000005829126566113866,
+                        "self-harm/intent": 0.000005475976980449466,
+                        "self-harm/instructions": 0.0000011125607488784412,
+                        "self-harm": 0.0004700830312855635,
+                        "sexual/minors": 0.0000011125607488784412,
+                        "violence": 0.07180195059877485,
+                        "violence/graphic": 0.0024770612917534712
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [
+                            "text"
+                        ],
+                        "harassment/threatening": [
+                            "text"
+                        ],
+                        "sexual": [
+                            "text",
+                            "image"
+                        ],
+                        "hate": [
+                            "text"
+                        ],
+                        "hate/threatening": [
+                            "text"
+                        ],
+                        "illicit": [
+                            "text"
+                        ],
+                        "illicit/violent": [
+                            "text"
+                        ],
+                        "self-harm/intent": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm": [
+                            "text",
+                            "image"
+                        ],
+                        "sexual/minors": [
+                            "text"
+                        ],
+                        "violence": [
+                            "text",
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "text",
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            },
+            {
+                "_id": "696fa4c48c4722564b4a7ef5",
+                "url": "https://s3.alterworld.ai/uploads/characters/696fa4bf8c4722564b4a7ea2/696fa4c48c4722564b4a7ef5.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "description": "Wargreymon",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "6967d71f20c0fa1b42f6f6f4",
+                "_galleryId": "696fa4d18c4722564b4a83a4",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-20T15:52:40.804Z",
+                "updatedAt": "2026-01-20T16:58:46.670Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0.00002199533724320648,
+                        "harassment/threatening": 0.000010720880092159908,
+                        "sexual": 0.0001048469267161009,
+                        "hate": 0.0000027535691114583474,
+                        "hate/threatening": 6.540437226933637e-7,
+                        "illicit": 0.00002868540823874629,
+                        "illicit/violent": 0.000019110431587777674,
+                        "self-harm/intent": 0.00000610885510164857,
+                        "self-harm/instructions": 0.0000021444948420913954,
+                        "self-harm": 0.00047624913019932136,
+                        "sexual/minors": 0.0000018925148246037342,
+                        "violence": 0.04713056472521023,
+                        "violence/graphic": 0.0023864626039328788
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [
+                            "text"
+                        ],
+                        "harassment/threatening": [
+                            "text"
+                        ],
+                        "sexual": [
+                            "text",
+                            "image"
+                        ],
+                        "hate": [
+                            "text"
+                        ],
+                        "hate/threatening": [
+                            "text"
+                        ],
+                        "illicit": [
+                            "text"
+                        ],
+                        "illicit/violent": [
+                            "text"
+                        ],
+                        "self-harm/intent": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm": [
+                            "text",
+                            "image"
+                        ],
+                        "sexual/minors": [
+                            "text"
+                        ],
+                        "violence": [
+                            "text",
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "text",
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            },
+            {
+                "_id": "696fa4c48c4722564b4a7ef9",
+                "url": "https://s3.alterworld.ai/uploads/characters/696fa4bf8c4722564b4a7ea2/696fa4c48c4722564b4a7ef9.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "description": "Omnimon ",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "6967d71f20c0fa1b42f6f6f4",
+                "_galleryId": "696fa4d18c4722564b4a83a4",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-20T15:52:41.556Z",
+                "updatedAt": "2026-01-20T16:58:46.671Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0.00004442183589214344,
+                        "harassment/threatening": 0.000020988308820313112,
+                        "sexual": 0.00008040859356292355,
+                        "hate": 0.000004331903899346328,
+                        "hate/threatening": 0.0000018342893327886845,
+                        "illicit": 0.005305858432699638,
+                        "illicit/violent": 0.00007978334816343426,
+                        "self-harm/intent": 0.00021575330372933303,
+                        "self-harm/instructions": 0.0000041335397768930325,
+                        "self-harm": 0.0004878214401016874,
+                        "sexual/minors": 0.000001670142184809518,
+                        "violence": 0.03199469344274105,
+                        "violence/graphic": 0.00003150386940813393
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [
+                            "text"
+                        ],
+                        "harassment/threatening": [
+                            "text"
+                        ],
+                        "sexual": [
+                            "text",
+                            "image"
+                        ],
+                        "hate": [
+                            "text"
+                        ],
+                        "hate/threatening": [
+                            "text"
+                        ],
+                        "illicit": [
+                            "text"
+                        ],
+                        "illicit/violent": [
+                            "text"
+                        ],
+                        "self-harm/intent": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "text",
+                            "image"
+                        ],
+                        "self-harm": [
+                            "text",
+                            "image"
+                        ],
+                        "sexual/minors": [
+                            "text"
+                        ],
+                        "violence": [
+                            "text",
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "text",
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            }
+        ]
+    }
+}

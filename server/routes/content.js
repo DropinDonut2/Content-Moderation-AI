@@ -402,20 +402,30 @@ router.get('/stats', async (req, res) => {
 router.post('/import-json', async (req, res) => {
     try {
         const jsonData = req.body;
+        const data = jsonData.data || jsonData;
+
+        // Detect Type
+        const isCharacter = (data.name && !data.title);
 
         // Validate JSON has required structure
-        const data = jsonData.data || jsonData;
-        if (!data.title && !data.characterSnapshots) {
+        if (!isCharacter && (!data.title && !data.characterSnapshots)) {
             return res.status(400).json({
                 success: false,
-                error: 'Invalid JSON format. Expected storyline data with title or characterSnapshots.'
+                error: 'Invalid JSON format. Expected Data with "name" (Character) or "title"/"characterSnapshots" (Storyline).'
             });
         }
 
-        console.log('📥 Importing JSON storyline:', data.title || 'Untitled');
-        console.log(`   - Characters: ${data.characterSnapshots?.length || 0}`);
-        console.log(`   - Personas: ${data.personaSnapshots?.length || 0}`);
-        console.log(`   - Tags: ${data.tagSnapshots?.length || 0}`);
+        const typeLabel = isCharacter ? 'Character' : 'Storyline';
+        const mainTitle = isCharacter ? (data.name || 'Unnamed Character') : (data.title || 'Untitled Story');
+
+        console.log(`📥 Importing JSON ${typeLabel}:`, mainTitle);
+
+        if (!isCharacter) {
+            console.log(`   - Characters: ${data.characterSnapshots?.length || 0}`);
+            console.log(`   - Personas: ${data.personaSnapshots?.length || 0}`);
+        } else {
+            console.log(`   - Media Count: ${data.media?.length || 0}`);
+        }
 
         // Check for images
         const images = extractImageUrls(jsonData);
@@ -431,67 +441,100 @@ router.post('/import-json', async (req, res) => {
             console.error('❌ Moderation error:', moderationResult.error);
         }
 
-        // Extract tag names for simple tags array
-        const tagNames = data.tagSnapshots
-            ?.filter(t => !t.deleted)
-            ?.map(t => t.name) || [];
+        let savedContent;
 
-        // Create storyline document with full snapshots AND text content
-        const storyline = new Storyline({
-            storylineId: data._id || `import_${Date.now()}`,
-            title: data.title || 'Imported Storyline',
-            user: data.creatorUsername || data._userId || 'json_import',
-            nsfw: data.nsfw || false,
-            visibility: data.visibility || 'hidden',
+        if (isCharacter) {
+            // === SAVE AS CHARACTER ===
+            savedContent = new Character({
+                characterId: data._id || `import_char_${Date.now()}`,
+                name: data.name,
+                user: data.creatorUsername || data._userId || 'json_import',
+                nsfw: data.nsfw || false,
+                visibility: data.visibility || 'hidden',
 
-            // Store cover URL
-            cover: data.cover?.url || null,
+                // Character specific fields
+                description: data.description || '',
+                descriptionSummary: data.descriptionSummary || '',
+                promptDescription: data.promptDescription || '',
+                exampleDialogue: data.exampleDialogue || '',
+                firstMessage: data.firstMessage || '',
 
-            // === STORYLINE TEXT CONTENT (was missing!) ===
-            description: data.description || '',
-            plot: data.plot || '',
-            plotSummary: data.plotSummary || '',
-            firstMessage: data.firstMessage || '',
-            promptPlot: data.promptPlot || '',
-            promptGuideline: data.promptGuideline || '',
-            reminder: data.reminder || '',
+                // Media / Cover
+                cover: data.cover?.url || null,
+                avatar: data.avatar || null, // Some formats use avatar
 
-            // Store full snapshots
-            characterSnapshots: data.characterSnapshots || [],
-            personaSnapshots: data.personaSnapshots || [],
-            tagSnapshots: data.tagSnapshots || [],
-            tags: tagNames,
+                // Tags
+                tags: (data.tags || data._tagIds || []).map(t => {
+                    if (typeof t === 'string') return t;
+                    if (typeof t === 'object' && t !== null) return t.name || t._id || String(t);
+                    return String(t);
+                }),
 
-            // Mark import source
-            importSource: 'json_import',
+                importSource: 'json_import',
+                moderationStatus: 'pending',
+                moderationResult: moderationResult.moderationResult,
+                flags: { ...moderationResult.flags }
+            });
+        } else {
+            // === SAVE AS STORYLINE ===
+            const tagNames = data.tagSnapshots
+                ?.filter(t => !t.deleted)
+                ?.map(t => t.name) || [];
 
-            // Moderation results
-            moderationStatus: 'pending',
-            moderationResult: moderationResult.moderationResult,
-            flags: { ...moderationResult.flags }
-        });
+            savedContent = new Storyline({
+                storylineId: data._id || `import_story_${Date.now()}`,
+                title: data.title || 'Imported Storyline',
+                user: data.creatorUsername || data._userId || 'json_import',
+                nsfw: data.nsfw || false,
+                visibility: data.visibility || 'hidden',
 
-        await storyline.save();
+                // Store cover URL
+                cover: data.cover?.url || null,
+
+                // Text Content
+                description: data.description || '',
+                plot: data.plot || '',
+                plotSummary: data.plotSummary || '',
+                firstMessage: data.firstMessage || '',
+                promptPlot: data.promptPlot || '',
+                promptGuideline: data.promptGuideline || '',
+                reminder: data.reminder || '',
+
+                // Snapshots
+                characterSnapshots: data.characterSnapshots || [],
+                personaSnapshots: data.personaSnapshots || [],
+                tagSnapshots: data.tagSnapshots || [],
+                tags: tagNames,
+
+                importSource: 'json_import',
+                moderationStatus: 'pending',
+                moderationResult: moderationResult.moderationResult,
+                flags: { ...moderationResult.flags }
+            });
+        }
+
+        await savedContent.save();
 
         // Emit socket event
         if (req.app.get('io')) {
             req.app.get('io').emit('newContent', {
-                type: 'storyline',
+                type: isCharacter ? 'character' : 'storyline',
                 source: 'json_import',
-                data: storyline
+                data: savedContent
             });
         }
 
         res.status(201).json({
             success: true,
-            data: storyline,
+            data: savedContent,
             moderation: moderationResult.moderationResult,
             meta: moderationResult.meta || {},
             preview: {
-                title: data.title,
-                characterCount: data.characterSnapshots?.length || 0,
-                personaCount: data.personaSnapshots?.length || 0,
-                tagCount: data.tagSnapshots?.length || 0,
+                title: mainTitle,
+                type: isCharacter ? 'character' : 'storyline',
+                characterCount: isCharacter ? 0 : (data.characterSnapshots?.length || 0),
+                personaCount: isCharacter ? 0 : (data.personaSnapshots?.length || 0),
+                tagCount: data.tagSnapshots?.length || (data.tags?.length || 0),
                 imageCount: images.length,
                 imagesAnalyzed: moderationResult.meta?.imagesAnalyzed || 0
             }
@@ -509,37 +552,57 @@ router.post('/preview-json', async (req, res) => {
         const jsonData = req.body;
         const data = jsonData.data || jsonData;
 
+        // Detect Type
+        const isCharacter = (data.name && !data.title);
+
         // Extract preview info
         const images = extractImageUrls(jsonData);
-        const textPreview = buildFullJsonContent(jsonData);
 
-        const tagNames = data.tagSnapshots
-            ?.filter(t => !t.deleted)
-            ?.map(t => ({ name: t.name, type: t.type, nsfw: t.nsfw || false })) || [];
+        let tagNames = [];
+        let characterPreviews = [];
+        let estimatedTextLength = 0;
 
-        const characterPreviews = data.characterSnapshots?.map(c => ({
-            name: c.name,
-            nsfw: c.nsfw || false,
-            status: c.status,
-            hasDescription: !!c.description,
-            descriptionLength: c.description?.length || 0,
-            tagCount: c.tagSnapshots?.length || 0,
-            hasAvatar: !!c.cover?.url
-        })) || [];
+        if (isCharacter) {
+            tagNames = (data.tags || []).map(t => {
+                if (typeof t === 'string') return { name: t, type: 'tag', nsfw: false };
+                if (typeof t === 'object' && t !== null) return { name: t.name || t.id || 'Unknown', type: t.type || 'tag', nsfw: t.nsfw || t.nsfw || false };
+                return { name: String(t), type: 'tag', nsfw: false };
+            });
+            // For character, we can estimate text from bio/description
+            estimatedTextLength = (data.description || '').length + (data.descriptionSummary || '').length;
+        } else {
+            const textPreview = buildFullJsonContent(jsonData);
+            estimatedTextLength = textPreview.length;
+
+            tagNames = data.tagSnapshots
+                ?.filter(t => !t.deleted)
+                ?.map(t => ({ name: t.name, type: t.type, nsfw: t.nsfw || false })) || [];
+
+            characterPreviews = data.characterSnapshots?.map(c => ({
+                name: c.name,
+                nsfw: c.nsfw || false,
+                status: c.status,
+                hasDescription: !!c.description,
+                descriptionLength: c.description?.length || 0,
+                tagCount: c.tagSnapshots?.length || 0,
+                hasAvatar: !!c.cover?.url
+            })) || [];
+        }
 
         res.json({
             success: true,
             preview: {
-                title: data.title || 'Untitled',
+                title: isCharacter ? (data.name || 'Unnamed Character') : (data.title || 'Untitled'),
+                type: isCharacter ? 'character' : 'storyline',
                 status: data.status,
                 nsfw: data.nsfw || false,
                 hasCover: !!data.cover?.url,
                 coverUrl: data.cover?.url || null,
-                characterCount: data.characterSnapshots?.length || 0,
-                personaCount: data.personaSnapshots?.length || 0,
-                tagCount: tagNames.length,
+                characterCount: isCharacter ? 0 : (data.characterSnapshots?.length || 0),
+                personaCount: isCharacter ? 0 : (data.personaSnapshots?.length || 0),
+                tagCount: isCharacter ? (data.tags?.length || 0) : tagNames.length,
                 imageCount: images.length,
-                estimatedTextLength: textPreview.length,
+                estimatedTextLength: estimatedTextLength,
                 tags: tagNames.slice(0, 20),
                 characters: characterPreviews
             }

@@ -1,0 +1,1886 @@
+{
+    "code": 200,
+    "status": "success",
+    "data": {
+        "_id": "696c1e27448c2c0c02ddf518",
+        "status": "reviewing",
+        "name": "ユウタ",
+        "_mediaIds": [
+            "696c1e27448c2c0c02ddf519"
+        ],
+        "cover": {
+            "url": "https://s3.alterworld.ai/uploads/cover/696deee7be5f0de63a2484c3.webp",
+            "type": "image",
+            "compositionType": "cover",
+            "selectByAI": true,
+            "hidden": false,
+            "streaming": false,
+            "generationExpiry": null,
+            "_userId": "695a341203f8072edd7e7f29",
+            "_galleryId": null,
+            "nsfw": false,
+            "flagged": false,
+            "moderated": false,
+            "_id": "696deee7be5f0de63a2484c3",
+            "createdAt": "2026-01-19T08:44:27.516Z",
+            "updatedAt": "2026-01-19T08:44:27.516Z",
+            "__v": 0,
+            "id": "696deee7be5f0de63a2484c3"
+        },
+        "descriptionSummary": "サイボーグ戦士",
+        "description": "名前:ユウタ\n年齢:21\n身長:140cm\n性別:男性\n職業:サイボーグ戦士\n話し方:やる気に満ち自信たっぷり、一人称はボク\n外見:小柄で童顔、機械の部分と生身の部分がある、体のラインがくっきりわかるボディスーツ\n性格:自信家\n好み:アイスクリーム\n嫌い:悪党\n恐れ:ムカデ\n趣味:体のメンテナンス\n持久力:性欲を大幅に強化されている\n社会傾向:任務に忠実\n背景:少子化対策で生殖機能や性欲を大幅に強化されている\n\n\n",
+        "promptDescription": "名前:ユウタ\n年齢:21\n身長:140cm\n性別:男性\n職業:サイボーグ戦士\n話し方:やる気に満ち自信たっぷり、一人称はボク\n外見:小柄で童顔、機械の部分と生身の部分がある、体のラインがくっきりわかるボディスーツ\n性格:自信家\n好み:アイスクリーム\n嫌い:悪党\n恐れ:ムカデ\n趣味:体のメンテナンス\n持久力:性欲を大幅に強化されている\n社会傾向:任務に忠実\n背景:少子化対策で生殖機能や性欲を大幅に強化されている\n\n\n",
+        "advancedMode": false,
+        "secretMode": false,
+        "visibility": "public",
+        "_userId": "695a341203f8072edd7e7f29",
+        "_tagIds": [
+            "686f8429c11000fdecd40756",
+            "689aaed785632a402b1c00f5",
+            "689aa5c985632a402b1bf9f6",
+            "68abd6119b2146894876f5ac",
+            "689aac1d85632a402b1bff0d",
+            "68abd4e99b2146894876eccd",
+            "689aabf285632a402b1bff01",
+            "689aaa9185632a402b1bfe91",
+            "689aa76c85632a402b1bfb21"
+        ],
+        "version": 6,
+        "deleted": false,
+        "tagSnapshots": [
+            {
+                "status": "approved",
+                "name": "Male",
+                "default": false,
+                "deleted": false,
+                "order": -1,
+                "type": "role",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Male"
+                    },
+                    "ms": {
+                        "name": "Lelaki"
+                    },
+                    "zh-Hans": {
+                        "name": "男性"
+                    },
+                    "zh-Hant": {
+                        "name": "男性"
+                    },
+                    "id": {
+                        "name": "Pria"
+                    },
+                    "tl": {
+                        "name": "Lalaki"
+                    },
+                    "ja": {
+                        "name": "男性"
+                    },
+                    "th": {
+                        "name": "ชาย"
+                    },
+                    "ko": {
+                        "name": "남성"
+                    },
+                    "es": {
+                        "name": "Masculino"
+                    },
+                    "pt": {
+                        "name": "Masculino"
+                    },
+                    "pt-BR": {
+                        "name": "Masculino"
+                    },
+                    "ru": {
+                        "name": "Мужской"
+                    },
+                    "de": {
+                        "name": "Männlich"
+                    },
+                    "fr": {
+                        "name": "Homme"
+                    },
+                    "it": {
+                        "name": "Maschio"
+                    },
+                    "tr": {
+                        "name": "Erkek"
+                    }
+                },
+                "_id": "686f8429c11000fdecd40756",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Human",
+                "default": false,
+                "deleted": false,
+                "order": 6,
+                "type": "role",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Human"
+                    },
+                    "ms": {
+                        "name": "Manusia"
+                    },
+                    "zh-Hans": {
+                        "name": "人类"
+                    },
+                    "zh-Hant": {
+                        "name": "人類"
+                    },
+                    "id": {
+                        "name": "Manusia"
+                    },
+                    "tl": {
+                        "name": "Tao"
+                    },
+                    "ja": {
+                        "name": "人間"
+                    },
+                    "th": {
+                        "name": "มนุษย์"
+                    },
+                    "ko": {
+                        "name": "인간"
+                    },
+                    "es": {
+                        "name": "Humano"
+                    },
+                    "pt": {
+                        "name": "Humano"
+                    },
+                    "pt-BR": {
+                        "name": "Humano"
+                    },
+                    "ru": {
+                        "name": "Человек"
+                    },
+                    "de": {
+                        "name": "Mensch"
+                    },
+                    "fr": {
+                        "name": "Humain"
+                    },
+                    "it": {
+                        "name": "Umano"
+                    },
+                    "tr": {
+                        "name": "İnsan"
+                    }
+                },
+                "_id": "689aaed785632a402b1c00f5",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Fighter",
+                "default": false,
+                "deleted": false,
+                "order": 2,
+                "type": "role",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Fighter"
+                    },
+                    "ms": {
+                        "name": "Pejuang"
+                    },
+                    "zh-Hans": {
+                        "name": "战士"
+                    },
+                    "zh-Hant": {
+                        "name": "鬥士"
+                    },
+                    "id": {
+                        "name": "Petarung"
+                    },
+                    "tl": {
+                        "name": "Fighter"
+                    },
+                    "ja": {
+                        "name": "ファイター"
+                    },
+                    "th": {
+                        "name": "นักสู้"
+                    },
+                    "ko": {
+                        "name": "격투가"
+                    },
+                    "es": {
+                        "name": "Luchador"
+                    },
+                    "pt": {
+                        "name": "Lutador"
+                    },
+                    "pt-BR": {
+                        "name": "Lutador"
+                    },
+                    "ru": {
+                        "name": "Боец"
+                    },
+                    "de": {
+                        "name": "Kämpfer"
+                    },
+                    "fr": {
+                        "name": "Combattant"
+                    },
+                    "it": {
+                        "name": "Guerriero"
+                    },
+                    "tr": {
+                        "name": "Dövüşçü"
+                    }
+                },
+                "_id": "689aa5c985632a402b1bf9f6",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Soldier",
+                "default": false,
+                "deleted": false,
+                "order": 3,
+                "type": "role",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Soldier"
+                    },
+                    "ms": {
+                        "name": "Askar"
+                    },
+                    "zh-Hans": {
+                        "name": "士兵"
+                    },
+                    "zh-Hant": {
+                        "name": "士兵"
+                    },
+                    "id": {
+                        "name": "Prajurit"
+                    },
+                    "tl": {
+                        "name": "Sundalo"
+                    },
+                    "ja": {
+                        "name": "兵士"
+                    },
+                    "th": {
+                        "name": "ทหาร"
+                    },
+                    "ko": {
+                        "name": "병사"
+                    },
+                    "es": {
+                        "name": "Soldado"
+                    },
+                    "pt": {
+                        "name": "Soldado"
+                    },
+                    "pt-BR": {
+                        "name": "Soldado"
+                    },
+                    "ru": {
+                        "name": "Солдат"
+                    },
+                    "de": {
+                        "name": "Soldat"
+                    },
+                    "fr": {
+                        "name": "Soldat"
+                    },
+                    "it": {
+                        "name": "Soldato"
+                    },
+                    "tr": {
+                        "name": "Asker"
+                    }
+                },
+                "_id": "68abd6119b2146894876f5ac",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Confident",
+                "default": false,
+                "deleted": false,
+                "order": 2,
+                "type": "personality",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Confident"
+                    },
+                    "ms": {
+                        "name": "Yakin"
+                    },
+                    "zh-Hans": {
+                        "name": "自信"
+                    },
+                    "zh-Hant": {
+                        "name": "有自信"
+                    },
+                    "id": {
+                        "name": "Percaya Diri"
+                    },
+                    "tl": {
+                        "name": "Mayumiin"
+                    },
+                    "ja": {
+                        "name": "自信がある"
+                    },
+                    "th": {
+                        "name": "มั่นใจ"
+                    },
+                    "ko": {
+                        "name": "자신감 있는"
+                    },
+                    "es": {
+                        "name": "Seguro de sí mismo"
+                    },
+                    "pt": {
+                        "name": "Confiante"
+                    },
+                    "pt-BR": {
+                        "name": "Confiante"
+                    },
+                    "ru": {
+                        "name": "Уверенный"
+                    },
+                    "de": {
+                        "name": "Selbstsicher"
+                    },
+                    "fr": {
+                        "name": "Confiant"
+                    },
+                    "it": {
+                        "name": "Sicuro di sé"
+                    },
+                    "tr": {
+                        "name": "Kendinden Emin"
+                    }
+                },
+                "_id": "689aac1d85632a402b1bff0d",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Energetic",
+                "default": false,
+                "deleted": false,
+                "order": 2,
+                "type": "personality",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Energetic"
+                    },
+                    "ms": {
+                        "name": "Bertenaga"
+                    },
+                    "zh-Hans": {
+                        "name": "精力充沛"
+                    },
+                    "zh-Hant": {
+                        "name": "精力充沛"
+                    },
+                    "id": {
+                        "name": "Energetik"
+                    },
+                    "tl": {
+                        "name": "Masigla"
+                    },
+                    "ja": {
+                        "name": "エネルギッシュ"
+                    },
+                    "th": {
+                        "name": "กระปรี้กระเปร่า"
+                    },
+                    "ko": {
+                        "name": "활기찬"
+                    },
+                    "es": {
+                        "name": "Enérgico"
+                    },
+                    "pt": {
+                        "name": "Enérgico"
+                    },
+                    "pt-BR": {
+                        "name": "Energético"
+                    },
+                    "ru": {
+                        "name": "Энергичный"
+                    },
+                    "de": {
+                        "name": "Energetisch"
+                    },
+                    "fr": {
+                        "name": "Énergique"
+                    },
+                    "it": {
+                        "name": "Energico"
+                    },
+                    "tr": {
+                        "name": "Enerjik"
+                    }
+                },
+                "_id": "68abd4e99b2146894876eccd",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Loyal",
+                "default": false,
+                "deleted": false,
+                "order": 1,
+                "type": "personality",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Loyal"
+                    },
+                    "ms": {
+                        "name": "Setia"
+                    },
+                    "zh-Hans": {
+                        "name": "忠诚"
+                    },
+                    "zh-Hant": {
+                        "name": "忠誠"
+                    },
+                    "id": {
+                        "name": "Loyal"
+                    },
+                    "tl": {
+                        "name": "Matapat"
+                    },
+                    "ja": {
+                        "name": "忠実"
+                    },
+                    "th": {
+                        "name": "ภักดี"
+                    },
+                    "ko": {
+                        "name": "로열"
+                    },
+                    "es": {
+                        "name": "Leal"
+                    },
+                    "pt": {
+                        "name": "Leal"
+                    },
+                    "pt-BR": {
+                        "name": "Leal"
+                    },
+                    "ru": {
+                        "name": "Лояльный"
+                    },
+                    "de": {
+                        "name": "Loyal"
+                    },
+                    "fr": {
+                        "name": "Loyal"
+                    },
+                    "it": {
+                        "name": "Leale"
+                    },
+                    "tr": {
+                        "name": "Sadık"
+                    }
+                },
+                "_id": "689aabf285632a402b1bff01",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Sci-Fi",
+                "default": false,
+                "deleted": false,
+                "order": 1,
+                "type": "genre",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Sci-Fi"
+                    },
+                    "ms": {
+                        "name": "Sci-Fi"
+                    },
+                    "zh-Hans": {
+                        "name": "科幻"
+                    },
+                    "zh-Hant": {
+                        "name": "科幻"
+                    },
+                    "id": {
+                        "name": "Fiksi Ilmiah"
+                    },
+                    "tl": {
+                        "name": "Sci-Fi"
+                    },
+                    "ja": {
+                        "name": "SF"
+                    },
+                    "th": {
+                        "name": "วิทยาศาสตร์"
+                    },
+                    "ko": {
+                        "name": "SF"
+                    },
+                    "es": {
+                        "name": "Ciencia ficción"
+                    },
+                    "pt": {
+                        "name": "Ficção Científica"
+                    },
+                    "pt-BR": {
+                        "name": "Ficção Científica"
+                    },
+                    "ru": {
+                        "name": "Научная фантастика"
+                    },
+                    "de": {
+                        "name": "Sci-Fi"
+                    },
+                    "fr": {
+                        "name": "Science-fiction"
+                    },
+                    "it": {
+                        "name": "Fantascienza"
+                    },
+                    "tr": {
+                        "name": "Bilim Kurgu"
+                    }
+                },
+                "_id": "689aaa9185632a402b1bfe91",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            },
+            {
+                "status": "approved",
+                "name": "Futuristic",
+                "default": false,
+                "deleted": false,
+                "order": 6,
+                "type": "element",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "searchFields": {
+                    "en": {
+                        "name": "Futuristic"
+                    },
+                    "ms": {
+                        "name": "Futuristik"
+                    },
+                    "zh-Hans": {
+                        "name": "未来主义"
+                    },
+                    "zh-Hant": {
+                        "name": "未來感"
+                    },
+                    "id": {
+                        "name": "Futuristik"
+                    },
+                    "tl": {
+                        "name": "Makabago"
+                    },
+                    "ja": {
+                        "name": "未来的な"
+                    },
+                    "th": {
+                        "name": "ล้ำอนาคต"
+                    },
+                    "ko": {
+                        "name": "미래지향적인"
+                    },
+                    "es": {
+                        "name": "Futurista"
+                    },
+                    "pt": {
+                        "name": "Futurista"
+                    },
+                    "pt-BR": {
+                        "name": "Futurista"
+                    },
+                    "ru": {
+                        "name": "Футуристичный"
+                    },
+                    "de": {
+                        "name": "Futuristisch"
+                    },
+                    "fr": {
+                        "name": "Futuriste"
+                    },
+                    "it": {
+                        "name": "Futuristico"
+                    },
+                    "tr": {
+                        "name": "Fütüristik"
+                    }
+                },
+                "_id": "689aa76c85632a402b1bfb21",
+                "createdAt": "2026-01-19T08:44:27.651Z",
+                "updatedAt": "2026-01-19T08:44:27.651Z"
+            }
+        ],
+        "creatorUsername": "cyber_system590",
+        "tagNames": "Male Human Fighter Soldier Confident Energetic Loyal Sci-Fi Futuristic",
+        "nsfw": true,
+        "flagged": false,
+        "moderated": true,
+        "languageCode": "ja",
+        "availableLanguageCodes": [
+            "ja"
+        ],
+        "_ttsVoiceIds": [],
+        "estimatedPromptTokens": 246,
+        "estimatedTotalTokens": 246,
+        "editedAt": "2026-01-19T08:44:27.650Z",
+        "createdAt": "2026-01-17T23:41:39.796Z",
+        "updatedAt": "2026-01-21T08:07:08.513Z",
+        "__v": 0,
+        "searchFields": {
+            "en": {
+                "tagNames": "Male Human Fighter Soldier Confident Energetic Loyal Sci-Fi Futuristic"
+            },
+            "ms": {
+                "tagNames": "Lelaki Manusia Pejuang Askar Yakin Bertenaga Setia Sci-Fi Futuristik"
+            },
+            "zh-Hans": {
+                "tagNames": "男性 人类 战士 士兵 自信 精力充沛 忠诚 科幻 未来主义"
+            },
+            "zh-Hant": {
+                "tagNames": "男性 人類 鬥士 士兵 有自信 精力充沛 忠誠 科幻 未來感"
+            },
+            "id": {
+                "tagNames": "Pria Manusia Petarung Prajurit Percaya Diri Energetik Loyal Fiksi Ilmiah Futuristik"
+            },
+            "tl": {
+                "tagNames": "Lalaki Tao Fighter Sundalo Mayumiin Masigla Matapat Sci-Fi Makabago"
+            },
+            "ja": {
+                "tagNames": "男性 人間 ファイター 兵士 自信がある エネルギッシュ 忠実 SF 未来的な"
+            },
+            "th": {
+                "tagNames": "ชาย มนุษย์ นักสู้ ทหาร มั่นใจ กระปรี้กระเปร่า ภักดี วิทยาศาสตร์ ล้ำอนาคต"
+            },
+            "ko": {
+                "tagNames": "남성 인간 격투가 병사 자신감 있는 활기찬 로열 SF 미래지향적인"
+            },
+            "es": {
+                "tagNames": "Masculino Humano Luchador Soldado Seguro de sí mismo Enérgico Leal Ciencia ficción Futurista"
+            },
+            "pt": {
+                "tagNames": "Masculino Humano Lutador Soldado Confiante Enérgico Leal Ficção Científica Futurista"
+            },
+            "pt-BR": {
+                "tagNames": "Masculino Humano Lutador Soldado Confiante Energético Leal Ficção Científica Futurista"
+            },
+            "ru": {
+                "tagNames": "Мужской Человек Боец Солдат Уверенный Энергичный Лояльный Научная фантастика Футуристичный"
+            },
+            "de": {
+                "tagNames": "Männlich Mensch Kämpfer Soldat Selbstsicher Energetisch Loyal Sci-Fi Futuristisch"
+            },
+            "fr": {
+                "tagNames": "Homme Humain Combattant Soldat Confiant Énergique Loyal Science-fiction Futuriste"
+            },
+            "it": {
+                "tagNames": "Maschio Umano Guerriero Soldato Sicuro di sé Energico Leale Fantascienza Futuristico"
+            },
+            "tr": {
+                "tagNames": "Erkek İnsan Dövüşçü Asker Kendinden Emin Enerjik Sadık Bilim Kurgu Fütüristik"
+            },
+            "ar": {
+                "tagNames": "        "
+            }
+        },
+        "moderationResult": {
+            "flagged": false,
+            "categories": {
+                "harassment": false,
+                "harassment/threatening": false,
+                "sexual": false,
+                "hate": false,
+                "hate/threatening": false,
+                "illicit": false,
+                "illicit/violent": false,
+                "self-harm/intent": false,
+                "self-harm/instructions": false,
+                "self-harm": false,
+                "sexual/minors": false,
+                "violence": false,
+                "violence/graphic": false
+            },
+            "category_scores": {
+                "harassment": 0.0007048158314455345,
+                "harassment/threatening": 0.00004655269187520153,
+                "sexual": 0.28797015523911934,
+                "hate": 0.00003150386940813393,
+                "hate/threatening": 0.000007722191834067996,
+                "illicit": 0.000012731104162213555,
+                "illicit/violent": 0.000007602479448313689,
+                "self-harm/intent": 0.0002182938001211795,
+                "self-harm/instructions": 0.000005225226840386988,
+                "self-harm": 0.000468757999308423,
+                "sexual/minors": 0.04410400871712259,
+                "violence": 0.0011600053574022634,
+                "violence/graphic": 0.000050333557545281144
+            },
+            "category_applied_input_types": {
+                "harassment": [
+                    "text"
+                ],
+                "harassment/threatening": [
+                    "text"
+                ],
+                "sexual": [
+                    "text"
+                ],
+                "hate": [
+                    "text"
+                ],
+                "hate/threatening": [
+                    "text"
+                ],
+                "illicit": [
+                    "text"
+                ],
+                "illicit/violent": [
+                    "text"
+                ],
+                "self-harm/intent": [
+                    "text"
+                ],
+                "self-harm/instructions": [
+                    "text"
+                ],
+                "self-harm": [
+                    "text"
+                ],
+                "sexual/minors": [
+                    "text"
+                ],
+                "violence": [
+                    "text"
+                ],
+                "violence/graphic": [
+                    "text"
+                ]
+            },
+            "custom": {
+                "harassment": false,
+                "harassment/threatening": false,
+                "sexual": false,
+                "hate": false,
+                "hate/threatening": false,
+                "illicit": false,
+                "illicit/violent": false,
+                "self-harm/intent": false,
+                "self-harm/instructions": false,
+                "self-harm": false,
+                "sexual/minors": false,
+                "violence": false,
+                "violence/graphic": false
+            },
+            "customFlagged": false
+        },
+        "_reviewerId": "6948f7c579411a9a9fbfc5c0",
+        "reason": "このキャラクターは「子供のような外見」と露骨な性的要素（性欲／生殖機能の大幅な強化）を併せ持っています。年齢は21歳と明記されているにもかかわらず、意図的に子供のような外見を強調し、さらに性的な側面を強調することで、未成年者向けの性的コンテンツに近づき、問題のあるキャラクター設定となっています。これらの要素に加え、タイトなボディスーツのディテールが、この懸念をさらに増幅させています。",
+        "reviewedAt": "2026-01-19T06:24:44.765Z",
+        "reviewerUsername": "stellar_colony3",
+        "_reviewingUserId": "6948f911150ef1d40812b23b",
+        "reviewingAt": "2026-01-21T08:07:08.513Z",
+        "reviewingUsername": "orbit_ship75",
+        "media": [
+            {
+                "_id": "696c1e27448c2c0c02ddf519",
+                "url": "https://s3.alterworld.ai/uploads/characters/696c1e27448c2c0c02ddf518/696c1e27448c2c0c02ddf519.webp",
+                "type": "image",
+                "compositionType": "foreground",
+                "selectByAI": true,
+                "hidden": false,
+                "streaming": false,
+                "generationExpiry": null,
+                "_userId": "695a341203f8072edd7e7f29",
+                "_galleryId": "696c1e33448c2c0c02ddff7d",
+                "nsfw": false,
+                "flagged": false,
+                "moderated": true,
+                "createdAt": "2026-01-17T23:41:33.386Z",
+                "updatedAt": "2026-01-19T08:44:22.383Z",
+                "__v": 0,
+                "moderationResult": {
+                    "flagged": false,
+                    "categories": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "category_scores": {
+                        "harassment": 0,
+                        "harassment/threatening": 0,
+                        "sexual": 0.00011879054941163418,
+                        "hate": 0,
+                        "hate/threatening": 0,
+                        "illicit": 0,
+                        "illicit/violent": 0,
+                        "self-harm/intent": 0.00021358242564492241,
+                        "self-harm/instructions": 0.000002931153855960119,
+                        "self-harm": 0.0004717428775960644,
+                        "sexual/minors": 0,
+                        "violence": 0.016023447475587517,
+                        "violence/graphic": 0.00003353501304664781
+                    },
+                    "category_applied_input_types": {
+                        "harassment": [],
+                        "harassment/threatening": [],
+                        "sexual": [
+                            "image"
+                        ],
+                        "hate": [],
+                        "hate/threatening": [],
+                        "illicit": [],
+                        "illicit/violent": [],
+                        "self-harm/intent": [
+                            "image"
+                        ],
+                        "self-harm/instructions": [
+                            "image"
+                        ],
+                        "self-harm": [
+                            "image"
+                        ],
+                        "sexual/minors": [],
+                        "violence": [
+                            "image"
+                        ],
+                        "violence/graphic": [
+                            "image"
+                        ]
+                    },
+                    "custom": {
+                        "harassment": false,
+                        "harassment/threatening": false,
+                        "sexual": false,
+                        "hate": false,
+                        "hate/threatening": false,
+                        "illicit": false,
+                        "illicit/violent": false,
+                        "self-harm/intent": false,
+                        "self-harm/instructions": false,
+                        "self-harm": false,
+                        "sexual/minors": false,
+                        "violence": false,
+                        "violence/graphic": false
+                    },
+                    "customFlagged": false
+                }
+            }
+        ],
+        "tags": [
+            {
+                "_id": "686f8429c11000fdecd40756",
+                "name": "Male",
+                "default": false,
+                "deleted": false,
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-07-10T09:13:13.554Z",
+                "updatedAt": "2025-11-18T17:12:29.555Z",
+                "__v": 0,
+                "order": -1,
+                "type": "role",
+                "searchFields": {
+                    "en": {
+                        "name": "Male"
+                    },
+                    "ms": {
+                        "name": "Lelaki"
+                    },
+                    "zh-Hans": {
+                        "name": "男性"
+                    },
+                    "zh-Hant": {
+                        "name": "男性"
+                    },
+                    "id": {
+                        "name": "Pria"
+                    },
+                    "tl": {
+                        "name": "Lalaki"
+                    },
+                    "ja": {
+                        "name": "男性"
+                    },
+                    "th": {
+                        "name": "ชาย"
+                    },
+                    "ko": {
+                        "name": "남성"
+                    },
+                    "es": {
+                        "name": "Masculino"
+                    },
+                    "pt": {
+                        "name": "Masculino"
+                    },
+                    "pt-BR": {
+                        "name": "Masculino"
+                    },
+                    "ru": {
+                        "name": "Мужской"
+                    },
+                    "de": {
+                        "name": "Männlich"
+                    },
+                    "fr": {
+                        "name": "Homme"
+                    },
+                    "it": {
+                        "name": "Maschio"
+                    },
+                    "tr": {
+                        "name": "Erkek"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "689aaed785632a402b1c00f5",
+                "name": "Human",
+                "default": false,
+                "deleted": false,
+                "order": 6,
+                "type": "role",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-12T03:02:47.829Z",
+                "updatedAt": "2025-08-25T02:49:17.892Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Human"
+                    },
+                    "ms": {
+                        "name": "Manusia"
+                    },
+                    "zh-Hans": {
+                        "name": "人类"
+                    },
+                    "zh-Hant": {
+                        "name": "人類"
+                    },
+                    "id": {
+                        "name": "Manusia"
+                    },
+                    "tl": {
+                        "name": "Tao"
+                    },
+                    "ja": {
+                        "name": "人間"
+                    },
+                    "th": {
+                        "name": "มนุษย์"
+                    },
+                    "ko": {
+                        "name": "인간"
+                    },
+                    "es": {
+                        "name": "Humano"
+                    },
+                    "pt": {
+                        "name": "Humano"
+                    },
+                    "pt-BR": {
+                        "name": "Humano"
+                    },
+                    "ru": {
+                        "name": "Человек"
+                    },
+                    "de": {
+                        "name": "Mensch"
+                    },
+                    "fr": {
+                        "name": "Humain"
+                    },
+                    "it": {
+                        "name": "Umano"
+                    },
+                    "tr": {
+                        "name": "İnsan"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "689aa5c985632a402b1bf9f6",
+                "name": "Fighter",
+                "default": false,
+                "deleted": false,
+                "order": 2,
+                "type": "role",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-12T02:24:09.424Z",
+                "updatedAt": "2025-08-25T07:53:47.327Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Fighter"
+                    },
+                    "ms": {
+                        "name": "Pejuang"
+                    },
+                    "zh-Hans": {
+                        "name": "战士"
+                    },
+                    "zh-Hant": {
+                        "name": "鬥士"
+                    },
+                    "id": {
+                        "name": "Petarung"
+                    },
+                    "tl": {
+                        "name": "Fighter"
+                    },
+                    "ja": {
+                        "name": "ファイター"
+                    },
+                    "th": {
+                        "name": "นักสู้"
+                    },
+                    "ko": {
+                        "name": "격투가"
+                    },
+                    "es": {
+                        "name": "Luchador"
+                    },
+                    "pt": {
+                        "name": "Lutador"
+                    },
+                    "pt-BR": {
+                        "name": "Lutador"
+                    },
+                    "ru": {
+                        "name": "Боец"
+                    },
+                    "de": {
+                        "name": "Kämpfer"
+                    },
+                    "fr": {
+                        "name": "Combattant"
+                    },
+                    "it": {
+                        "name": "Guerriero"
+                    },
+                    "tr": {
+                        "name": "Dövüşçü"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "68abd6119b2146894876f5ac",
+                "name": "Soldier",
+                "default": false,
+                "deleted": false,
+                "order": 3,
+                "type": "role",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-25T03:18:41.581Z",
+                "updatedAt": "2025-08-25T06:44:17.437Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Soldier"
+                    },
+                    "ms": {
+                        "name": "Askar"
+                    },
+                    "zh-Hans": {
+                        "name": "士兵"
+                    },
+                    "zh-Hant": {
+                        "name": "士兵"
+                    },
+                    "id": {
+                        "name": "Prajurit"
+                    },
+                    "tl": {
+                        "name": "Sundalo"
+                    },
+                    "ja": {
+                        "name": "兵士"
+                    },
+                    "th": {
+                        "name": "ทหาร"
+                    },
+                    "ko": {
+                        "name": "병사"
+                    },
+                    "es": {
+                        "name": "Soldado"
+                    },
+                    "pt": {
+                        "name": "Soldado"
+                    },
+                    "pt-BR": {
+                        "name": "Soldado"
+                    },
+                    "ru": {
+                        "name": "Солдат"
+                    },
+                    "de": {
+                        "name": "Soldat"
+                    },
+                    "fr": {
+                        "name": "Soldat"
+                    },
+                    "it": {
+                        "name": "Soldato"
+                    },
+                    "tr": {
+                        "name": "Asker"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "689aac1d85632a402b1bff0d",
+                "name": "Confident",
+                "default": false,
+                "deleted": false,
+                "order": 2,
+                "type": "personality",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-12T02:51:09.683Z",
+                "updatedAt": "2025-09-02T04:19:37.766Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Confident"
+                    },
+                    "ms": {
+                        "name": "Yakin"
+                    },
+                    "zh-Hans": {
+                        "name": "自信"
+                    },
+                    "zh-Hant": {
+                        "name": "有自信"
+                    },
+                    "id": {
+                        "name": "Percaya Diri"
+                    },
+                    "tl": {
+                        "name": "Mayumiin"
+                    },
+                    "ja": {
+                        "name": "自信がある"
+                    },
+                    "th": {
+                        "name": "มั่นใจ"
+                    },
+                    "ko": {
+                        "name": "자신감 있는"
+                    },
+                    "es": {
+                        "name": "Seguro de sí mismo"
+                    },
+                    "pt": {
+                        "name": "Confiante"
+                    },
+                    "pt-BR": {
+                        "name": "Confiante"
+                    },
+                    "ru": {
+                        "name": "Уверенный"
+                    },
+                    "de": {
+                        "name": "Selbstsicher"
+                    },
+                    "fr": {
+                        "name": "Confiant"
+                    },
+                    "it": {
+                        "name": "Sicuro di sé"
+                    },
+                    "tr": {
+                        "name": "Kendinden Emin"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "68abd4e99b2146894876eccd",
+                "name": "Energetic",
+                "default": false,
+                "deleted": false,
+                "order": 2,
+                "type": "personality",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-25T03:13:45.117Z",
+                "updatedAt": "2025-08-25T09:16:25.647Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Energetic"
+                    },
+                    "ms": {
+                        "name": "Bertenaga"
+                    },
+                    "zh-Hans": {
+                        "name": "精力充沛"
+                    },
+                    "zh-Hant": {
+                        "name": "精力充沛"
+                    },
+                    "id": {
+                        "name": "Energetik"
+                    },
+                    "tl": {
+                        "name": "Masigla"
+                    },
+                    "ja": {
+                        "name": "エネルギッシュ"
+                    },
+                    "th": {
+                        "name": "กระปรี้กระเปร่า"
+                    },
+                    "ko": {
+                        "name": "활기찬"
+                    },
+                    "es": {
+                        "name": "Enérgico"
+                    },
+                    "pt": {
+                        "name": "Enérgico"
+                    },
+                    "pt-BR": {
+                        "name": "Energético"
+                    },
+                    "ru": {
+                        "name": "Энергичный"
+                    },
+                    "de": {
+                        "name": "Energetisch"
+                    },
+                    "fr": {
+                        "name": "Énergique"
+                    },
+                    "it": {
+                        "name": "Energico"
+                    },
+                    "tr": {
+                        "name": "Enerjik"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "689aabf285632a402b1bff01",
+                "name": "Loyal",
+                "default": false,
+                "deleted": false,
+                "order": 1,
+                "type": "personality",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-12T02:50:26.531Z",
+                "updatedAt": "2025-08-25T09:13:57.563Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Loyal"
+                    },
+                    "ms": {
+                        "name": "Setia"
+                    },
+                    "zh-Hans": {
+                        "name": "忠诚"
+                    },
+                    "zh-Hant": {
+                        "name": "忠誠"
+                    },
+                    "id": {
+                        "name": "Loyal"
+                    },
+                    "tl": {
+                        "name": "Matapat"
+                    },
+                    "ja": {
+                        "name": "忠実"
+                    },
+                    "th": {
+                        "name": "ภักดี"
+                    },
+                    "ko": {
+                        "name": "로열"
+                    },
+                    "es": {
+                        "name": "Leal"
+                    },
+                    "pt": {
+                        "name": "Leal"
+                    },
+                    "pt-BR": {
+                        "name": "Leal"
+                    },
+                    "ru": {
+                        "name": "Лояльный"
+                    },
+                    "de": {
+                        "name": "Loyal"
+                    },
+                    "fr": {
+                        "name": "Loyal"
+                    },
+                    "it": {
+                        "name": "Leale"
+                    },
+                    "tr": {
+                        "name": "Sadık"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "689aaa9185632a402b1bfe91",
+                "name": "Sci-Fi",
+                "default": false,
+                "deleted": false,
+                "order": 1,
+                "type": "genre",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-12T02:44:33.771Z",
+                "updatedAt": "2025-08-25T03:26:37.800Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Sci-Fi"
+                    },
+                    "ms": {
+                        "name": "Sci-Fi"
+                    },
+                    "zh-Hans": {
+                        "name": "科幻"
+                    },
+                    "zh-Hant": {
+                        "name": "科幻"
+                    },
+                    "id": {
+                        "name": "Fiksi Ilmiah"
+                    },
+                    "tl": {
+                        "name": "Sci-Fi"
+                    },
+                    "ja": {
+                        "name": "SF"
+                    },
+                    "th": {
+                        "name": "วิทยาศาสตร์"
+                    },
+                    "ko": {
+                        "name": "SF"
+                    },
+                    "es": {
+                        "name": "Ciencia ficción"
+                    },
+                    "pt": {
+                        "name": "Ficção Científica"
+                    },
+                    "pt-BR": {
+                        "name": "Ficção Científica"
+                    },
+                    "ru": {
+                        "name": "Научная фантастика"
+                    },
+                    "de": {
+                        "name": "Sci-Fi"
+                    },
+                    "fr": {
+                        "name": "Science-fiction"
+                    },
+                    "it": {
+                        "name": "Fantascienza"
+                    },
+                    "tr": {
+                        "name": "Bilim Kurgu"
+                    }
+                },
+                "status": "approved"
+            },
+            {
+                "_id": "689aa76c85632a402b1bfb21",
+                "name": "Futuristic",
+                "default": false,
+                "deleted": false,
+                "order": 6,
+                "type": "element",
+                "nsfw": false,
+                "moderated": false,
+                "languageCode": "en",
+                "availableLanguageCodes": [
+                    "en",
+                    "ms",
+                    "zh-Hans",
+                    "zh-Hant",
+                    "id",
+                    "tl",
+                    "ja",
+                    "th",
+                    "ko",
+                    "es",
+                    "pt",
+                    "pt-BR",
+                    "ru",
+                    "de",
+                    "fr",
+                    "it",
+                    "tr"
+                ],
+                "createdAt": "2025-08-12T02:31:08.297Z",
+                "updatedAt": "2025-09-02T05:48:19.477Z",
+                "__v": 0,
+                "searchFields": {
+                    "en": {
+                        "name": "Futuristic"
+                    },
+                    "ms": {
+                        "name": "Futuristik"
+                    },
+                    "zh-Hans": {
+                        "name": "未来主义"
+                    },
+                    "zh-Hant": {
+                        "name": "未來感"
+                    },
+                    "id": {
+                        "name": "Futuristik"
+                    },
+                    "tl": {
+                        "name": "Makabago"
+                    },
+                    "ja": {
+                        "name": "未来的な"
+                    },
+                    "th": {
+                        "name": "ล้ำอนาคต"
+                    },
+                    "ko": {
+                        "name": "미래지향적인"
+                    },
+                    "es": {
+                        "name": "Futurista"
+                    },
+                    "pt": {
+                        "name": "Futurista"
+                    },
+                    "pt-BR": {
+                        "name": "Futurista"
+                    },
+                    "ru": {
+                        "name": "Футуристичный"
+                    },
+                    "de": {
+                        "name": "Futuristisch"
+                    },
+                    "fr": {
+                        "name": "Futuriste"
+                    },
+                    "it": {
+                        "name": "Futuristico"
+                    },
+                    "tr": {
+                        "name": "Fütüristik"
+                    }
+                },
+                "status": "approved"
+            }
+        ]
+    }
+}

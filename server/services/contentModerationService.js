@@ -264,7 +264,7 @@ const moderationTool = {
                         }
                     }
                 },
-                nsfw: { 
+                nsfw: {
                     type: "boolean",
                     description: "Does content (text OR images) contain NSFW material?"
                 },
@@ -293,7 +293,7 @@ const moderationTool = {
                     type: "string",
                     enum: ["low", "medium", "high", "critical"]
                 },
-                reasoning: { 
+                reasoning: {
                     type: "string",
                     description: "2-4 sentences in natural prose explaining your findings. Do NOT use step labels, bullet points, or bold formatting. Write conversationally."
                 }
@@ -313,16 +313,27 @@ const extractImageUrls = (content) => {
 
     // Storyline/content cover
     if (data.cover?.url) {
-        images.push({ type: 'storyline_cover', name: 'Main Cover', url: data.cover.url });
-    }
-    if (content.cover?.url) {
-        images.push({ type: 'storyline_cover', name: 'Main Cover', url: content.cover.url });
-    }
-    if (typeof content.cover === 'string' && content.cover.startsWith('http')) {
-        images.push({ type: 'storyline_cover', name: 'Main Cover', url: content.cover });
+        images.push({ type: 'cover', name: 'Cover Image', url: data.cover.url });
+    } else if (content.cover?.url) {
+        images.push({ type: 'cover', name: 'Cover Image', url: content.cover.url });
+    } else if (typeof content.cover === 'string' && content.cover.startsWith('http')) {
+        images.push({ type: 'cover', name: 'Cover Image', url: content.cover });
     }
 
-    // Character avatars
+    // Single Character Export Media (jsoncharaexample style)
+    if (data.media && Array.isArray(data.media)) {
+        data.media.forEach((m, idx) => {
+            if (m.url && m.type === 'image') {
+                images.push({
+                    type: 'character_art',
+                    name: `Art ${idx + 1}`,
+                    url: m.url
+                });
+            }
+        });
+    }
+
+    // Character avatars (Storyline structure)
     if (data.characterSnapshots) {
         data.characterSnapshots.forEach((char, idx) => {
             if (char.cover?.url) {
@@ -352,10 +363,28 @@ const extractImageUrls = (content) => {
 };
 
 // ============================================
+// IMAGE PROCESSING UTILS
+// ============================================
+
+const downloadImageAsBase64 = async (url) => {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const contentType = response.headers.get('content-type') || 'image/jpeg';
+        return `data:${contentType};base64,${buffer.toString('base64')}`;
+    } catch (error) {
+        console.error(`Error downloading image ${url}:`, error.message);
+        return null; // Skip image on error
+    }
+};
+
+// ============================================
 // BUILD MULTIMODAL MESSAGE CONTENT
 // ============================================
 
-const buildMultimodalContent = (textPrompt, images, maxImages = 10) => {
+const buildMultimodalContent = async (textPrompt, images, maxImages = 10) => {
     const content = [];
 
     // Add text first
@@ -363,12 +392,27 @@ const buildMultimodalContent = (textPrompt, images, maxImages = 10) => {
 
     // Add images (limit to prevent token overflow)
     const imagesToAnalyze = images.slice(0, maxImages);
-    
+
     for (const image of imagesToAnalyze) {
+        if (!image.url) continue;
+
+        // Convert URL to base64 if it's a remote http/https URL
+        // (If it's already a data URI, use as is)
+        let imageUrl = image.url;
+        if (imageUrl.startsWith('http')) {
+            const base64Data = await downloadImageAsBase64(imageUrl);
+            if (base64Data) {
+                imageUrl = base64Data;
+            } else {
+                console.warn(`Skipping image ${image.name}: Download failed`);
+                continue;
+            }
+        }
+
         content.push({
             type: 'image_url',
             image_url: {
-                url: image.url,
+                url: imageUrl,
                 detail: 'low'  // resolution: 'low' for faster/cheaper, 'high' for detailed
             }
         });
@@ -513,11 +557,13 @@ Or if there's an issue: "While the text states the character is 20 years old, th
 
         // STEP 6: Build message content (text or multimodal)
         let messageContent;
-        
+
         if (hasImages) {
             // MULTIMODAL: text + images together
-            messageContent = buildMultimodalContent(prompt, images, maxImages);
-            console.log(`   📷 Sending ${Math.min(images.length, maxImages)} images for analysis`);
+            messageContent = await buildMultimodalContent(prompt, images, maxImages);
+            // Count valid images added
+            const validImages = messageContent.filter(c => c.type === 'image_url').length;
+            console.log(`   📷 Sending ${validImages} images for analysis (converted to base64)`);
         } else {
             // TEXT ONLY: just the prompt string
             messageContent = prompt;
@@ -531,11 +577,11 @@ Or if there's an issue: "While the text states the character is 20 years old, th
                     role: 'system',
                     content: `You are a content moderator who analyzes text and images together.
 
-CRITICAL FOR IMAGES: Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages. A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
+            CRITICAL FOR IMAGES: Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages.A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
 
-Write your reasoning in natural conversational prose. Do not use step labels, bullet points, bold text, or structured formatting.
+Write your reasoning in natural conversational prose.Do not use step labels, bullet points, bold text, or structured formatting.
 
-Always include the imageAnalysis field in your response, even if no images (set totalImages: 0).`
+Always include the imageAnalysis field in your response, even if no images(set totalImages: 0).`
                 },
                 { role: 'user', content: messageContent }
             ],
@@ -553,10 +599,10 @@ Always include the imageAnalysis field in your response, even if no images (set 
             try {
                 result = JSON.parse(toolCall.function.arguments);
                 console.log("✓ Structured output received and parsed");
-                console.log(`   Verdict: ${result.verdict}, Confidence: ${result.confidence}`);
+                console.log(`   Verdict: ${result.verdict}, Confidence: ${result.confidence} `);
                 if (result.imageAnalysis) {
-                    console.log(`   Images analyzed: ${result.imageAnalysis.totalImages || 0}`);
-                    console.log(`   Images flagged: ${result.imageAnalysis.flaggedImages || 0}`);
+                    console.log(`   Images analyzed: ${result.imageAnalysis.totalImages || 0} `);
+                    console.log(`   Images flagged: ${result.imageAnalysis.flaggedImages || 0} `);
                 }
             } catch (parseError) {
                 console.error("Tool arguments parsing failed:", parseError);
@@ -593,12 +639,12 @@ Always include the imageAnalysis field in your response, even if no images (set 
                 aiSummary: result.summary,
                 highlightedIssues: highlightedIssues,
                 fieldAnalysis: result.fieldAnalysis || {},
-                
+
                 // Image analysis results
                 imageAnalysis: imageAnalysis,
                 imagesAnalyzed: imageAnalysis.totalImages || 0,
                 imagesFlagged: imageAnalysis.flaggedImages || 0,
-                
+
                 categories: result.categories || [],
                 flaggedPolicies: result.flaggedPolicies || [],
                 offendingSnippet: highlightedIssues[0]?.quote || null,
@@ -620,7 +666,7 @@ Always include the imageAnalysis field in your response, even if no images (set 
                 ...(imageAnalysis.issues || []).map(issue => ({
                     type: issue.severity === 'critical' ? 'error' : 'warning',
                     field: issue.imageType,
-                    issue: `Image issue: ${issue.issue}`,
+                    issue: `Image issue: ${issue.issue} `,
                     quote: issue.imageName || issue.imageType,
                     suggestion: `Review ${issue.imageType} for ${issue.category}`,
                     source: 'image_moderation'
@@ -655,6 +701,10 @@ Always include the imageAnalysis field in your response, even if no images (set 
 
     } catch (error) {
         console.error('Auto-moderation error:', error);
+        if (error.response) {
+            console.error('API Error Response:', JSON.stringify(error.response.data || error.response, null, 2));
+        }
+        console.error('Error Message:', error.message);
 
         return {
             success: false,
@@ -662,7 +712,7 @@ Always include the imageAnalysis field in your response, even if no images (set 
             moderationResult: {
                 aiVerdict: 'flagged',
                 aiConfidence: 0,
-                aiReasoning: `Auto-moderation failed: ${error.message}. Requires manual review.`,
+                aiReasoning: `Auto - moderation failed: ${error.message}. Requires manual review.`,
                 aiSummary: 'AI analysis failed - needs human review',
                 highlightedIssues: [],
                 imageAnalysis: { totalImages: 0, flaggedImages: 0, issues: [] },
@@ -718,11 +768,11 @@ const extractPersonaFields = (persona) => ({
 
 const buildCharacterContent = (char) => `
 CHARACTER NAME: ${char.name || 'N/A'}
-USER: ${char.user || 'N/A'}
-VISIBILITY: ${char.visibility || 'N/A'}
+        USER: ${char.user || 'N/A'}
+        VISIBILITY: ${char.visibility || 'N/A'}
 MARKED AS NSFW: ${char.nsfw ? 'Yes' : 'No'}
 
-DESCRIPTION:
+        DESCRIPTION:
 ${char.description || 'No description'}
 
 DESCRIPTION SUMMARY:
@@ -734,43 +784,43 @@ ${char.promptDescription || 'No prompt description'}
 EXAMPLE DIALOGUE:
 ${char.exampleDialogue || 'No example dialogue'}
 
-TAGS: ${char.tags?.join(', ') || 'None'}
-`.trim();
+        TAGS: ${char.tags?.join(', ') || 'None'}
+        `.trim();
 
 const buildStorylineContent = (story) => {
     let content = `
-=== STORYLINE METADATA ===
-TITLE: ${story.title || 'N/A'}
-USER: ${story.user || 'N/A'}
-VISIBILITY: ${story.visibility || 'N/A'}
+            === STORYLINE METADATA ===
+                TITLE: ${story.title || 'N/A'}
+        USER: ${story.user || 'N/A'}
+        VISIBILITY: ${story.visibility || 'N/A'}
 MARKED AS NSFW: ${story.nsfw ? 'Yes' : 'No'}
-MONETIZED: ${story.monetized ? 'Yes' : 'No'}
+        MONETIZED: ${story.monetized ? 'Yes' : 'No'}
 
 === MAIN CONTENT FIELDS ===
 
-[FIELD: description]
+            [FIELD: description]
 ${story.description || 'No description'}
 
-[FIELD: plotSummary]
+        [FIELD: plotSummary]
 ${story.plotSummary || 'No plot summary'}
 
-[FIELD: plot]
+        [FIELD: plot]
 ${story.plot || 'No plot'}
 
-[FIELD: promptPlot]
+        [FIELD: promptPlot]
 ${story.promptPlot || 'No prompt plot'}
 
-[FIELD: firstMessage]
+        [FIELD: firstMessage]
 ${story.firstMessage || 'No first message'}
 
-[FIELD: promptGuideline]
+        [FIELD: promptGuideline]
 ${story.promptGuideline || 'None'}
 
-[FIELD: reminder]
+        [FIELD: reminder]
 ${story.reminder || 'None'}
 
-TAGS: ${story.tags?.join(', ') || 'None'}
-`;
+        TAGS: ${story.tags?.join(', ') || 'None'}
+        `;
 
     // Characters
     let characterContent = '';
@@ -778,17 +828,17 @@ TAGS: ${story.tags?.join(', ') || 'None'}
         characterContent = story.rawCharacterList;
     } else if (story.characterSnapshots?.length > 0) {
         characterContent = story.characterSnapshots.filter(c => !c.deleted).map((char, idx) => {
-            let charInfo = `--- CHARACTER ${idx + 1}: ${char.name || 'Unnamed'} ---\n`;
-            charInfo += `NSFW: ${char.nsfw ? 'Yes' : 'No'}\n`;
-            if (char.descriptionSummary) charInfo += `SUMMARY: ${char.descriptionSummary}\n`;
+            let charInfo = `-- - CHARACTER ${idx + 1}: ${char.name || 'Unnamed'} ---\n`;
+            charInfo += `NSFW: ${char.nsfw ? 'Yes' : 'No'} \n`;
+            if (char.descriptionSummary) charInfo += `SUMMARY: ${char.descriptionSummary} \n`;
             if (char.description) {
                 const desc = char.description.length > 2000 ? char.description.substring(0, 2000) + '...' : char.description;
-                charInfo += `DESCRIPTION:\n${desc}\n`;
+                charInfo += `DESCRIPTION: \n${desc} \n`;
             }
             return charInfo;
         }).join('\n');
     }
-    if (characterContent) content += `\n=== CHARACTERS ===\n${characterContent}\n`;
+    if (characterContent) content += `\n === CHARACTERS ===\n${characterContent} \n`;
 
     // Personas
     let personaContent = '';
@@ -796,35 +846,35 @@ TAGS: ${story.tags?.join(', ') || 'None'}
         personaContent = story.rawPersonaList;
     } else if (story.personaSnapshots?.length > 0) {
         personaContent = story.personaSnapshots.filter(p => !p.deleted).map((persona, idx) => {
-            let personaInfo = `--- PERSONA ${idx + 1}: ${persona.name || 'Unnamed'} ---\n`;
-            personaInfo += `NSFW: ${persona.nsfw ? 'Yes' : 'No'}\n`;
-            if (persona.descriptionSummary) personaInfo += `SUMMARY: ${persona.descriptionSummary}\n`;
+            let personaInfo = `-- - PERSONA ${idx + 1}: ${persona.name || 'Unnamed'} ---\n`;
+            personaInfo += `NSFW: ${persona.nsfw ? 'Yes' : 'No'} \n`;
+            if (persona.descriptionSummary) personaInfo += `SUMMARY: ${persona.descriptionSummary} \n`;
             if (persona.description) {
                 const desc = persona.description.length > 2000 ? persona.description.substring(0, 2000) + '...' : persona.description;
-                personaInfo += `DESCRIPTION:\n${desc}\n`;
+                personaInfo += `DESCRIPTION: \n${desc} \n`;
             }
             return personaInfo;
         }).join('\n');
     }
-    if (personaContent) content += `\n=== PERSONAS ===\n${personaContent}\n`;
+    if (personaContent) content += `\n === PERSONAS ===\n${personaContent} \n`;
 
     return content.trim();
 };
 
 const buildPersonaContent = (persona) => `
 PERSONA NAME: ${persona.name || 'N/A'}
-USER: ${persona.user || 'N/A'}
-VISIBILITY: ${persona.visibility || 'N/A'}
+        USER: ${persona.user || 'N/A'}
+        VISIBILITY: ${persona.visibility || 'N/A'}
 MARKED AS NSFW: ${persona.nsfw ? 'Yes' : 'No'}
 
-DESCRIPTION:
+        DESCRIPTION:
 ${persona.description || 'No description'}
 
 DESCRIPTION SUMMARY:
 ${persona.descriptionSummary || 'No summary'}
 
-TAGS: ${persona.tags?.join(', ') || 'None'}
-`.trim();
+        TAGS: ${persona.tags?.join(', ') || 'None'}
+        `.trim();
 
 const buildFullJsonContent = (data) => buildStorylineContent({
     title: data.title,
@@ -853,9 +903,39 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
         const data = jsonContent.data || jsonContent;
 
         console.log("🔍 Moderating full JSON import...");
-        console.log(`   - Title: ${data.title || 'Untitled'}`);
-        console.log(`   - Characters: ${data.characterSnapshots?.length || 0}`);
-        console.log(`   - Personas: ${data.personaSnapshots?.length || 0}`);
+
+        // DETECT CONTENT TYPE
+        // Scenario A: Single Character Import (has name, no title, no snapshots)
+        const isSingleCharacter = data.name && !data.title && (!data.characterSnapshots || data.characterSnapshots.length === 0);
+
+        if (isSingleCharacter) {
+            console.log("   -> Detected SINGLE CHARACTER import");
+            console.log(`   - Name: ${data.name || 'Unknown'} `);
+
+            const characterData = {
+                name: data.name,
+                description: data.description || '',
+                descriptionSummary: data.descriptionSummary || '',
+                promptDescription: data.promptDescription || '',
+                exampleDialogue: data.exampleDialogue || '',
+                firstMessage: data.firstMessage || '',
+                tags: (data.tags || []).concat(data._tagIds || []), // Handle different tag formats
+                cover: data.cover,
+                media: data.media || [], // Images from character card
+                nsfw: data.nsfw || false
+            };
+
+            return await autoModerateContent('character', characterData, {
+                includeImages: options.includeImages,
+                maxImages: options.maxImages || 5
+            });
+        }
+
+        // Scenario B: Storyline/World Import
+        console.log("   -> Detected STORYLINE/WORLD import");
+        console.log(`   - Title: ${data.title || 'Untitled'} `);
+        console.log(`   - Characters: ${data.characterSnapshots?.length || 0} `);
+        console.log(`   - Personas: ${data.personaSnapshots?.length || 0} `);
 
         const storylineData = {
             title: data.title || 'Imported Storyline',
@@ -889,7 +969,7 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
             moderationResult: {
                 aiVerdict: 'flagged',
                 aiConfidence: 0,
-                aiReasoning: `Auto-moderation failed: ${error.message}`,
+                aiReasoning: `Auto - moderation failed: ${error.message} `,
                 aiSummary: 'AI analysis failed - needs human review',
                 highlightedIssues: [],
                 imageAnalysis: { totalImages: 0, flaggedImages: 0, issues: [] },
