@@ -52,3 +52,4 @@ Respond with JSON only.`;
 module.exports = {
     buildModerationPrompt
 };
+

@@ -358,7 +358,7 @@ const importFromUrl = async (url) => {
             throw new Error('Invalid URL. Must start with http:// or https://');
         }
 
-        console.log(`📥 Fetching policies from: ${url}`);
+        console.log(` Fetching policies from: ${url}`);
 
         const response = await fetch(url, {
             headers: {
@@ -372,7 +372,7 @@ const importFromUrl = async (url) => {
         }
 
         const html = await response.text();
-        console.log(`📄 Received ${html.length} characters`);
+        console.log(` Received ${html.length} characters`);
 
         const policies = parseIsekaiPolicyHtml(html);
 
@@ -406,7 +406,7 @@ const importFromHtml = (html) => {
             throw new Error('HTML content is empty');
         }
 
-        console.log(`📥 Parsing pasted HTML (${html.length} characters)`);
+        console.log(`Parsing pasted HTML (${html.length} characters)`);
 
         const policies = parseIsekaiPolicyHtml(html);
 
@@ -443,7 +443,7 @@ const importFromFile = (fileContent, filename) => {
         const extension = filename?.split('.').pop()?.toLowerCase() || 'txt';
         let policies = [];
 
-        console.log(`📥 Parsing file: ${filename} (${extension})`);
+        console.log(` Parsing file: ${filename} (${extension})`);
 
         if (extension === 'json') {
             // Direct JSON import
