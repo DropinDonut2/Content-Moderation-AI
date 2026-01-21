@@ -28,3 +28,4 @@ coverage/
 
 # vite config
 client/vite.config.js  
+client/vite.config.js
