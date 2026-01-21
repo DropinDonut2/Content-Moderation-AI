@@ -466,7 +466,7 @@ router.post('/import-json', async (req, res) => {
             importSource: 'json_import',
 
             // Moderation results
-            moderationStatus: moderationResult.moderationResult?.aiVerdict === 'safe' ? 'approved' : 'pending',
+            moderationStatus: 'pending',
             moderationResult: moderationResult.moderationResult,
             flags: { ...moderationResult.flags }
         });

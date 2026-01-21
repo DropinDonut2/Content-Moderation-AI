@@ -1,5 +1,28 @@
+// ============================================
+// CONTENT MODERATION SERVICE (WITH IMAGE MODERATION)
+// ============================================
+// 
+// This service handles AI-powered content moderation for ISEKAI ZERO
+// 
+// FEATURES:
+// - Context-based text analysis
+// - IMAGE MODERATION (using Claude 4.5 Sonnet vision)
+// - 5-step analysis process
+// - Combination-based violation detection
+// - NSFW tag awareness
+// 
+// METHODS USED:
+// - Method 1: Prompt Engineering (context and instructions)
+// - Method 3: Tool Use (structured output via function calling)
+// - Multimodal: Text + Images sent together
+// ============================================
+
 const OpenAI = require('openai');
 const Policy = require('../models/Policy');
+
+// ============================================
+// OPENROUTER CLIENT SETUP
+// ============================================
 
 const openai = new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
@@ -14,7 +37,6 @@ const validateFields = (contentType, content) => {
     const issues = [];
     const warnings = [];
 
-    // Title/Name check
     const name = content.name || content.title;
     if (!name || name.trim().length === 0) {
         issues.push({
@@ -32,7 +54,6 @@ const validateFields = (contentType, content) => {
         });
     }
 
-    // Description check
     const description = content.description || '';
     if (description && description.length < 50) {
         warnings.push({
@@ -43,7 +64,6 @@ const validateFields = (contentType, content) => {
         });
     }
 
-    // NSFW + Minor conflict check
     if (content.nsfw === true) {
         const allText = [
             content.description,
@@ -75,7 +95,6 @@ const validateFields = (contentType, content) => {
         }
     }
 
-    // Check if content appears NSFW but not tagged
     if (!content.nsfw) {
         const allText = [
             content.description,
@@ -102,7 +121,6 @@ const validateFields = (contentType, content) => {
         }
     }
 
-    // Storyline-specific
     if (contentType === 'storyline') {
         if (!content.firstMessage || content.firstMessage.trim().length < 20) {
             warnings.push({
@@ -114,7 +132,6 @@ const validateFields = (contentType, content) => {
         }
     }
 
-    // Character-specific
     if (contentType === 'character') {
         if (!content.exampleDialogue) {
             warnings.push({
@@ -136,32 +153,33 @@ const validateFields = (contentType, content) => {
 };
 
 // ============================================
-// IMPROVED AI MODERATION WITH FIELD HIGHLIGHTING
+// TOOL DEFINITION (With Image Analysis Fields)
 // ============================================
 
 const moderationTool = {
     type: "function",
     function: {
         name: "submit_moderation_result",
-        description: "Submit the final verdict and analysis of the content moderation.",
+        description: "Submit the final content moderation analysis for both TEXT and IMAGES.",
         parameters: {
             type: "object",
             properties: {
                 verdict: {
                     type: "string",
                     enum: ["safe", "flagged", "rejected"],
-                    description: "The overall safety verdict."
+                    description: "Overall verdict for ALL content (text + images)"
                 },
                 confidence: {
                     type: "number",
-                    description: "Confidence score between 0.0 and 1.0"
+                    description: "Confidence in verdict (0.0-1.0)"
                 },
                 summary: {
                     type: "string",
-                    description: "A concise summary of the moderation findings (max 100 chars)."
+                    description: "Brief one-line summary in natural language (max 100 chars). No formatting or labels."
                 },
                 highlightedIssues: {
                     type: "array",
+                    description: "Text-based issues found. Empty array if safe.",
                     items: {
                         type: "object",
                         properties: {
@@ -175,6 +193,67 @@ const moderationTool = {
                         required: ["field", "quote", "policy", "severity", "reason"]
                     }
                 },
+                // ============================================
+                // IMAGE ANALYSIS FIELDS
+                // ============================================
+                imageAnalysis: {
+                    type: "object",
+                    description: "Analysis of all images in the content",
+                    properties: {
+                        totalImages: {
+                            type: "number",
+                            description: "Total number of images analyzed"
+                        },
+                        flaggedImages: {
+                            type: "number",
+                            description: "Number of images with issues"
+                        },
+                        overallImageVerdict: {
+                            type: "string",
+                            enum: ["safe", "flagged", "rejected"],
+                            description: "Overall verdict for images"
+                        },
+                        issues: {
+                            type: "array",
+                            description: "Specific image issues found",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    imageType: {
+                                        type: "string",
+                                        description: "Type of image (storyline_cover, character_avatar, persona_avatar)"
+                                    },
+                                    imageName: {
+                                        type: "string",
+                                        description: "Name/identifier of the image"
+                                    },
+                                    issue: {
+                                        type: "string",
+                                        description: "What's wrong with this image"
+                                    },
+                                    severity: {
+                                        type: "string",
+                                        enum: ["low", "medium", "high", "critical"]
+                                    },
+                                    category: {
+                                        type: "string",
+                                        enum: ["nudity", "minor_appearance", "violence", "hate_symbol", "other"],
+                                        description: "Category of the issue. Use 'minor_appearance' if character LOOKS underage regardless of stated age."
+                                    },
+                                    visualAgeAssessment: {
+                                        type: "string",
+                                        description: "Your assessment of how old the character APPEARS visually (e.g., 'appears adult', 'appears 14-16', 'childlike proportions')"
+                                    },
+                                    statedAge: {
+                                        type: "string",
+                                        description: "The age stated in the text for this character, if any"
+                                    }
+                                },
+                                required: ["imageType", "issue", "severity", "category"]
+                            }
+                        }
+                    }
+                },
                 fieldAnalysis: {
                     type: "object",
                     additionalProperties: {
@@ -185,7 +264,10 @@ const moderationTool = {
                         }
                     }
                 },
-                nsfw: { type: "boolean" },
+                nsfw: { 
+                    type: "boolean",
+                    description: "Does content (text OR images) contain NSFW material?"
+                },
                 nsfwReason: { type: "string" },
                 categories: {
                     type: "array",
@@ -211,127 +293,281 @@ const moderationTool = {
                     type: "string",
                     enum: ["low", "medium", "high", "critical"]
                 },
-                reasoning: { type: "string" }
+                reasoning: { 
+                    type: "string",
+                    description: "2-4 sentences in natural prose explaining your findings. Do NOT use step labels, bullet points, or bold formatting. Write conversationally."
+                }
             },
-            required: ["verdict", "confidence", "summary", "highlightedIssues", "nsfw", "recommendedAction", "reasoning"]
+            required: ["verdict", "confidence", "summary", "highlightedIssues", "imageAnalysis", "nsfw", "recommendedAction", "reasoning"]
         }
     }
 };
 
 // ============================================
-// IMPROVED AI MODERATION WITH FIELD HIGHLIGHTING
+// IMAGE URL EXTRACTION
 // ============================================
 
-/**
- * Auto-moderate content with field-specific highlighting
- * Returns detailed analysis with exact quotes from each problematic field
- */
-const autoModerateContent = async (contentType, content) => {
+const extractImageUrls = (content) => {
+    const images = [];
+    const data = content.data || content;
+
+    // Storyline/content cover
+    if (data.cover?.url) {
+        images.push({ type: 'storyline_cover', name: 'Main Cover', url: data.cover.url });
+    }
+    if (content.cover?.url) {
+        images.push({ type: 'storyline_cover', name: 'Main Cover', url: content.cover.url });
+    }
+    if (typeof content.cover === 'string' && content.cover.startsWith('http')) {
+        images.push({ type: 'storyline_cover', name: 'Main Cover', url: content.cover });
+    }
+
+    // Character avatars
+    if (data.characterSnapshots) {
+        data.characterSnapshots.forEach((char, idx) => {
+            if (char.cover?.url) {
+                images.push({
+                    type: 'character_avatar',
+                    name: char.name || `Character ${idx + 1}`,
+                    url: char.cover.url
+                });
+            }
+        });
+    }
+
+    // Persona avatars
+    if (data.personaSnapshots) {
+        data.personaSnapshots.forEach((persona, idx) => {
+            if (persona.cover?.url) {
+                images.push({
+                    type: 'persona_avatar',
+                    name: persona.name || `Persona ${idx + 1}`,
+                    url: persona.cover.url
+                });
+            }
+        });
+    }
+
+    return images;
+};
+
+// ============================================
+// BUILD MULTIMODAL MESSAGE CONTENT
+// ============================================
+
+const buildMultimodalContent = (textPrompt, images, maxImages = 10) => {
+    const content = [];
+
+    // Add text first
+    content.push({ type: 'text', text: textPrompt });
+
+    // Add images (limit to prevent token overflow)
+    const imagesToAnalyze = images.slice(0, maxImages);
+    
+    for (const image of imagesToAnalyze) {
+        content.push({
+            type: 'image_url',
+            image_url: {
+                url: image.url,
+                detail: 'low'  // resolution: 'low' for faster/cheaper, 'high' for detailed
+            }
+        });
+    }
+
+    return content;
+};
+
+// ============================================
+// MAIN MODERATION FUNCTION (WITH IMAGES)
+// ============================================
+
+const autoModerateContent = async (contentType, content, options = {}) => {
     try {
-        // Run field validation first
+        const { includeImages = true, maxImages = 5 } = options;
+
+        // STEP 1: Field validation
         const validation = validateFields(contentType, content);
         if (validation.issues.length > 0 || validation.warnings.length > 0) {
-            console.log('📋 Field validation results:', validation.all.length, 'issues/warnings');
+            console.log(' Field validation results:', validation.all.length, 'issues/warnings');
         }
 
-        // Get active policies
+        // STEP 2: Get policies
         const policies = await Policy.find({ isActive: true });
 
-        // Build content string based on type
-        let contentToAnalyze = '';
+        // STEP 3: Build content strings
         let fieldsToAnalyze = {};
 
         switch (contentType) {
             case 'character':
-                contentToAnalyze = buildCharacterContent(content);
                 fieldsToAnalyze = extractCharacterFields(content);
                 break;
             case 'storyline':
-                contentToAnalyze = buildStorylineContent(content);
                 fieldsToAnalyze = extractStorylineFields(content);
                 break;
             case 'persona':
-                contentToAnalyze = buildPersonaContent(content);
                 fieldsToAnalyze = extractPersonaFields(content);
                 break;
             default:
-                contentToAnalyze = JSON.stringify(content);
                 fieldsToAnalyze = { raw: JSON.stringify(content) };
         }
 
-        // Build policy context with clear examples
         const policyContext = policies.map(p =>
             `- ${p.policyId}: ${p.title} (${p.severity.toUpperCase()}) - ${p.description}`
         ).join('\n');
 
-        // Build field-by-field content for clearer analysis
         const fieldBreakdown = Object.entries(fieldsToAnalyze)
             .filter(([_, value]) => value && value.trim())
             .map(([field, value]) => `[FIELD: ${field}]\n${value}`)
             .join('\n\n---\n\n');
 
-        // =====================================================
-        // IMPROVED PROMPT WITH FIELD-SPECIFIC HIGHLIGHTING
-        // =====================================================
-        const prompt = `You are an expert content moderator for ISEKAI ZERO, a roleplay/storytelling platform. 
-Your job is to analyze content and identify SPECIFIC text segments that may violate policies.
+        const isMarkedNSFW = content.nsfw === true;
 
-## POLICIES TO CHECK:
+        // STEP 4: Extract images
+        const images = includeImages ? extractImageUrls(content) : [];
+        const hasImages = images.length > 0;
+
+        console.log(' Sending to AI for analysis...');
+        console.log(`   Content type: ${contentType}`);
+        console.log(`   NSFW tagged: ${isMarkedNSFW}`);
+        console.log(`   Fields to analyze: ${Object.keys(fieldsToAnalyze).join(', ')}`);
+        console.log(`   Images to analyze: ${images.length}`);
+
+        // STEP 5: Build prompt
+        const prompt = `You are an expert content moderator for ISEKAI ZERO, a fictional roleplay and storytelling platform.
+
+Analyze the text content and any attached images for policy violations. Write your reasoning in natural prose - do NOT use step labels, numbered lists, or bold formatting in your reasoning field.
+
+## CONTENT METADATA
+- Content Type: ${contentType}
+- Marked as NSFW: ${isMarkedNSFW ? 'YES' : 'NO'}
+- Images Attached: ${hasImages ? `YES (${images.length} images)` : 'NO'}
+${hasImages ? `- Image Types: ${images.map(i => `${i.type}: ${i.name}`).join(', ')}` : ''}
+
+${hasImages ? `
+## IMAGE ANALYSIS - CRITICAL
+
+You have ${images.length} image(s) to analyze. This is extremely important:
+
+### MINOR APPEARANCE CHECK (CRITICAL!)
+You must evaluate whether each character in the images VISUALLY APPEARS to be a minor, regardless of what the text claims their age is.
+
+RED FLAGS for minor appearance:
+- Childlike body proportions (small frame, flat chest, short stature relative to head size)
+- Childlike facial features (large eyes relative to face, round cheeks, small nose/mouth)
+- School uniforms or childlike clothing
+- Overall appearance suggesting someone under 18
+
+IMPORTANT: A stated age of "18", "20", "100", or "1000 year old vampire" does NOT matter if the character LOOKS like a child. The "actually she's 1000 years old" excuse is not valid. Judge by VISUAL APPEARANCE.
+
+If a character LOOKS like a minor AND is depicted in sexual/suggestive content:
+- Revealing clothing, suggestive poses, sexual context = REJECT
+- This applies even if text says they're an adult
+
+### Other Image Checks:
+- Nudity in non-NSFW tagged content = FLAG
+- Extreme violence/gore = FLAG  
+- Hate symbols = FLAG
+- Adult-appearing characters in NSFW content = ALLOWED
+` : ''}
+
+## TEXT ANALYSIS
+
+Read ALL text fields carefully, including character descriptions. Look for:
+- Stated ages in character descriptions (e.g., "Age: 20", "18 years old", etc.)
+- Extract and note the age of EACH character mentioned
+- Sexual content involving minors = REJECT
+- Medical misinformation with specific claims = FLAG
+- Hate speech targeting real groups = FLAG
+
+IMPORTANT: Character ages are often listed in their descriptions like "Age: 20" or "Species: X, Age: Y". Read these carefully and compare to the visual appearance in images.
+
+Note: Comfort themes (Mommy/Daddy dynamics), fantasy violence, and properly-tagged NSFW adult content are allowed.
+
+## POLICIES:
 ${policyContext}
 
-## CONTENT TO ANALYZE (Field by Field):
+## CONTENT TO ANALYZE:
+
 ${fieldBreakdown}
 
-## YOUR TASK:
-1. Read each field carefully: firstMessage, promptPlot, plot, plotSummary, description, etc.
-2. Find ANY text segments that may violate the policies above
-3. Call the 'submit_moderation_result' tool with your detailed analysis info.
+${hasImages ? `
+## IMAGES TO ANALYZE:
+
+${images.map((img, idx) => `IMAGE ${idx + 1}: ${img.type} - "${img.name}"`).join('\n')}
+
+Look at each image carefully. Does any character APPEAR to be under 18? Consider their body proportions, facial features, and overall appearance - not just stated ages.
+` : ''}
+
+## OUTPUT INSTRUCTIONS
+
+In your reasoning field, write 2-4 sentences in natural prose explaining what you found. Do NOT use:
+- Step labels (STEP 1, STEP 2, etc.)
+- Bold text or markdown formatting
+- Bullet points or numbered lists
+- Labels like "REASONABLE PERSON TEST"
+
+Just write naturally, like: "This is an adult fantasy game with explicit content properly tagged as NSFW. All characters have stated ages of 18+ and appear visually adult in the images. No policy violations detected."
+
+Or if there's an issue: "While the text states the character is 20 years old, the image depicts a character with childlike proportions in revealing clothing. This combination requires review regardless of stated age."
 `;
 
-        console.log('🤖 Sending to AI for analysis...');
-        console.log(`   Content type: ${contentType}`);
-        console.log(`   Fields to analyze: ${Object.keys(fieldsToAnalyze).join(', ')}`);
+        // STEP 6: Build message content (text or multimodal)
+        let messageContent;
+        
+        if (hasImages) {
+            // MULTIMODAL: text + images together
+            messageContent = buildMultimodalContent(prompt, images, maxImages);
+            console.log(`   📷 Sending ${Math.min(images.length, maxImages)} images for analysis`);
+        } else {
+            // TEXT ONLY: just the prompt string
+            messageContent = prompt;
+        }
 
+        // STEP 7: Call AI
         const response = await openai.chat.completions.create({
             model: process.env.AI_MODEL || 'anthropic/claude-4.5-sonnet',
             messages: [
                 {
                     role: 'system',
-                    content: 'You are a content moderation AI. usage of the submit_moderation_result tool is mandatory.'
+                    content: `You are a content moderator who analyzes text and images together.
+
+CRITICAL FOR IMAGES: Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages. A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
+
+Write your reasoning in natural conversational prose. Do not use step labels, bullet points, bold text, or structured formatting.
+
+Always include the imageAnalysis field in your response, even if no images (set totalImages: 0).`
                 },
-                { role: 'user', content: prompt }
+                { role: 'user', content: messageContent }
             ],
             tools: [moderationTool],
-            // force the tool call
             tool_choice: { type: "function", function: { name: "submit_moderation_result" } },
-            temperature: 0.1,
+            temperature: 0.15,
             max_tokens: 4000
         });
 
-        // --------------------------------------------------------
-        // TOOL CALL PARSING
-        // --------------------------------------------------------
-
+        // STEP 8: Parse response
         const toolCall = response.choices[0].message.tool_calls?.[0];
-
         let result;
 
         if (toolCall && toolCall.function && toolCall.function.name === 'submit_moderation_result') {
             try {
                 result = JSON.parse(toolCall.function.arguments);
-                console.log("✓ Structured output (tool call) received and parsed");
+                console.log("✓ Structured output received and parsed");
                 console.log(`   Verdict: ${result.verdict}, Confidence: ${result.confidence}`);
+                if (result.imageAnalysis) {
+                    console.log(`   Images analyzed: ${result.imageAnalysis.totalImages || 0}`);
+                    console.log(`   Images flagged: ${result.imageAnalysis.flaggedImages || 0}`);
+                }
             } catch (parseError) {
                 console.error("Tool arguments parsing failed:", parseError);
-                console.error("Raw arguments:", toolCall.function.arguments);
                 throw new Error("AI produced invalid JSON in tool arguments");
             }
         } else {
-            console.error("AI failed to call tool. Response content:", response.choices[0].message.content);
+            console.error("AI failed to call tool.");
             throw new Error("AI did not use the structured output tool");
         }
 
-        // Process highlighted issues for display
+        // STEP 9: Process and return results
         const highlightedIssues = (result.highlightedIssues || []).map(issue => ({
             field: issue.field || 'unknown',
             quote: issue.quote || '',
@@ -341,6 +577,13 @@ ${fieldBreakdown}
             reason: issue.reason || ''
         }));
 
+        const imageAnalysis = result.imageAnalysis || {
+            totalImages: images.length,
+            flaggedImages: 0,
+            overallImageVerdict: 'safe',
+            issues: []
+        };
+
         return {
             success: true,
             moderationResult: {
@@ -348,12 +591,14 @@ ${fieldBreakdown}
                 aiConfidence: result.confidence,
                 aiReasoning: result.reasoning,
                 aiSummary: result.summary,
-
-                // NEW: Field-specific highlighted issues
                 highlightedIssues: highlightedIssues,
                 fieldAnalysis: result.fieldAnalysis || {},
-
-                // Legacy fields for backwards compatibility
+                
+                // Image analysis results
+                imageAnalysis: imageAnalysis,
+                imagesAnalyzed: imageAnalysis.totalImages || 0,
+                imagesFlagged: imageAnalysis.flaggedImages || 0,
+                
                 categories: result.categories || [],
                 flaggedPolicies: result.flaggedPolicies || [],
                 offendingSnippet: highlightedIssues[0]?.quote || null,
@@ -363,18 +608,23 @@ ${fieldBreakdown}
                 humanReviewPriority: result.humanReviewPriority,
                 moderatedAt: new Date()
             },
-            // Suggestions for creator
             suggestionsForCreator: [
-                // Convert highlighted issues to suggestions
                 ...highlightedIssues.map(issue => ({
                     type: issue.severity === 'critical' ? 'error' : 'warning',
                     field: issue.field,
-                    issue: `Potential ${issue.policyTitle || issue.policy} violation`,
+                    issue: `Potential ${issue.policyTitle || issue.policy} concern`,
                     quote: issue.quote,
                     suggestion: issue.reason,
                     source: 'ai_moderation'
                 })),
-                // Add field validation issues
+                ...(imageAnalysis.issues || []).map(issue => ({
+                    type: issue.severity === 'critical' ? 'error' : 'warning',
+                    field: issue.imageType,
+                    issue: `Image issue: ${issue.issue}`,
+                    quote: issue.imageName || issue.imageType,
+                    suggestion: `Review ${issue.imageType} for ${issue.category}`,
+                    source: 'image_moderation'
+                })),
                 ...validation.all.map(v => ({
                     type: v.severity === 'critical' ? 'error' : v.severity,
                     field: v.field,
@@ -383,17 +633,23 @@ ${fieldBreakdown}
                     source: 'field_validation'
                 }))
             ],
-            
             fieldValidation: validation,
-
             flags: {
                 isNsfw: result.nsfw || false,
                 hasViolence: result.categories?.some(c => c.category === 'violence' && c.flagged) || false,
                 hasHateSpeech: result.categories?.some(c => c.category === 'hate_speech' && c.flagged) || false,
                 hasChildSafetyConcern: result.flaggedPolicies?.includes('POL-005') || false,
-                needsManualReview: result.verdict !== 'safe',
+                hasImageIssues: (imageAnalysis.flaggedImages || 0) > 0,
+                needsManualReview: true,
                 hasFieldErrors: !validation.isValid,
-                hasFieldWarnings: validation.hasWarnings
+                hasFieldWarnings: validation.hasWarnings,
+                highlightedIssueCount: highlightedIssues.length,
+                imageIssueCount: (imageAnalysis.issues || []).length
+            },
+            meta: {
+                imagesProvided: images.length,
+                imagesAnalyzed: Math.min(images.length, maxImages),
+                imageUrls: images.slice(0, maxImages).map(i => ({ type: i.type, name: i.name }))
             }
         };
 
@@ -409,15 +665,15 @@ ${fieldBreakdown}
                 aiReasoning: `Auto-moderation failed: ${error.message}. Requires manual review.`,
                 aiSummary: 'AI analysis failed - needs human review',
                 highlightedIssues: [],
+                imageAnalysis: { totalImages: 0, flaggedImages: 0, issues: [] },
                 fieldAnalysis: {},
                 categories: [],
+                flaggedPolicies: [],
                 recommendedAction: 'review',
                 humanReviewPriority: 'high',
                 moderatedAt: new Date()
             },
-            flags: {
-                needsManualReview: true
-            }
+            flags: { needsManualReview: true }
         };
     }
 };
@@ -426,60 +682,41 @@ ${fieldBreakdown}
 // FIELD EXTRACTION HELPERS
 // ============================================
 
-/**
- * Extract individual fields from storyline for analysis
- */
-const extractStorylineFields = (story) => {
-    return {
-        title: story.title || '',
-        description: story.description || '',
-        plotSummary: story.plotSummary || '',
-        plot: story.plot || '',
-        promptPlot: story.promptPlot || '',
-        firstMessage: story.firstMessage || '',
-        promptGuideline: story.promptGuideline || '',
-        reminder: story.reminder || '',
-        characterDescriptions: story.rawCharacterList || '',
-        personaDescriptions: story.rawPersonaList || '',
-        tags: (story.tags || []).join(', ')
-    };
-};
+const extractStorylineFields = (story) => ({
+    title: story.title || '',
+    description: story.description || '',
+    plotSummary: story.plotSummary || '',
+    plot: story.plot || '',
+    promptPlot: story.promptPlot || '',
+    firstMessage: story.firstMessage || '',
+    promptGuideline: story.promptGuideline || '',
+    reminder: story.reminder || '',
+    characterDescriptions: story.rawCharacterList || '',
+    personaDescriptions: story.rawPersonaList || '',
+    tags: (story.tags || []).join(', ')
+});
 
-/**
- * Extract individual fields from character for analysis
- */
-const extractCharacterFields = (char) => {
-    return {
-        name: char.name || '',
-        description: char.description || '',
-        descriptionSummary: char.descriptionSummary || '',
-        promptDescription: char.promptDescription || '',
-        exampleDialogue: char.exampleDialogue || '',
-        tags: (char.tags || []).join(', ')
-    };
-};
+const extractCharacterFields = (char) => ({
+    name: char.name || '',
+    description: char.description || '',
+    descriptionSummary: char.descriptionSummary || '',
+    promptDescription: char.promptDescription || '',
+    exampleDialogue: char.exampleDialogue || '',
+    tags: (char.tags || []).join(', ')
+});
 
-/**
- * Extract individual fields from persona for analysis
- */
-const extractPersonaFields = (persona) => {
-    return {
-        name: persona.name || '',
-        description: persona.description || '',
-        descriptionSummary: persona.descriptionSummary || '',
-        tags: (persona.tags || []).join(', ')
-    };
-};
+const extractPersonaFields = (persona) => ({
+    name: persona.name || '',
+    description: persona.description || '',
+    descriptionSummary: persona.descriptionSummary || '',
+    tags: (persona.tags || []).join(', ')
+});
 
 // ============================================
-// CONTENT BUILDERS (For full text analysis)
+// CONTENT BUILDERS
 // ============================================
 
-/**
- * Build content string for character analysis
- */
-const buildCharacterContent = (char) => {
-    return `
+const buildCharacterContent = (char) => `
 CHARACTER NAME: ${char.name || 'N/A'}
 USER: ${char.user || 'N/A'}
 VISIBILITY: ${char.visibility || 'N/A'}
@@ -499,11 +736,7 @@ ${char.exampleDialogue || 'No example dialogue'}
 
 TAGS: ${char.tags?.join(', ') || 'None'}
 `.trim();
-};
 
-/**
- * Build content string for storyline analysis
- */
 const buildStorylineContent = (story) => {
     let content = `
 === STORYLINE METADATA ===
@@ -539,95 +772,46 @@ ${story.reminder || 'None'}
 TAGS: ${story.tags?.join(', ') || 'None'}
 `;
 
-    // Add character content if available
+    // Characters
     let characterContent = '';
-    // Check for rawCharacterList (pre-built string)
-    if (story.rawCharacterList && story.rawCharacterList.trim()) {
+    if (story.rawCharacterList?.trim()) {
         characterContent = story.rawCharacterList;
-    }
-    // Check for characterSnapshots (array of objects)
-    else if (story.characterSnapshots && story.characterSnapshots.length > 0) {
-        characterContent = story.characterSnapshots
-            .filter(c => !c.deleted)
-            .map((char, idx) => {
-                let charInfo = `--- CHARACTER ${idx + 1}: ${char.name || 'Unnamed'} ---\n`;
-                charInfo += `NSFW: ${char.nsfw ? 'Yes' : 'No'}\n`;
-                if (char.descriptionSummary) {
-                    charInfo += `SUMMARY: ${char.descriptionSummary}\n`;
-                }
-                if (char.description) {
-                    const desc = char.description.length > 2000
-                        ? char.description.substring(0, 2000) + '... [TRUNCATED]'
-                        : char.description;
-                    charInfo += `DESCRIPTION:\n${desc}\n`;
-                }
-                if (char.tagSnapshots && char.tagSnapshots.length > 0) {
-                    const tags = char.tagSnapshots.filter(t => !t.deleted).map(t => t.name).join(', ');
-                    charInfo += `TAGS: ${tags}\n`;
-                }
-                return charInfo;
-            })
-            .join('\n');
-    }
-    // Check for characters array (might be objects or IDs)
-    else if (story.characters && story.characters.length > 0) {
-        characterContent = story.characters.map((char, idx) => {
-            if (typeof char === 'string') return `Character ID: ${char}`;
+    } else if (story.characterSnapshots?.length > 0) {
+        characterContent = story.characterSnapshots.filter(c => !c.deleted).map((char, idx) => {
             let charInfo = `--- CHARACTER ${idx + 1}: ${char.name || 'Unnamed'} ---\n`;
-            if (char.description) charInfo += `DESCRIPTION: ${char.description.substring(0, 1000)}\n`;
+            charInfo += `NSFW: ${char.nsfw ? 'Yes' : 'No'}\n`;
+            if (char.descriptionSummary) charInfo += `SUMMARY: ${char.descriptionSummary}\n`;
+            if (char.description) {
+                const desc = char.description.length > 2000 ? char.description.substring(0, 2000) + '...' : char.description;
+                charInfo += `DESCRIPTION:\n${desc}\n`;
+            }
             return charInfo;
         }).join('\n');
     }
+    if (characterContent) content += `\n=== CHARACTERS ===\n${characterContent}\n`;
 
-    if (characterContent) {
-        content += `\n=== CHARACTERS ===\n[FIELD: characterDescriptions]\n${characterContent}\n`;
-    }
-
-    // Add persona content if available
+    // Personas
     let personaContent = '';
-    if (story.rawPersonaList && story.rawPersonaList.trim()) {
+    if (story.rawPersonaList?.trim()) {
         personaContent = story.rawPersonaList;
-    }
-    else if (story.personaSnapshots && story.personaSnapshots.length > 0) {
-        personaContent = story.personaSnapshots
-            .filter(p => !p.deleted)
-            .map((persona, idx) => {
-                let personaInfo = `--- PERSONA ${idx + 1}: ${persona.name || 'Unnamed'} ---\n`;
-                personaInfo += `NSFW: ${persona.nsfw ? 'Yes' : 'No'}\n`;
-                if (persona.descriptionSummary) {
-                    personaInfo += `SUMMARY: ${persona.descriptionSummary}\n`;
-                }
-                if (persona.description) {
-                    const desc = persona.description.length > 2000
-                        ? persona.description.substring(0, 2000) + '... [TRUNCATED]'
-                        : persona.description;
-                    personaInfo += `DESCRIPTION:\n${desc}\n`;
-                }
-                return personaInfo;
-            })
-            .join('\n');
-    }
-    else if (story.personas && story.personas.length > 0) {
-        personaContent = story.personas.map((persona, idx) => {
-            if (typeof persona === 'string') return `Persona ID: ${persona}`;
+    } else if (story.personaSnapshots?.length > 0) {
+        personaContent = story.personaSnapshots.filter(p => !p.deleted).map((persona, idx) => {
             let personaInfo = `--- PERSONA ${idx + 1}: ${persona.name || 'Unnamed'} ---\n`;
-            if (persona.description) personaInfo += `DESCRIPTION: ${persona.description.substring(0, 1000)}\n`;
+            personaInfo += `NSFW: ${persona.nsfw ? 'Yes' : 'No'}\n`;
+            if (persona.descriptionSummary) personaInfo += `SUMMARY: ${persona.descriptionSummary}\n`;
+            if (persona.description) {
+                const desc = persona.description.length > 2000 ? persona.description.substring(0, 2000) + '...' : persona.description;
+                personaInfo += `DESCRIPTION:\n${desc}\n`;
+            }
             return personaInfo;
         }).join('\n');
     }
-
-    if (personaContent) {
-        content += `\n=== PERSONAS ===\n[FIELD: personaDescriptions]\n${personaContent}\n`;
-    }
+    if (personaContent) content += `\n=== PERSONAS ===\n${personaContent}\n`;
 
     return content.trim();
 };
 
-/**
- * Build content string for persona analysis
- */
-const buildPersonaContent = (persona) => {
-    return `
+const buildPersonaContent = (persona) => `
 PERSONA NAME: ${persona.name || 'N/A'}
 USER: ${persona.user || 'N/A'}
 VISIBILITY: ${persona.visibility || 'N/A'}
@@ -641,72 +825,29 @@ ${persona.descriptionSummary || 'No summary'}
 
 TAGS: ${persona.tags?.join(', ') || 'None'}
 `.trim();
-};
 
-/**
- * Build full JSON content string (for JSON imports)
- */
-const buildFullJsonContent = (data) => {
-    return buildStorylineContent({
-        title: data.title,
-        user: data.creatorUsername || data._userId,
-        visibility: data.visibility,
-        nsfw: data.nsfw,
-        monetized: data.monetized,
-        description: data.description,
-        plotSummary: data.plotSummary,
-        plot: data.plot,
-        promptPlot: data.promptPlot,
-        firstMessage: data.firstMessage,
-        promptGuideline: data.promptGuideline,
-        reminder: data.reminder,
-        tags: data.tagSnapshots?.filter(t => !t.deleted).map(t => t.name) || [],
-        characterSnapshots: data.characterSnapshots,
-        personaSnapshots: data.personaSnapshots
-    });
-};
+const buildFullJsonContent = (data) => buildStorylineContent({
+    title: data.title,
+    user: data.creatorUsername || data._userId,
+    visibility: data.visibility,
+    nsfw: data.nsfw,
+    monetized: data.monetized,
+    description: data.description,
+    plotSummary: data.plotSummary,
+    plot: data.plot,
+    promptPlot: data.promptPlot,
+    firstMessage: data.firstMessage,
+    promptGuideline: data.promptGuideline,
+    reminder: data.reminder,
+    tags: data.tagSnapshots?.filter(t => !t.deleted).map(t => t.name) || [],
+    characterSnapshots: data.characterSnapshots,
+    personaSnapshots: data.personaSnapshots
+});
 
-/**
- * Extract all image URLs from the JSON for multimodal analysis
- */
-const extractImageUrls = (json) => {
-    const data = json.data || json;
-    const images = [];
+// ============================================
+// FULL JSON IMPORT MODERATION
+// ============================================
 
-    if (data.cover?.url) {
-        images.push({ type: 'storyline_cover', url: data.cover.url });
-    }
-
-    if (data.characterSnapshots) {
-        data.characterSnapshots.forEach((char, idx) => {
-            if (char.cover?.url) {
-                images.push({
-                    type: 'character_avatar',
-                    name: char.name || `Character ${idx + 1}`,
-                    url: char.cover.url
-                });
-            }
-        });
-    }
-
-    if (data.personaSnapshots) {
-        data.personaSnapshots.forEach((persona, idx) => {
-            if (persona.cover?.url) {
-                images.push({
-                    type: 'persona_avatar',
-                    name: persona.name || `Persona ${idx + 1}`,
-                    url: persona.cover.url
-                });
-            }
-        });
-    }
-
-    return images;
-};
-
-/**
- * Auto-moderate full JSON import
- */
 const autoModerateFullJson = async (jsonContent, options = { includeImages: true }) => {
     try {
         const data = jsonContent.data || jsonContent;
@@ -716,7 +857,6 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
         console.log(`   - Characters: ${data.characterSnapshots?.length || 0}`);
         console.log(`   - Personas: ${data.personaSnapshots?.length || 0}`);
 
-        // Convert to storyline format
         const storylineData = {
             title: data.title || 'Imported Storyline',
             user: data.creatorUsername || data._userId || 'json_import',
@@ -730,52 +870,42 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
             firstMessage: data.firstMessage || '',
             promptGuideline: data.promptGuideline || '',
             reminder: data.reminder || '',
+            cover: data.cover,
             characterSnapshots: data.characterSnapshots,
             personaSnapshots: data.personaSnapshots,
             tags: data.tagSnapshots?.filter(t => !t.deleted).map(t => t.name) || []
         };
 
-        // Use the main moderation function
-        const moderationResult = await autoModerateContent('storyline', storylineData);
-
-        // Add image metadata
-        if (options.includeImages) {
-            const images = extractImageUrls(jsonContent);
-            if (images.length > 0) {
-                console.log(`   - Images found: ${images.length}`);
-                moderationResult.meta = {
-                    ...(moderationResult.meta || {}),
-                    imagesFound: images.length,
-                    imageUrls: images.slice(0, 5).map(i => ({ type: i.type, name: i.name }))
-                };
-            }
-        }
-
-        return moderationResult;
+        return await autoModerateContent('storyline', storylineData, {
+            includeImages: options.includeImages,
+            maxImages: options.maxImages || 5
+        });
 
     } catch (error) {
         console.error('Full JSON moderation error:', error);
-
         return {
             success: false,
             error: error.message,
             moderationResult: {
                 aiVerdict: 'flagged',
                 aiConfidence: 0,
-                aiReasoning: `Auto-moderation failed: ${error.message}. Requires manual review.`,
+                aiReasoning: `Auto-moderation failed: ${error.message}`,
                 aiSummary: 'AI analysis failed - needs human review',
                 highlightedIssues: [],
+                imageAnalysis: { totalImages: 0, flaggedImages: 0, issues: [] },
                 categories: [],
                 recommendedAction: 'review',
                 humanReviewPriority: 'high',
                 moderatedAt: new Date()
             },
-            flags: {
-                needsManualReview: true
-            }
+            flags: { needsManualReview: true }
         };
     }
 };
+
+// ============================================
+// EXPORTS
+// ============================================
 
 module.exports = {
     autoModerateContent,

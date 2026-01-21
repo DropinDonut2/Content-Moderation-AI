@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
             };
         }
 
-        // Use the new, better service (Claude 4.5 Sonnet + Tool Calling)
+        // Use (Claude 4.5 Sonnet + Tool Calling)
         const result = await autoModerateContent(contentType, contentData);
 
         // Enhance result with metadata that the old endpoint might expect (or for logging)

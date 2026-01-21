@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import SuggestionsPanel from './SuggestionsPanel'
 import { reviewCharacter, reviewStoryline, reviewPersona, rerunModeration } from '../../services/api'
@@ -125,6 +125,8 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
 }
 
 function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
+    const [scrollToField, setScrollToField] = useState(null)
+    const contentAreaRef = useRef(null)
     const [activeTab, setActiveTab] = useState('details')
     const [reviewerName, setReviewerName] = useState('')
     const [reviewNotes, setReviewerNotes] = useState('')
@@ -144,6 +146,25 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
     const highlightedIssues = useMemo(() => {
         return item.moderationResult?.highlightedIssues || []
     }, [item.moderationResult])
+
+    // Add this useEffect after your other useEffects
+    useEffect(() => {
+        if (scrollToField && activeTab === 'details') {
+            const timer = setTimeout(() => {
+                const fieldElement = document.getElementById(`field-${scrollToField.toLowerCase()}`)
+                if (fieldElement) {
+                    fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                    // Add temporary highlight
+                    fieldElement.classList.add('ring-2', 'ring-yellow-500')
+                    setTimeout(() => {
+                        fieldElement.classList.remove('ring-2', 'ring-yellow-500')
+                    }, 2000)
+                }
+                setScrollToField(null)
+            }, 100)
+            return () => clearTimeout(timer)
+        }
+    }, [scrollToField, activeTab])
 
     const handleReview = async (status) => {
         if (!reviewerName.trim()) {
@@ -178,6 +199,12 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
         } finally {
             setSubmitting(false)
         }
+    }
+
+    // Add this function
+    const handleIssueClick = (fieldName) => {
+        setScrollToField(fieldName)
+        setActiveTab('details')
     }
 
     const handleRerunModeration = async () => {
@@ -429,7 +456,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                             : 'rgba(234, 179, 8, 0.3)'
                                                         }`
                                                     }}
-                                                    onClick={() => setActiveTab('details')}
+                                                    onClick={() => handleIssueClick(issue.field)}
                                                     title="Click to view in Details tab"
                                                 >
                                                     {/* Issue Header */}
@@ -579,8 +606,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 )}
 
                                 <div>
-                                    <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">Full Analysis</h4>
-                                    <div className="p-4 bg-zinc-950 border border-white/10 rounded-lg text-xs font-mono text-text-secondary leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
+                                    <h4 className="text-xs font-bold var(--text-primary) uppercase tracking-wider mb-2">Full Analysis</h4>
+                                    <div className="p-4 'var(--text-secondary)' border var(--border-color) rounded-lg text-xs font-mono var(--text-primary) leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
                                         {mod.aiReasoning}
                                     </div>
                                 </div>
@@ -788,7 +815,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2" id="field-description">
                                         <h4
                                             className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                             style={{
@@ -811,7 +838,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     </div>
 
                                     {item.plotSummary && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" id="field-plotsummary">
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
@@ -846,7 +873,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     )}
 
                                     {item.plot && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" id="field-plot">
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
@@ -881,7 +908,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     )}
 
                                     {item.promptPlot && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" id="field-promptplot">
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
@@ -918,7 +945,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     )}
 
                                     {item.firstMessage && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" id="field-firstmessage">
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
@@ -953,7 +980,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     )}
 
                                     {item.promptGuideline && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" id="field-description">
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
@@ -990,7 +1017,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     )}
 
                                     {item.reminder && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" id="field-description">
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
@@ -1028,7 +1055,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
                                     {/* Tags - support both tags array and tagSnapshots */}
                                     {((item.tags && item.tags.length > 0) || (item.tagSnapshots && item.tagSnapshots.length > 0)) && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" id="field-description">
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
@@ -1243,27 +1270,71 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                             </div>
                                                         )}
 
-                                                        {/* Description */}
-                                                        {char.description && (
-                                                            <div>
-                                                                <h5
-                                                                    className="text-xs font-bold uppercase tracking-widest mb-2"
-                                                                    style={{ color: 'var(--text-secondary)' }}
-                                                                >
-                                                                    Full Description
-                                                                </h5>
-                                                                <div
-                                                                    className="text-sm whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto p-3 rounded-lg"
-                                                                    style={{ 
-                                                                        color: 'var(--text-primary)',
-                                                                        backgroundColor: 'var(--bg-card)',
-                                                                        border: '1px solid var(--border-color)'
-                                                                    }}
-                                                                >
-                                                                    {char.description}
+                                                        {/* Description Summary */}
+                                                            {char.descriptionSummary && (
+                                                                <div>
+                                                                    <h5
+                                                                        className="text-xs font-bold uppercase tracking-widest mb-2"
+                                                                        style={{ color: 'var(--text-secondary)' }}
+                                                                    >
+                                                                        Summary
+                                                                    </h5>
+                                                                    <div
+                                                                        className="text-sm leading-relaxed p-3 rounded-lg"
+                                                                        style={{ 
+                                                                            color: 'var(--text-primary)',
+                                                                            backgroundColor: 'var(--bg-card)',
+                                                                            border: '1px solid var(--border-color)'
+                                                                        }}
+                                                                    >
+                                                                        {char.descriptionSummary}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        )}
+                                                            )}
+
+                                                            {/* Full Description */}
+                                                            {char.description && (
+                                                                <div>
+                                                                    <h5
+                                                                        className="text-xs font-bold uppercase tracking-widest mb-2"
+                                                                        style={{ color: 'var(--text-secondary)' }}
+                                                                    >
+                                                                        Full Description
+                                                                    </h5>
+                                                                    <div
+                                                                        className="text-sm whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto p-3 rounded-lg"
+                                                                        style={{ 
+                                                                            color: 'var(--text-primary)',
+                                                                            backgroundColor: 'var(--bg-card)',
+                                                                            border: '1px solid var(--border-color)'
+                                                                        }}
+                                                                    >
+                                                                        {char.description}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Prompt Description (AI Instructions) */}
+                                                            {char.promptDescription && (
+                                                                <div>
+                                                                    <h5
+                                                                        className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
+                                                                        style={{ color: 'var(--flagged-text)' }}
+                                                                    >
+                                                                        <Bot size={14} /> Prompt Description (AI Instructions)
+                                                                    </h5>
+                                                                    <div
+                                                                        className="text-sm font-mono whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto p-3 rounded-lg"
+                                                                        style={{ 
+                                                                            color: 'var(--text-primary)',
+                                                                            backgroundColor: 'rgba(234, 179, 8, 0.05)',
+                                                                            border: '1px solid rgba(234, 179, 8, 0.2)'
+                                                                        }}
+                                                                    >
+                                                                        {char.promptDescription}
+                                                                    </div>
+                                                                </div>
+                                                            )}
 
                                                         {/* Tags */}
                                                         {char.tagSnapshots && char.tagSnapshots.length > 0 && (
