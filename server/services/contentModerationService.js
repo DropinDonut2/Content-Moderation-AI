@@ -1,5 +1,5 @@
 // ============================================
-// CONTENT MODERATION SERVICE (WITH IMAGE MODERATION)
+// CONTENT MODERATION SERVICE (WITH IMAGE MODERATION) MULTIMODAL
 // ============================================
 // 
 // This service handles AI-powered content moderation for ISEKAI ZERO
@@ -12,8 +12,8 @@
 // - NSFW tag awareness
 // 
 // METHODS USED:
-// - Method 1: Prompt Engineering (context and instructions)
-// - Method 3: Tool Use (structured output via function calling)
+// - Prompt Engineering (context and instructions)
+// - Tool Use (structured output via function calling)
 // - Multimodal: Text + Images sent together
 // ============================================
 
@@ -470,12 +470,45 @@ If a character LOOKS like a minor AND is depicted in sexual/suggestive content:
 - Adult-appearing characters in NSFW content = ALLOWED
 ` : ''}
 
+## ZERO TOLERANCE - ALWAYS REJECT
+
+These are NEVER acceptable, even with NSFW tagging or "fictional" framing:
+
+### 1. Non-Consensual / Rape Content
+ANY sexual content where consent is absent, forced, or coerced:
+- Explicit rape or "non-con" scenarios = REJECT
+- "Forced to", "no choice", "must submit" = REJECT
+- Mind control / hypnosis / drugging for sex = REJECT
+- Blackmail / coercion / threats for sex = REJECT
+- Curses or "biological needs" that FORCE sexual acts = REJECT (non-consent with extra steps)
+- "Reluctantly accepts" or "resistance breaks down" = REJECT
+
+"It's fiction" or "NSFW tagged" does NOT make rape content acceptable.
+
+### 2. Minor Safety (POL-005)
+- ANY sexual content involving characters under 18 = REJECT
+- Characters who LOOK like minors in sexual context = REJECT
+- "Actually 1000 years old" loophole = STILL REJECT
+
+### 3. Real-World Harm
+- Detailed instructions for weapons/drugs/violence = REJECT
+- Content targeting real people for harm = REJECT
+
+## FLAG FOR HUMAN REVIEW
+
+These require human moderator review:
+- Dubious consent / power imbalances (boss/employee, etc.)
+- Extreme violence combined with sexual content
+- Degradation/humiliation as primary theme
+- Any gray areas where consent is unclear
+
 ## TEXT ANALYSIS
 
 Read ALL text fields carefully, including character descriptions. Look for:
 - Stated ages in character descriptions (e.g., "Age: 20", "18 years old", etc.)
 - Extract and note the age of EACH character mentioned
 - Sexual content involving minors = REJECT
+- Non-consensual sexual content = REJECT
 - Medical misinformation with specific claims = FLAG
 - Hate speech targeting real groups = FLAG
 

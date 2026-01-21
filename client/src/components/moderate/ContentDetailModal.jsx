@@ -17,6 +17,28 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
         return <span>{text}</span>
     }
 
+    // Normalize function to handle multiple languages and character variations
+    const normalize = (str) => {
+        if (!str) return ''
+        return str
+            .toLowerCase()
+            // Normalize Unicode (handles composed vs decomposed characters)
+            .normalize('NFKC')
+            // Remove accents from Latin characters: é→e, ã→a, ñ→n
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            // Smart quotes → straight quotes
+            .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+            .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+            // Full-width characters → half-width (Japanese/Chinese)
+            .replace(/[\uFF01-\uFF5E]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+            // Japanese special characters
+            .replace(/\u3000/g, ' ')      // Ideographic space → normal space
+            .replace(/[・]/g, '·')         // Katakana middle dot
+            // Normalize whitespace
+            .replace(/\s+/g, ' ')
+            .trim()
+    }
+
     // Filter highlights for this specific field
     const fieldHighlights = highlights.filter(h => 
         h.field?.toLowerCase() === fieldName?.toLowerCase() ||
@@ -30,28 +52,47 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
 
     // Build highlighted text
     let result = []
-    let remainingText = text
     let keyIndex = 0
+    let lastIndex = 0
 
-    // Sort by position in text (find each quote's position)
+    // Normalize the full text for searching
+    const normalizedFullText = normalize(text)
+
+    // Sort by position in normalized text
     const sortedHighlights = fieldHighlights
-        .map(h => ({
-            ...h,
-            position: text.toLowerCase().indexOf(h.quote?.toLowerCase() || '')
-        }))
+        .map(h => {
+            const normalizedQuote = normalize(h.quote)
+            const position = normalizedFullText.indexOf(normalizedQuote)
+            return { ...h, normalizedQuote, position }
+        })
         .filter(h => h.position !== -1)
         .sort((a, b) => a.position - b.position)
 
-    let lastIndex = 0
-
-    sortedHighlights.forEach((highlight, idx) => {
+    // For each highlight, find it in the original text
+    sortedHighlights.forEach((highlight) => {
         const quote = highlight.quote
         if (!quote) return
 
-        // Find the quote in the remaining text (case-insensitive)
-        const lowerText = text.toLowerCase()
-        const lowerQuote = quote.toLowerCase()
-        const startIndex = lowerText.indexOf(lowerQuote, lastIndex)
+        const normalizedQuote = normalize(quote)
+        
+        // Try exact match first
+        let startIndex = text.toLowerCase().indexOf(quote.toLowerCase(), lastIndex)
+        let matchLength = quote.length
+        
+        // If exact match fails, try normalized scanning
+        if (startIndex === -1) {
+            for (let i = lastIndex; i < text.length; i++) {
+                for (let len = 1; len <= text.length - i && len <= normalizedQuote.length + 50; len++) {
+                    const substring = text.substring(i, i + len)
+                    if (normalize(substring) === normalizedQuote) {
+                        startIndex = i
+                        matchLength = len
+                        break
+                    }
+                }
+                if (startIndex !== -1) break
+            }
+        }
 
         if (startIndex === -1) return
 
@@ -64,8 +105,8 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
             )
         }
 
-        // Add the highlighted text
-        const actualQuote = text.substring(startIndex, startIndex + quote.length)
+        const actualQuote = text.substring(startIndex, startIndex + matchLength)
+        
         const severityColors = {
             critical: { bg: 'rgba(239, 68, 68, 0.3)', border: '#ef4444', text: '#fca5a5' },
             high: { bg: 'rgba(249, 115, 22, 0.3)', border: '#f97316', text: '#fdba74' },
@@ -86,7 +127,6 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
                 title={`${highlight.policy}: ${highlight.reason}`}
             >
                 {actualQuote}
-                {/* Tooltip on hover */}
                 <span 
                     className="absolute bottom-full left-0 mb-2 px-3 py-2 rounded-lg text-xs font-normal opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap max-w-xs"
                     style={{
@@ -109,7 +149,7 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
             </mark>
         )
 
-        lastIndex = startIndex + quote.length
+        lastIndex = startIndex + matchLength
     })
 
     // Add remaining text
