@@ -57,7 +57,7 @@ function ContentList({ type, items, loading, onItemClick }) {
                 const name = item.name || item.title
                 const mod = item.moderationResult || {}
                 const statusStyle = getStatusStyle(item.moderationStatus)
-                const priorityStyle = getPriorityStyle(mod.humanReviewPriority)
+                const priorityStyle = getPriorityStyle(mod.violationSeverity || mod.humanReviewPriority)
 
                 return (
                     <div
@@ -193,7 +193,7 @@ function ContentList({ type, items, loading, onItemClick }) {
                                         backgroundColor: 'transparent'
                                     }}
                                 >
-                                    {mod.humanReviewPriority} Severity
+                                    {mod.violationSeverity || mod.humanReviewPriority} Severity
                                 </span>
                             )}
 
