@@ -2,6 +2,30 @@ const express = require('express');
 const router = express.Router();
 const policyService = require('../services/policyService');
 
+// GET /api/v1/policies/file - Get policy file content
+router.get('/file', async (req, res) => {
+    try {
+        const content = await policyService.getPolicyFileContent();
+        res.json({ success: true, data: content });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// PUT /api/v1/policies/file - Update policy file content
+router.put('/file', async (req, res) => {
+    try {
+        const { content } = req.body;
+        if (content === undefined) {
+            return res.status(400).json({ success: false, error: 'Content is required' });
+        }
+        await policyService.savePolicyFileContent(content);
+        res.json({ success: true, message: 'Policy file updated' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // GET /api/v1/policies - List all policies
 router.get('/', async (req, res) => {
     try {
