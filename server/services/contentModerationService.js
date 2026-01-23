@@ -10,16 +10,15 @@
 // - 5-step analysis process
 // - Combination-based violation detection
 // - NSFW tag awareness
+// - Creator feedback & suggestions
 // 
 // METHODS USED:
 // - Prompt Engineering (context and instructions)
-// - Tool Use (structured output via function calling)
+// - Structured Output (JSON schema response format)
 // - Multimodal: Text + Images sent together
 // ============================================
 
 const OpenAI = require('openai');
-// Removes policy model dependency
-// const Policy = require('../models/Policy');
 const fs = require('fs');
 const path = require('path');
 
@@ -156,185 +155,193 @@ const validateFields = (contentType, content) => {
 };
 
 // ============================================
-// TOOL DEFINITION (With Image Analysis Fields)
+// STRUCTURED OUTPUT SCHEMA (Replaces Tool Definition)
 // ============================================
 
-const moderationTool = {
-    type: "function",
-    function: {
-        name: "submit_moderation_result",
-        description: "Submit the final content moderation analysis for both TEXT and IMAGES.",
-        parameters: {
+const moderationSchema = {
+    type: "object",
+    properties: {
+        verdict: {
+            type: "string",
+            enum: ["safe", "flagged", "rejected"],
+            description: "Overall verdict for ALL content (text + images)"
+        },
+        confidence: {
+            type: "number",
+            description: "Confidence in verdict (0.0-1.0)"
+        },
+        summary: {
+            type: "string",
+            description: "Brief one-line summary in natural language (max 100 chars). No formatting or labels."
+        },
+        reasoning: {
+            type: "string",
+            description: "2-4 sentences in natural prose explaining your findings. Do NOT use step labels, bullet points, or bold formatting. Write conversationally."
+        },
+        highlightedIssues: {
+            type: "array",
+            description: "Text-based issues found. Empty array if safe.",
+            items: {
+                type: "object",
+                properties: {
+                    field: { type: "string" },
+                    quote: { type: "string" },
+                    policy: { type: "string" },
+                    policyTitle: { type: "string" },
+                    severity: { type: "string", enum: ["low", "medium", "high", "critical"] },
+                    reason: { type: "string" }
+                },
+                required: ["field", "quote", "policy", "severity", "reason"]
+            }
+        },
+        imageAnalysis: {
             type: "object",
+            description: "Analysis of all images in the content",
             properties: {
-                verdict: {
+                totalImages: {
+                    type: "number",
+                    description: "Total number of images analyzed"
+                },
+                flaggedImages: {
+                    type: "number",
+                    description: "Number of images with issues"
+                },
+                overallImageVerdict: {
                     type: "string",
                     enum: ["safe", "flagged", "rejected"],
-                    description: "Overall verdict for ALL content (text + images)"
+                    description: "Overall verdict for images"
                 },
-                confidence: {
-                    type: "number",
-                    description: "Confidence in verdict (0.0-1.0)"
-                },
-                summary: {
-                    type: "string",
-                    description: "Brief one-line summary in natural language (max 100 chars). No formatting or labels."
-                },
-                highlightedIssues: {
+                issues: {
                     type: "array",
-                    description: "Text-based issues found. Empty array if safe.",
+                    description: "Specific image issues found",
                     items: {
                         type: "object",
                         properties: {
-                            field: { type: "string" },
-                            quote: { type: "string" },
-                            policy: { type: "string" },
-                            policyTitle: { type: "string" },
-                            severity: { type: "string", enum: ["low", "medium", "high", "critical"] },
-                            reason: { type: "string" }
-                        },
-                        required: ["field", "quote", "policy", "severity", "reason"]
-                    }
-                },
-                // ============================================
-                // IMAGE ANALYSIS FIELDS
-                // ============================================
-                imageAnalysis: {
-                    type: "object",
-                    description: "Analysis of all images in the content",
-                    properties: {
-                        totalImages: {
-                            type: "number",
-                            description: "Total number of images analyzed"
-                        },
-                        flaggedImages: {
-                            type: "number",
-                            description: "Number of images with issues"
-                        },
-                        overallImageVerdict: {
-                            type: "string",
-                            enum: ["safe", "flagged", "rejected"],
-                            description: "Overall verdict for images"
-                        },
-                        issues: {
-                            type: "array",
-                            description: "Specific image issues found",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    imageType: {
-                                        type: "string",
-                                        description: "Type of image (storyline_cover, character_avatar, persona_avatar)"
-                                    },
-                                    imageName: {
-                                        type: "string",
-                                        description: "Name/identifier of the image"
-                                    },
-                                    issue: {
-                                        type: "string",
-                                        description: "What's wrong with this image"
-                                    },
-                                    severity: {
-                                        type: "string",
-                                        enum: ["low", "medium", "high", "critical"]
-                                    },
-                                    category: {
-                                        type: "string",
-                                        enum: ["nudity", "minor_appearance", "violence", "hate_symbol", "other"],
-                                        description: "Category of the issue. Use 'minor_appearance' if character LOOKS underage regardless of stated age."
-                                    },
-                                    visualAgeAssessment: {
-                                        type: "string",
-                                        description: "Your assessment of how old the character APPEARS visually (e.g., 'appears adult', 'appears 14-16', 'childlike proportions')"
-                                    },
-                                    statedAge: {
-                                        type: "string",
-                                        description: "The age stated in the text for this character, if any"
-                                    }
-                                },
-                                required: ["imageType", "issue", "severity", "category"]
+                            imageType: {
+                                type: "string",
+                                description: "Type of image (cover, character_avatar, persona_avatar)"
+                            },
+                            imageName: {
+                                type: "string",
+                                description: "Name/identifier of the image"
+                            },
+                            issue: {
+                                type: "string",
+                                description: "What's wrong with this image"
+                            },
+                            severity: {
+                                type: "string",
+                                enum: ["low", "medium", "high", "critical"]
+                            },
+                            category: {
+                                type: "string",
+                                enum: ["nudity", "minor_appearance", "violence", "hate_symbol", "other"],
+                                description: "Category of the issue. Use 'minor_appearance' if character LOOKS underage regardless of stated age."
+                            },
+                            visualAgeAssessment: {
+                                type: "string",
+                                description: "Your assessment of how old the character APPEARS visually"
+                            },
+                            statedAge: {
+                                type: "string",
+                                description: "The age stated in the text for this character, if any"
                             }
-                        }
-                    }
-                },
-                fieldAnalysis: {
-                    type: "object",
-                    additionalProperties: {
-                        type: "object",
-                        properties: {
-                            status: { type: "string", enum: ["safe", "flagged"] },
-                            issueCount: { type: "number" }
-                        }
-                    }
-                },
-                nsfw: {
-                    type: "boolean",
-                    description: "Does content (text OR images) contain NSFW material?"
-                },
-                nsfwReason: { type: "string" },
-                categories: {
-                    type: "array",
-                    items: {
-                        type: "object",
-                        properties: {
-                            category: { type: "string" },
-                            flagged: { type: "boolean" },
-                            confidence: { type: "number" }
                         },
-                        required: ["category", "flagged"]
+                        required: ["imageType", "issue", "severity", "category"]
                     }
-                },
-                flaggedPolicies: {
-                    type: "array",
-                    items: { type: "string" }
-                },
-                recommendedAction: {
-                    type: "string",
-                    enum: ["approve", "review", "reject"]
-                },
-                violationSeverity: {
-                    type: "string",
-                    enum: ["low", "medium", "high", "critical"]
-                },
-                reasoning: {
-                    type: "string",
-                    description: "2-4 sentences in natural prose explaining your findings. Do NOT use step labels, bullet points, or bold formatting. Write conversationally."
-                },
-
-                suggestions: {
-                    type: "object",
-                    description: "Feedback and suggestions for the creator",
-                    properties: {
-                        type: {
-                            type: "string",
-                            enum: ["great", "improvements", "required_changes"],
-                            description: "great = no issues, improvements = optional enhancements, required_changes = must fix to approve"
-                        },
-                        summary: {
-                            type: "string",
-                            description: "One sentence summary of feedback"
-                        },
-                        items: {
-                            type: "array",
-                            description: "List of specific suggestions",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    field: { type: "string", description: "Which field this applies to" },
-                                    issue: { type: "string", description: "What the problem is" },
-                                    suggestion: { type: "string", description: "How to fix or improve it" },
-                                    priority: { type: "string", enum: ["required", "recommended", "optional"] }
-                                },
-                                required: ["field", "suggestion", "priority"]
-                            }
-                        }
-                    },
-                    required: ["type", "summary", "items"]
                 }
             },
-            required: ["verdict", "confidence", "summary", "highlightedIssues", "imageAnalysis", "nsfw", "recommendedAction", "reasoning", "suggestions"]
+            required: ["totalImages", "flaggedImages", "overallImageVerdict", "issues"]
+        },
+        suggestions: {
+            type: "object",
+            description: "Detailed constructive feedback for the creator",
+            properties: {
+                type: {
+                    type: "string",
+                    enum: ["great", "minor_improvements", "needs_work", "rejected"],
+                    description: "great = excellent, minor_improvements = small tweaks, needs_work = significant issues, rejected = must fix to approve"
+                },
+                overallFeedback: {
+                    type: "string",
+                    description: "Detailed 3-5 sentence explanation. Be specific about what's good, what's wrong, and the overall assessment."
+                },
+                specificIssues: {
+                    type: "array",
+                    description: "List of specific issues, each clearly explained",
+                    items: {
+                        type: "object",
+                        properties: {
+                            field: { type: "string", description: "Which field has the issue" },
+                            problem: { type: "string", description: "What the problem is" },
+                            howToFix: { type: "string", description: "Specific actionable fix" }
+                        },
+                        required: ["field", "problem", "howToFix"]
+                    }
+                },
+                strengths: {
+                    type: "array",
+                    description: "What the creator did well (include even for rejected content if applicable)",
+                    items: { type: "string" }
+                },
+                includeExampleLinks: {
+                    type: "boolean",
+                    description: "True if creator would benefit from seeing approved examples (for quality issues, NOT policy violations)"
+                }
+            },
+            required: ["type", "overallFeedback", "specificIssues", "strengths", "includeExampleLinks"]
+        },
+        fieldAnalysis: {
+            type: "object",
+            additionalProperties: {
+                type: "object",
+                properties: {
+                    status: { type: "string", enum: ["safe", "flagged"] },
+                    issueCount: { type: "number" }
+                }
+            }
+        },
+        nsfw: {
+            type: "boolean",
+            description: "Does content (text OR images) contain NSFW material?"
+        },
+        nsfwReason: { type: "string" },
+        categories: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    category: { type: "string" },
+                    flagged: { type: "boolean" },
+                    confidence: { type: "number" }
+                },
+                required: ["category", "flagged"]
+            }
+        },
+        flaggedPolicies: {
+            type: "array",
+            items: { type: "string" }
+        },
+        recommendedAction: {
+            type: "string",
+            enum: ["approve", "review", "reject"]
+        },
+        violationSeverity: {
+            type: "string",
+            enum: ["none", "low", "medium", "high", "critical"]
         }
-    }
+    },
+    required: [
+        "verdict", 
+        "confidence", 
+        "summary", 
+        "reasoning",
+        "highlightedIssues", 
+        "imageAnalysis", 
+        "suggestions",
+        "nsfw", 
+        "recommendedAction"
+    ]
 };
 
 // ============================================
@@ -410,7 +417,7 @@ const downloadImageAsBase64 = async (url) => {
         return `data:${contentType};base64,${buffer.toString('base64')}`;
     } catch (error) {
         console.error(`Error downloading image ${url}:`, error.message);
-        return null; // Skip image on error
+        return null;
     }
 };
 
@@ -430,8 +437,6 @@ const buildMultimodalContent = async (textPrompt, images, maxImages = 10) => {
     for (const image of imagesToAnalyze) {
         if (!image.url) continue;
 
-        // Convert URL to base64 if it's a remote http/https URL
-        // (If it's already a data URI, use as is)
         let imageUrl = image.url;
         if (imageUrl.startsWith('http')) {
             const base64Data = await downloadImageAsBase64(imageUrl);
@@ -447,7 +452,7 @@ const buildMultimodalContent = async (textPrompt, images, maxImages = 10) => {
             type: 'image_url',
             image_url: {
                 url: imageUrl,
-                detail: 'low'  // resolution: 'low' for faster/cheaper, 'high' for detailed
+                detail: 'low'
             }
         });
     }
@@ -456,7 +461,7 @@ const buildMultimodalContent = async (textPrompt, images, maxImages = 10) => {
 };
 
 // ============================================
-// MAIN MODERATION FUNCTION (WITH IMAGES)
+// MAIN MODERATION FUNCTION (WITH STRUCTURED OUTPUT)
 // ============================================
 
 const autoModerateContent = async (contentType, content, options = {}) => {
@@ -469,10 +474,7 @@ const autoModerateContent = async (contentType, content, options = {}) => {
             console.log(' Field validation results:', validation.all.length, 'issues/warnings');
         }
 
-        // STEP 2: Get policies
-        // Read policy file directly from project root
-        // c:\Users\Lenovo\Documents\GitHub\Content-Moderation-AI\content-creation-policy.txt
-        // Accessing from server/services relative path: ../../content-creation-policy.txt
+        // STEP 2: Get policies from file
         const policyPath = path.join(__dirname, '../../content-creation-policy.txt');
         let policyContext = "";
         try {
@@ -500,8 +502,6 @@ const autoModerateContent = async (contentType, content, options = {}) => {
                 fieldsToAnalyze = { raw: JSON.stringify(content) };
         }
 
-        // policyContext is now the raw file content, mapped logic removed
-
         const fieldBreakdown = Object.entries(fieldsToAnalyze)
             .filter(([_, value]) => value && value.trim())
             .map(([field, value]) => `[FIELD: ${field}]\n${value}`)
@@ -523,6 +523,8 @@ const autoModerateContent = async (contentType, content, options = {}) => {
         const prompt = `You are an expert content moderator for ISEKAI ZERO, a fictional roleplay and storytelling platform.
 
 Analyze the text content and any attached images against the provided CONTENT CREATION POLICY. Write your reasoning in natural prose.
+
+You MUST respond with valid JSON matching the required schema.
 
 ## CONTENT METADATA
 - Content Type: ${contentType}
@@ -618,123 +620,87 @@ ${images.map((img, idx) => `IMAGE ${idx + 1}: ${img.type} - "${img.name}"`).join
 Look at each image carefully. Does any character APPEAR to be under 18? Consider their body proportions, facial features, and overall appearance - not just stated ages.
 ` : ''}
 
-## SUGGESTIONS FOR CREATOR
-
-Based on your analysis, provide helpful feedback:
-
-If verdict is REJECTED:
-- Type: "required_changes"
-- Explain exactly what must be changed to make it approvable
-- Be specific: "Remove the non-consensual elements from the plot" not just "Fix the content"
-
-If verdict is FLAGGED:
-- Type: "improvements" or "required_changes" depending on severity
-- Explain what the human reviewer will be looking at
-- Suggest how to address the flagged issues
-
-If verdict is SAFE:
-- Type: "great" if content is excellent with no suggestions
-- Type: "improvements" if there are optional enhancements
-- Suggestions could include: better descriptions, clearer tags, improved formatting
-
-Always be constructive and helpful, not punitive.
-
 ## CREATOR FEEDBACK & SUGGESTIONS
 
-Provide detailed, helpful, constructive feedback to help creators improve their content.
+Provide detailed, constructive feedback to help creators improve their content.
 
-### Feedback Structure:
+### For REJECTED content:
+- Explain exactly WHY it was rejected
+- List specific issues that need to be fixed  
+- Provide actionable suggestions
+- Be specific: "The plot lacks character motivation" NOT "The plot is bad"
+- Set includeExampleLinks to TRUE if rejected for quality/structure issues (not policy violations)
 
-1. **Opening Statement** - Summarize the overall quality/issue
-2. **Specific Problems** - List each issue clearly
-3. **Actionable Solutions** - Tell them exactly how to fix it
-4. **Encouragement** - End positively when appropriate
-
-### For REJECTED content, be thorough:
-- Explain the core problem clearly
-- Break down each issue separately  
-- Provide specific, actionable fixes
-- Reference what good content looks like
-
-Example of GOOD detailed feedback:
-"The story lacks sufficient details, character development, and narrative structure. The plot outline is overly broad, and the premise does not provide enough concrete guidance or context to develop a compelling story.
 ### For FLAGGED content:
 - Explain what triggered the flag
 - Suggest specific changes to resolve concerns
-- Be encouraging while being clear about issues
+- Set includeExampleLinks to TRUE if helpful
 
 ### For SAFE content:
-- If content is excellent: praise specific strengths
-- If there are optional improvements: suggest them kindly
-- Keep it brief for good content
+- Type: "great" if excellent with no suggestions
+- Type: "minor_improvements" if there are optional enhancements
+- Praise specific strengths
+- Set includeExampleLinks to FALSE
 
-### Feedback Style:
-- Be constructive, not punitive
-- Be specific: "The plot lacks character motivation" NOT "The plot is bad"
-- Give actionable advice: "Add backstory for the main character" NOT "Make it better"
-
-### Example Feedback for Rejected Content:
+Example feedback for rejected quality issues:
 "The story lacks sufficient details, character development, and narrative structure. The plot outline is overly broad, and the premise does not provide enough concrete guidance or context to develop a compelling story."
-
-### Example Links (include when helpful):
-For storylines that need improvement, you may suggest these approved examples:
-- https://www.isekai.world/storylines/69266b059b88456aafac748b?referralCode=QVY53ZG8
-- https://www.isekai.world/storylines/692df6b671619f94a86f7ba8?referralCode=QVY53ZG8
 
 ## OUTPUT INSTRUCTIONS
 
-In your reasoning field, write 2-4 sentences in natural prose explaining what you found. Do NOT use:
-- Step labels (STEP 1, STEP 2, etc.)
-- Bold text or markdown formatting
-- Bullet points or numbered lists
-- Labels like "REASONABLE PERSON TEST"
+Respond with valid JSON only. No markdown code blocks, no explanation outside the JSON.
 
-When citing policies in 'highlightedIssues', USE THE EXACT SECTION TITLE from the provided policy text (e.g., "2. Sexual and Nudity Content Policy" or "5. Child Safety Policy").
+In your reasoning field, write 2-4 sentences in natural prose. Do NOT use step labels, bullet points, or bold formatting.
 
-Just write naturally, like: "This is an adult fantasy game with explicit content properly tagged as NSFW. All characters have stated ages of 18+ and appear visually adult in the images. No policy violations detected."
+When citing policies in 'highlightedIssues', USE THE EXACT SECTION TITLE from the provided policy text.
 
-Or if there's an issue: "While the text states the character is 20 years old, the image depicts a character with childlike proportions in revealing clothing. This combination requires review regardless of stated age."
+Always include the imageAnalysis field, even if no images (set totalImages: 0, flaggedImages: 0, overallImageVerdict: "safe", issues: []).
+
+Always include the suggestions field with constructive feedback.
 `;
 
         // STEP 6: Build message content (text or multimodal)
         let messageContent;
 
         if (hasImages) {
-            // MULTIMODAL: text + images together
             messageContent = await buildMultimodalContent(prompt, images, maxImages);
-            // Count valid images added
             const validImages = messageContent.filter(c => c.type === 'image_url').length;
             console.log(`   📷 Sending ${validImages} images for analysis (converted to base64)`);
         } else {
-            // TEXT ONLY: just the prompt string
             messageContent = prompt;
         }
 
-        // STEP 7: Call AI
+        // STEP 7: Call AI with Structured Output
         const response = await openai.chat.completions.create({
-            model: process.env.AI_MODEL || 'anthropic/claude-4.5-sonnet',
+            model: process.env.AI_MODEL || 'anthropic/claude-sonnet-4-20250514',
             messages: [
                 {
                     role: 'system',
                     content: `You are a content moderator who analyzes text and images together.
 
-            CRITICAL FOR IMAGES: Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages.A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
+CRITICAL FOR IMAGES: Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages. A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
 
-Write your reasoning in natural conversational prose.Do not use step labels, bullet points, bold text, or structured formatting.
+Write your reasoning in natural conversational prose. Do not use step labels, bullet points, bold text, or structured formatting.
 
-Always include the imageAnalysis field in your response, even if no images(set totalImages: 0).`
+You MUST respond with valid JSON matching the schema provided. No markdown, no code blocks, just pure JSON.
+
+Always include imageAnalysis (set totalImages: 0 if no images).
+Always include suggestions with constructive feedback for the creator.`
                 },
                 { role: 'user', content: messageContent }
             ],
-            tools: [moderationTool],
-            tool_choice: { type: "function", function: { name: "submit_moderation_result" } },
+            response_format: {
+                type: "json_schema",
+                json_schema: {
+                    name: "moderation_result",
+                    strict: true,
+                    schema: moderationSchema
+                }
+            },
             temperature: 0.15,
             max_tokens: 4000
         });
 
-        // =============================================
-        // STEP 7.5: Calculate usage and cost (NEW!)
-        // =============================================
+        // STEP 7.5: Calculate usage and cost
         const usage = response.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
         
         const PRICING = {
@@ -758,26 +724,21 @@ Always include the imageAnalysis field in your response, even if no images(set t
         
         console.log(` Token Usage: ${usageStats.totalTokens} tokens | ${usageStats.costFormatted}`);
 
-        // STEP 8: Parse response
-        const toolCall = response.choices[0].message.tool_calls?.[0];
+        // STEP 8: Parse response (SIMPLER with Structured Output!)
         let result;
-
-        if (toolCall && toolCall.function && toolCall.function.name === 'submit_moderation_result') {
-            try {
-                result = JSON.parse(toolCall.function.arguments);
-                console.log("✓ Structured output received and parsed");
-                console.log(`   Verdict: ${result.verdict}, Confidence: ${result.confidence} `);
-                if (result.imageAnalysis) {
-                    console.log(`   Images analyzed: ${result.imageAnalysis.totalImages || 0} `);
-                    console.log(`   Images flagged: ${result.imageAnalysis.flaggedImages || 0} `);
-                }
-            } catch (parseError) {
-                console.error("Tool arguments parsing failed:", parseError);
-                throw new Error("AI produced invalid JSON in tool arguments");
+        try {
+            const content = response.choices[0].message.content;
+            result = JSON.parse(content);
+            console.log("✓ Structured output received and parsed");
+            console.log(`   Verdict: ${result.verdict}, Confidence: ${result.confidence}`);
+            if (result.imageAnalysis) {
+                console.log(`   Images analyzed: ${result.imageAnalysis.totalImages || 0}`);
+                console.log(`   Images flagged: ${result.imageAnalysis.flaggedImages || 0}`);
             }
-        } else {
-            console.error("AI failed to call tool.");
-            throw new Error("AI did not use the structured output tool");
+        } catch (parseError) {
+            console.error("JSON parsing failed:", parseError);
+            console.error("Raw response:", response.choices[0].message.content);
+            throw new Error("AI produced invalid JSON response");
         }
 
         // STEP 9: Process and return results
@@ -797,6 +758,14 @@ Always include the imageAnalysis field in your response, even if no images(set t
             issues: []
         };
 
+        const suggestions = result.suggestions || {
+            type: 'great',
+            overallFeedback: 'This content meets all requirements.',
+            specificIssues: [],
+            strengths: [],
+            includeExampleLinks: false
+        };
+
         return {
             success: true,
             moderationResult: {
@@ -807,21 +776,16 @@ Always include the imageAnalysis field in your response, even if no images(set t
                 highlightedIssues: highlightedIssues,
                 fieldAnalysis: result.fieldAnalysis || {},
 
-                suggestions: result.suggestions || {
-                    type: 'great',
-                    summary: 'No suggestions at this time.',
-                    items: []
-                },
-
                 // Image analysis results
                 imageAnalysis: imageAnalysis,
                 imagesAnalyzed: imageAnalysis.totalImages || 0,
                 imagesFlagged: imageAnalysis.flaggedImages || 0,
 
-                // Usage stats (tokens & cost)
-                usage: usageStats,
+                // Creator suggestions
+                suggestions: suggestions,
 
-                categories: result.categories || [],
+                // Usage stats
+                usage: usageStats,
 
                 categories: result.categories || [],
                 flaggedPolicies: result.flaggedPolicies || [],
@@ -829,7 +793,7 @@ Always include the imageAnalysis field in your response, even if no images(set t
                 nsfw: result.nsfw || false,
                 nsfwReason: result.nsfwReason || null,
                 recommendedAction: result.recommendedAction,
-                violationSeverity: result.violationSeverity,
+                violationSeverity: result.violationSeverity || 'none',
                 moderatedAt: new Date()
             },
             suggestionsForCreator: [
@@ -844,7 +808,7 @@ Always include the imageAnalysis field in your response, even if no images(set t
                 ...(imageAnalysis.issues || []).map(issue => ({
                     type: issue.severity === 'critical' ? 'error' : 'warning',
                     field: issue.imageType,
-                    issue: `Image issue: ${issue.issue} `,
+                    issue: `Image issue: ${issue.issue}`,
                     quote: issue.imageName || issue.imageType,
                     suggestion: `Review ${issue.imageType} for ${issue.category}`,
                     source: 'image_moderation'
@@ -890,10 +854,17 @@ Always include the imageAnalysis field in your response, even if no images(set t
             moderationResult: {
                 aiVerdict: 'flagged',
                 aiConfidence: 0,
-                aiReasoning: `Auto - moderation failed: ${error.message}. Requires manual review.`,
+                aiReasoning: `Auto-moderation failed: ${error.message}. Requires manual review.`,
                 aiSummary: 'AI analysis failed - needs human review',
                 highlightedIssues: [],
-                imageAnalysis: { totalImages: 0, flaggedImages: 0, issues: [] },
+                imageAnalysis: { totalImages: 0, flaggedImages: 0, overallImageVerdict: 'safe', issues: [] },
+                suggestions: {
+                    type: 'needs_work',
+                    overallFeedback: 'Unable to analyze content due to a technical error. Please try again.',
+                    specificIssues: [],
+                    strengths: [],
+                    includeExampleLinks: false
+                },
                 fieldAnalysis: {},
                 categories: [],
                 flaggedPolicies: [],
@@ -946,11 +917,11 @@ const extractPersonaFields = (persona) => ({
 
 const buildCharacterContent = (char) => `
 CHARACTER NAME: ${char.name || 'N/A'}
-        USER: ${char.user || 'N/A'}
-        VISIBILITY: ${char.visibility || 'N/A'}
+USER: ${char.user || 'N/A'}
+VISIBILITY: ${char.visibility || 'N/A'}
 MARKED AS NSFW: ${char.nsfw ? 'Yes' : 'No'}
 
-        DESCRIPTION:
+DESCRIPTION:
 ${char.description || 'No description'}
 
 DESCRIPTION SUMMARY:
@@ -962,43 +933,43 @@ ${char.promptDescription || 'No prompt description'}
 EXAMPLE DIALOGUE:
 ${char.exampleDialogue || 'No example dialogue'}
 
-        TAGS: ${char.tags?.join(', ') || 'None'}
-        `.trim();
+TAGS: ${char.tags?.join(', ') || 'None'}
+`.trim();
 
 const buildStorylineContent = (story) => {
     let content = `
-            === STORYLINE METADATA ===
-                TITLE: ${story.title || 'N/A'}
-        USER: ${story.user || 'N/A'}
-        VISIBILITY: ${story.visibility || 'N/A'}
+=== STORYLINE METADATA ===
+TITLE: ${story.title || 'N/A'}
+USER: ${story.user || 'N/A'}
+VISIBILITY: ${story.visibility || 'N/A'}
 MARKED AS NSFW: ${story.nsfw ? 'Yes' : 'No'}
-        MONETIZED: ${story.monetized ? 'Yes' : 'No'}
+MONETIZED: ${story.monetized ? 'Yes' : 'No'}
 
 === MAIN CONTENT FIELDS ===
 
-            [FIELD: description]
+[FIELD: description]
 ${story.description || 'No description'}
 
-        [FIELD: plotSummary]
+[FIELD: plotSummary]
 ${story.plotSummary || 'No plot summary'}
 
-        [FIELD: plot]
+[FIELD: plot]
 ${story.plot || 'No plot'}
 
-        [FIELD: promptPlot]
+[FIELD: promptPlot]
 ${story.promptPlot || 'No prompt plot'}
 
-        [FIELD: firstMessage]
+[FIELD: firstMessage]
 ${story.firstMessage || 'No first message'}
 
-        [FIELD: promptGuideline]
+[FIELD: promptGuideline]
 ${story.promptGuideline || 'None'}
 
-        [FIELD: reminder]
+[FIELD: reminder]
 ${story.reminder || 'None'}
 
-        TAGS: ${story.tags?.join(', ') || 'None'}
-        `;
+TAGS: ${story.tags?.join(', ') || 'None'}
+`;
 
     // Characters
     let characterContent = '';
@@ -1006,17 +977,17 @@ ${story.reminder || 'None'}
         characterContent = story.rawCharacterList;
     } else if (story.characterSnapshots?.length > 0) {
         characterContent = story.characterSnapshots.filter(c => !c.deleted).map((char, idx) => {
-            let charInfo = `-- - CHARACTER ${idx + 1}: ${char.name || 'Unnamed'} ---\n`;
-            charInfo += `NSFW: ${char.nsfw ? 'Yes' : 'No'} \n`;
-            if (char.descriptionSummary) charInfo += `SUMMARY: ${char.descriptionSummary} \n`;
+            let charInfo = `--- CHARACTER ${idx + 1}: ${char.name || 'Unnamed'} ---\n`;
+            charInfo += `NSFW: ${char.nsfw ? 'Yes' : 'No'}\n`;
+            if (char.descriptionSummary) charInfo += `SUMMARY: ${char.descriptionSummary}\n`;
             if (char.description) {
                 const desc = char.description.length > 2000 ? char.description.substring(0, 2000) + '...' : char.description;
-                charInfo += `DESCRIPTION: \n${desc} \n`;
+                charInfo += `DESCRIPTION:\n${desc}\n`;
             }
             return charInfo;
         }).join('\n');
     }
-    if (characterContent) content += `\n === CHARACTERS ===\n${characterContent} \n`;
+    if (characterContent) content += `\n=== CHARACTERS ===\n${characterContent}\n`;
 
     // Personas
     let personaContent = '';
@@ -1024,35 +995,35 @@ ${story.reminder || 'None'}
         personaContent = story.rawPersonaList;
     } else if (story.personaSnapshots?.length > 0) {
         personaContent = story.personaSnapshots.filter(p => !p.deleted).map((persona, idx) => {
-            let personaInfo = `-- - PERSONA ${idx + 1}: ${persona.name || 'Unnamed'} ---\n`;
-            personaInfo += `NSFW: ${persona.nsfw ? 'Yes' : 'No'} \n`;
-            if (persona.descriptionSummary) personaInfo += `SUMMARY: ${persona.descriptionSummary} \n`;
+            let personaInfo = `--- PERSONA ${idx + 1}: ${persona.name || 'Unnamed'} ---\n`;
+            personaInfo += `NSFW: ${persona.nsfw ? 'Yes' : 'No'}\n`;
+            if (persona.descriptionSummary) personaInfo += `SUMMARY: ${persona.descriptionSummary}\n`;
             if (persona.description) {
                 const desc = persona.description.length > 2000 ? persona.description.substring(0, 2000) + '...' : persona.description;
-                personaInfo += `DESCRIPTION: \n${desc} \n`;
+                personaInfo += `DESCRIPTION:\n${desc}\n`;
             }
             return personaInfo;
         }).join('\n');
     }
-    if (personaContent) content += `\n === PERSONAS ===\n${personaContent} \n`;
+    if (personaContent) content += `\n=== PERSONAS ===\n${personaContent}\n`;
 
     return content.trim();
 };
 
 const buildPersonaContent = (persona) => `
 PERSONA NAME: ${persona.name || 'N/A'}
-        USER: ${persona.user || 'N/A'}
-        VISIBILITY: ${persona.visibility || 'N/A'}
+USER: ${persona.user || 'N/A'}
+VISIBILITY: ${persona.visibility || 'N/A'}
 MARKED AS NSFW: ${persona.nsfw ? 'Yes' : 'No'}
 
-        DESCRIPTION:
+DESCRIPTION:
 ${persona.description || 'No description'}
 
 DESCRIPTION SUMMARY:
 ${persona.descriptionSummary || 'No summary'}
 
-        TAGS: ${persona.tags?.join(', ') || 'None'}
-        `.trim();
+TAGS: ${persona.tags?.join(', ') || 'None'}
+`.trim();
 
 const buildFullJsonContent = (data) => buildStorylineContent({
     title: data.title,
@@ -1083,12 +1054,11 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
         console.log("🔍 Moderating full JSON import...");
 
         // DETECT CONTENT TYPE
-        // Scenario A: Single Character Import (has name, no title, no snapshots)
         const isSingleCharacter = data.name && !data.title && (!data.characterSnapshots || data.characterSnapshots.length === 0);
 
         if (isSingleCharacter) {
             console.log("   -> Detected SINGLE CHARACTER import");
-            console.log(`   - Name: ${data.name || 'Unknown'} `);
+            console.log(`   - Name: ${data.name || 'Unknown'}`);
 
             const characterData = {
                 name: data.name,
@@ -1097,9 +1067,9 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
                 promptDescription: data.promptDescription || '',
                 exampleDialogue: data.exampleDialogue || '',
                 firstMessage: data.firstMessage || '',
-                tags: (data.tags || []).concat(data._tagIds || []), // Handle different tag formats
+                tags: (data.tags || []).concat(data._tagIds || []),
                 cover: data.cover,
-                media: data.media || [], // Images from character card
+                media: data.media || [],
                 nsfw: data.nsfw || false
             };
 
@@ -1111,9 +1081,9 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
 
         // Scenario B: Storyline/World Import
         console.log("   -> Detected STORYLINE/WORLD import");
-        console.log(`   - Title: ${data.title || 'Untitled'} `);
-        console.log(`   - Characters: ${data.characterSnapshots?.length || 0} `);
-        console.log(`   - Personas: ${data.personaSnapshots?.length || 0} `);
+        console.log(`   - Title: ${data.title || 'Untitled'}`);
+        console.log(`   - Characters: ${data.characterSnapshots?.length || 0}`);
+        console.log(`   - Personas: ${data.personaSnapshots?.length || 0}`);
 
         const storylineData = {
             title: data.title || 'Imported Storyline',
@@ -1147,10 +1117,17 @@ const autoModerateFullJson = async (jsonContent, options = { includeImages: true
             moderationResult: {
                 aiVerdict: 'flagged',
                 aiConfidence: 0,
-                aiReasoning: `Auto - moderation failed: ${error.message} `,
+                aiReasoning: `Auto-moderation failed: ${error.message}`,
                 aiSummary: 'AI analysis failed - needs human review',
                 highlightedIssues: [],
-                imageAnalysis: { totalImages: 0, flaggedImages: 0, issues: [] },
+                imageAnalysis: { totalImages: 0, flaggedImages: 0, overallImageVerdict: 'safe', issues: [] },
+                suggestions: {
+                    type: 'needs_work',
+                    overallFeedback: 'Unable to analyze content due to a technical error.',
+                    specificIssues: [],
+                    strengths: [],
+                    includeExampleLinks: false
+                },
                 categories: [],
                 recommendedAction: 'review',
                 humanReviewPriority: 'high',
