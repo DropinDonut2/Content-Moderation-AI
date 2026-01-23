@@ -299,9 +299,40 @@ const moderationTool = {
                 reasoning: {
                     type: "string",
                     description: "2-4 sentences in natural prose explaining your findings. Do NOT use step labels, bullet points, or bold formatting. Write conversationally."
+                },
+
+                suggestions: {
+                    type: "object",
+                    description: "Feedback and suggestions for the creator",
+                    properties: {
+                        type: {
+                            type: "string",
+                            enum: ["great", "improvements", "required_changes"],
+                            description: "great = no issues, improvements = optional enhancements, required_changes = must fix to approve"
+                        },
+                        summary: {
+                            type: "string",
+                            description: "One sentence summary of feedback"
+                        },
+                        items: {
+                            type: "array",
+                            description: "List of specific suggestions",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    field: { type: "string", description: "Which field this applies to" },
+                                    issue: { type: "string", description: "What the problem is" },
+                                    suggestion: { type: "string", description: "How to fix or improve it" },
+                                    priority: { type: "string", enum: ["required", "recommended", "optional"] }
+                                },
+                                required: ["field", "suggestion", "priority"]
+                            }
+                        }
+                    },
+                    required: ["type", "summary", "items"]
                 }
             },
-            required: ["verdict", "confidence", "summary", "highlightedIssues", "imageAnalysis", "nsfw", "recommendedAction", "reasoning"]
+            required: ["verdict", "confidence", "summary", "highlightedIssues", "imageAnalysis", "nsfw", "recommendedAction", "reasoning", "suggestions"]
         }
     }
 };
@@ -587,6 +618,69 @@ ${images.map((img, idx) => `IMAGE ${idx + 1}: ${img.type} - "${img.name}"`).join
 Look at each image carefully. Does any character APPEAR to be under 18? Consider their body proportions, facial features, and overall appearance - not just stated ages.
 ` : ''}
 
+## SUGGESTIONS FOR CREATOR
+
+Based on your analysis, provide helpful feedback:
+
+If verdict is REJECTED:
+- Type: "required_changes"
+- Explain exactly what must be changed to make it approvable
+- Be specific: "Remove the non-consensual elements from the plot" not just "Fix the content"
+
+If verdict is FLAGGED:
+- Type: "improvements" or "required_changes" depending on severity
+- Explain what the human reviewer will be looking at
+- Suggest how to address the flagged issues
+
+If verdict is SAFE:
+- Type: "great" if content is excellent with no suggestions
+- Type: "improvements" if there are optional enhancements
+- Suggestions could include: better descriptions, clearer tags, improved formatting
+
+Always be constructive and helpful, not punitive.
+
+## CREATOR FEEDBACK & SUGGESTIONS
+
+Provide detailed, helpful, constructive feedback to help creators improve their content.
+
+### Feedback Structure:
+
+1. **Opening Statement** - Summarize the overall quality/issue
+2. **Specific Problems** - List each issue clearly
+3. **Actionable Solutions** - Tell them exactly how to fix it
+4. **Encouragement** - End positively when appropriate
+
+### For REJECTED content, be thorough:
+- Explain the core problem clearly
+- Break down each issue separately  
+- Provide specific, actionable fixes
+- Reference what good content looks like
+
+Example of GOOD detailed feedback:
+"The story lacks sufficient details, character development, and narrative structure. The plot outline is overly broad, and the premise does not provide enough concrete guidance or context to develop a compelling story.
+### For FLAGGED content:
+- Explain what triggered the flag
+- Suggest specific changes to resolve concerns
+- Be encouraging while being clear about issues
+
+### For SAFE content:
+- If content is excellent: praise specific strengths
+- If there are optional improvements: suggest them kindly
+- Keep it brief for good content
+
+### Feedback Style:
+- Be constructive, not punitive
+- Be specific: "The plot lacks character motivation" NOT "The plot is bad"
+- Give actionable advice: "Add backstory for the main character" NOT "Make it better"
+
+### Example Feedback for Rejected Content:
+"The story lacks sufficient details, character development, and narrative structure. The plot outline is overly broad, and the premise does not provide enough concrete guidance or context to develop a compelling story."
+
+### Example Links (include when helpful):
+For storylines that need improvement, you may suggest these approved examples:
+- https://www.isekai.world/storylines/69266b059b88456aafac748b?referralCode=QVY53ZG8
+- https://www.isekai.world/storylines/692df6b671619f94a86f7ba8?referralCode=QVY53ZG8
+
 ## OUTPUT INSTRUCTIONS
 
 In your reasoning field, write 2-4 sentences in natural prose explaining what you found. Do NOT use:
@@ -638,6 +732,32 @@ Always include the imageAnalysis field in your response, even if no images(set t
             max_tokens: 4000
         });
 
+        // =============================================
+        // STEP 7.5: Calculate usage and cost (NEW!)
+        // =============================================
+        const usage = response.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+        
+        const PRICING = {
+            input: 3.00 / 1_000_000,
+            output: 15.00 / 1_000_000
+        };
+        
+        const inputCost = usage.prompt_tokens * PRICING.input;
+        const outputCost = usage.completion_tokens * PRICING.output;
+        const totalCost = inputCost + outputCost;
+        
+        const usageStats = {
+            inputTokens: usage.prompt_tokens,
+            outputTokens: usage.completion_tokens,
+            totalTokens: usage.total_tokens,
+            inputCost: inputCost,
+            outputCost: outputCost,
+            totalCost: totalCost,
+            costFormatted: `$${totalCost.toFixed(4)}`
+        };
+        
+        console.log(` Token Usage: ${usageStats.totalTokens} tokens | ${usageStats.costFormatted}`);
+
         // STEP 8: Parse response
         const toolCall = response.choices[0].message.tool_calls?.[0];
         let result;
@@ -687,10 +807,21 @@ Always include the imageAnalysis field in your response, even if no images(set t
                 highlightedIssues: highlightedIssues,
                 fieldAnalysis: result.fieldAnalysis || {},
 
+                suggestions: result.suggestions || {
+                    type: 'great',
+                    summary: 'No suggestions at this time.',
+                    items: []
+                },
+
                 // Image analysis results
                 imageAnalysis: imageAnalysis,
                 imagesAnalyzed: imageAnalysis.totalImages || 0,
                 imagesFlagged: imageAnalysis.flaggedImages || 0,
+
+                // Usage stats (tokens & cost)
+                usage: usageStats,
+
+                categories: result.categories || [],
 
                 categories: result.categories || [],
                 flaggedPolicies: result.flaggedPolicies || [],

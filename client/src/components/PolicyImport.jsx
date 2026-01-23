@@ -1,18 +1,15 @@
 import { useState } from 'react'
 import { 
-    Upload, Link, FileText, Code, Save, RefreshCw, 
-    Check, X, AlertTriangle, Download, Eye, Trash2 
+    Upload, FileText, Save, RefreshCw, 
+    Check, AlertTriangle, Trash2 
 } from 'lucide-react'
 
 function PolicyImport({ onImportComplete }) {
-    const [activeTab, setActiveTab] = useState('url') // 'url', 'html', 'file'
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
     
     // Import state
-    const [url, setUrl] = useState('https://docs.isekai.world/books/terms-policies/page/content-creation-policy')
-    const [htmlContent, setHtmlContent] = useState('')
     const [selectedFile, setSelectedFile] = useState(null)
     
     // Preview state
@@ -21,82 +18,6 @@ function PolicyImport({ onImportComplete }) {
     
     // Save options
     const [saveMode, setSaveMode] = useState('merge')
-
-    const tabs = [
-        { id: 'url', label: 'From URL', icon: <Link size={16} /> },
-        { id: 'html', label: 'Paste HTML', icon: <Code size={16} /> },
-        { id: 'file', label: 'Upload File', icon: <Upload size={16} /> }
-    ]
-
-    // Import from URL
-    const handleUrlImport = async () => {
-        if (!url.trim()) {
-            setError('Please enter a URL')
-            return
-        }
-
-        setLoading(true)
-        setError(null)
-        setSuccess(null)
-
-        try {
-            const response = await fetch('/api/v1/policies/import/url', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            })
-
-            const data = await response.json()
-            
-            if (!data.success) {
-                throw new Error(data.error || 'Import failed')
-            }
-
-            setPreviewPolicies(data.preview)
-            setFullPolicies(data.policies)
-            setSuccess(`Found ${data.preview.length} policies from URL`)
-
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    // Import from HTML
-    const handleHtmlImport = async () => {
-        if (!htmlContent.trim()) {
-            setError('Please paste HTML content')
-            return
-        }
-
-        setLoading(true)
-        setError(null)
-        setSuccess(null)
-
-        try {
-            const response = await fetch('/api/v1/policies/import/html', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ html: htmlContent })
-            })
-
-            const data = await response.json()
-            
-            if (!data.success) {
-                throw new Error(data.error || 'Import failed')
-            }
-
-            setPreviewPolicies(data.preview)
-            setFullPolicies(data.policies)
-            setSuccess(`Found ${data.preview.length} policies from HTML`)
-
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoading(false)
-        }
-    }
 
     // Import from File
     const handleFileImport = async () => {
@@ -163,6 +84,7 @@ function PolicyImport({ onImportComplete }) {
             // Clear preview
             setPreviewPolicies(null)
             setFullPolicies(null)
+            setSelectedFile(null)
             
             // Notify parent
             if (onImportComplete) {
@@ -180,6 +102,7 @@ function PolicyImport({ onImportComplete }) {
     const handleClear = () => {
         setPreviewPolicies(null)
         setFullPolicies(null)
+        setSelectedFile(null)
         setError(null)
         setSuccess(null)
     }
@@ -187,10 +110,9 @@ function PolicyImport({ onImportComplete }) {
     const getSeverityStyle = (severity) => {
         switch (severity) {
             case 'critical': return { color: 'var(--rejected-text)', bg: 'var(--rejected-bg)' }
-            case 'high': return { color: '#f97316', bg: 'rgba(249, 115, 22, 0.1)' }
-            case 'medium': return { color: 'var(--flagged-text)', bg: 'var(--flagged-bg)' }
-            case 'low': return { color: 'var(--safe-text)', bg: 'var(--safe-bg)' }
-            default: return { color: 'var(--text-secondary)', bg: 'var(--bg-secondary)' }
+            case 'high': return { color: 'var(--flagged-text)', bg: 'var(--flagged-bg)' }
+            case 'medium': return { color: 'var(--pending-text)', bg: 'var(--pending-bg)' }
+            default: return { color: 'var(--safe-text)', bg: 'var(--safe-bg)' }
         }
     }
 
@@ -198,138 +120,64 @@ function PolicyImport({ onImportComplete }) {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h3 className="text-lg font-bold uppercase tracking-wider mb-2">
+                <h3 
+                    className="text-lg font-bold mb-1"
+                    style={{ color: 'var(--text-primary)' }}
+                >
                     Import Policies
                 </h3>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    Import policies from ISEKAI ZERO docs, paste HTML, or upload a file
+                <p 
+                    className="text-sm"
+                    style={{ color: 'var(--text-secondary)' }}
+                >
+                    Upload a policy file (HTML, Markdown, or JSON)
                 </p>
             </div>
 
-            {/* Tabs */}
-            <div 
-                className="flex gap-2 p-1 rounded-lg"
-                style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
-            >
-                {tabs.map(tab => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all uppercase tracking-wider"
-                        style={{
-                            backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent',
-                            color: activeTab === tab.id ? 'var(--bg-primary)' : 'var(--text-secondary)'
-                        }}
+            {/* File Upload */}
+            <div className="space-y-4">
+                <div>
+                    <label 
+                        className="text-xs font-bold uppercase tracking-widest mb-2 block" 
+                        style={{ color: 'var(--text-secondary)' }}
                     >
-                        {tab.icon}
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
-            {/* Tab Content */}
-            <div 
-                className="p-6 rounded-lg"
-                style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-            >
-                {/* URL Import */}
-                {activeTab === 'url' && (
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-widest mb-2 block" style={{ color: 'var(--text-secondary)' }}>
-                                Policy Document URL
-                            </label>
-                            <input
-                                type="url"
-                                value={url}
-                                onChange={(e) => setUrl(e.target.value)}
-                                placeholder="https://docs.isekai.world/..."
-                                className="input-premium w-full"
-                            />
-                            <p className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
-                                Default: ISEKAI ZERO Content Creation Policy page
+                        Upload Policy File
+                    </label>
+                    <div 
+                        className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors hover:border-opacity-70"
+                        style={{ borderColor: 'var(--border-color)' }}
+                        onClick={() => document.getElementById('file-input').click()}
+                    >
+                        <input
+                            id="file-input"
+                            type="file"
+                            accept=".html,.htm,.md,.markdown,.json,.txt"
+                            onChange={(e) => {
+                                setSelectedFile(e.target.files[0])
+                                setError(null)
+                            }}
+                            className="hidden"
+                        />
+                        <Upload size={32} className="mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
+                        {selectedFile ? (
+                            <p style={{ color: 'var(--text-primary)' }}>
+                                Selected: <strong>{selectedFile.name}</strong>
                             </p>
-                        </div>
-                        <button
-                            onClick={handleUrlImport}
-                            disabled={loading}
-                            className="btn-primary flex items-center gap-2"
-                        >
-                            {loading ? <RefreshCw size={16} className="animate-spin" /> : <Download size={16} />}
-                            Fetch & Parse
-                        </button>
-                    </div>
-                )}
-
-                {/* HTML Paste */}
-                {activeTab === 'html' && (
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-widest mb-2 block" style={{ color: 'var(--text-secondary)' }}>
-                                Paste HTML Content
-                            </label>
-                            <textarea
-                                value={htmlContent}
-                                onChange={(e) => setHtmlContent(e.target.value)}
-                                placeholder="Paste the HTML from DevTools (Network tab → Response)..."
-                                className="input-premium w-full h-48 font-mono text-xs"
-                            />
-                            <p className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
-                                Open DevTools → Network → Click the page → Response tab → Copy the HTML
+                        ) : (
+                            <p style={{ color: 'var(--text-secondary)' }}>
+                                Click to upload HTML, Markdown, or JSON
                             </p>
-                        </div>
-                        <button
-                            onClick={handleHtmlImport}
-                            disabled={loading || !htmlContent.trim()}
-                            className="btn-primary flex items-center gap-2"
-                        >
-                            {loading ? <RefreshCw size={16} className="animate-spin" /> : <Code size={16} />}
-                            Parse HTML
-                        </button>
+                        )}
                     </div>
-                )}
-
-                {/* File Upload */}
-                {activeTab === 'file' && (
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-widest mb-2 block" style={{ color: 'var(--text-secondary)' }}>
-                                Upload Policy File
-                            </label>
-                            <div 
-                                className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors"
-                                style={{ borderColor: 'var(--border-color)' }}
-                                onClick={() => document.getElementById('file-input').click()}
-                            >
-                                <input
-                                    id="file-input"
-                                    type="file"
-                                    accept=".html,.htm,.md,.markdown,.json,.txt"
-                                    onChange={(e) => setSelectedFile(e.target.files[0])}
-                                    className="hidden"
-                                />
-                                <Upload size={32} className="mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
-                                {selectedFile ? (
-                                    <p style={{ color: 'var(--text-primary)' }}>
-                                        Selected: <strong>{selectedFile.name}</strong>
-                                    </p>
-                                ) : (
-                                    <p style={{ color: 'var(--text-secondary)' }}>
-                                        Click to upload HTML, Markdown, or JSON
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                        <button
-                            onClick={handleFileImport}
-                            disabled={loading || !selectedFile}
-                            className="btn-primary flex items-center gap-2"
-                        >
-                            {loading ? <RefreshCw size={16} className="animate-spin" /> : <FileText size={16} />}
-                            Parse File
-                        </button>
-                    </div>
-                )}
+                </div>
+                <button
+                    onClick={handleFileImport}
+                    disabled={loading || !selectedFile}
+                    className="btn-primary flex items-center gap-2"
+                >
+                    {loading ? <RefreshCw size={16} className="animate-spin" /> : <FileText size={16} />}
+                    Parse File
+                </button>
             </div>
 
             {/* Messages */}
@@ -357,7 +205,7 @@ function PolicyImport({ onImportComplete }) {
             {previewPolicies && previewPolicies.length > 0 && (
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-bold uppercase tracking-widest">
+                        <h4 className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--text-primary)' }}>
                             Preview ({previewPolicies.length} policies)
                         </h4>
                         <button
@@ -417,7 +265,10 @@ function PolicyImport({ onImportComplete }) {
                         style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
                     >
                         <div>
-                            <label className="text-xs font-bold uppercase tracking-widest mb-2 block" style={{ color: 'var(--text-secondary)' }}>
+                            <label 
+                                className="text-xs font-bold uppercase tracking-widest mb-2 block" 
+                                style={{ color: 'var(--text-secondary)' }}
+                            >
                                 Save Mode
                             </label>
                             <div className="flex gap-4">

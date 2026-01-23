@@ -2315,3 +2315,30 @@ Last Updated: 15 DECEMBER 2025
  
 
  By creating content on ISEKAI ZERO, you acknowledge that you have read, understood, and agree to comply with this Content Creation Policy. Violation of these policies may result in content removal, account suspension, or permanent termination depending on severity.
+
+[NEW POLICY SECTION]
+[ID]: POL-XXX
+[TITLE]: New Policy Title
+[SEVERITY]: Medium
+[ACTION]: Flag
+
+[DESCRIPTION]:
+Enter detailed description of the policy here. Explain what is allowed and what is prohibited.
+
+[EXAMPLES]:
+- Violation example 1
+- Violation example 2
+
+
+[NEW POLICY SECTION]
+[ID]: POL-XXX
+[TITLE]: New Policy Title
+[SEVERITY]: Medium
+[ACTION]: Flag
+
+[DESCRIPTION]:
+Enter detailed description of the policy here. Explain what is allowed and what is prohibited.
+
+[EXAMPLES]:
+- Violation example 1
+- Violation example 2
