@@ -11,15 +11,15 @@ function ContentList({ type, items, loading, onItemClick }) {
 
     if (!items || items.length === 0) {
         return (
-            <div 
+            <div
                 className="p-12 flex flex-col items-center text-center"
-                style={{ 
+                style={{
                     backgroundColor: 'var(--bg-card)',
                     border: '1px solid var(--border-color)'
                 }}
             >
                 <Archive size={48} className="mb-4 opacity-50" style={{ color: 'var(--text-muted)' }} />
-                <p 
+                <p
                     className="font-mono text-sm uppercase tracking-wide"
                     style={{ color: 'var(--text-secondary)' }}
                 >
@@ -57,14 +57,14 @@ function ContentList({ type, items, loading, onItemClick }) {
                 const name = item.name || item.title
                 const mod = item.moderationResult || {}
                 const statusStyle = getStatusStyle(item.moderationStatus)
-                const priorityStyle = getPriorityStyle(mod.humanReviewPriority)
+                const priorityStyle = getPriorityStyle(mod.violationSeverity || mod.humanReviewPriority)
 
                 return (
                     <div
                         key={id}
                         onClick={() => onItemClick(item)}
                         className="group relative flex flex-col md:flex-row gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200"
-                        style={{ 
+                        style={{
                             backgroundColor: 'var(--bg-card)',
                             border: '1px solid var(--border-color)'
                         }}
@@ -77,7 +77,7 @@ function ContentList({ type, items, loading, onItemClick }) {
                                 src={item.avatar || item.cover || `https://placehold.co/60x60/1a1a1a/white?text=${name?.charAt(0)}`}
                                 alt={name}
                                 className="w-16 h-16 rounded-md object-cover"
-                                style={{ 
+                                style={{
                                     border: '1px solid var(--border-color)',
                                     backgroundColor: 'var(--bg-secondary)'
                                 }}
@@ -87,20 +87,20 @@ function ContentList({ type, items, loading, onItemClick }) {
                         {/* Middle: Info */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-baseline gap-3 mb-1">
-                                <h3 
+                                <h3
                                     className="font-bold truncate pr-2 transition-colors"
                                     style={{ color: 'var(--text-primary)' }}
                                 >
                                     {name}
                                 </h3>
-                                <span 
+                                <span
                                     className="font-mono text-xs hidden sm:inline-block"
                                     style={{ color: 'var(--text-secondary)' }}
                                 >
                                     {id}
                                 </span>
                             </div>
-                            <p 
+                            <p
                                 className="text-xs mb-2"
                                 style={{ color: 'var(--text-secondary)' }}
                             >
@@ -109,15 +109,15 @@ function ContentList({ type, items, loading, onItemClick }) {
 
                             {/* AI Summary if available */}
                             {mod.aiSummary && (
-                                <div 
+                                <div
                                     className="flex items-start gap-2 p-2 rounded mb-2"
-                                    style={{ 
+                                    style={{
                                         backgroundColor: 'var(--bg-secondary)',
                                         border: '1px solid var(--border-color)'
                                     }}
                                 >
                                     <Bot size={14} className="mt-0.5 shrink-0" style={{ color: 'var(--text-secondary)' }} />
-                                    <p 
+                                    <p
                                         className="text-xs line-clamp-1"
                                         style={{ color: 'var(--text-primary)' }}
                                     >
@@ -128,10 +128,10 @@ function ContentList({ type, items, loading, onItemClick }) {
 
                             <div className="flex flex-wrap gap-1.5">
                                 {item.tags?.slice(0, 3).map((tag, i) => (
-                                    <span 
-                                        key={i} 
+                                    <span
+                                        key={i}
                                         className="px-2 py-0.5 rounded text-[10px] uppercase tracking-wide"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--bg-hover)',
                                             color: 'var(--text-secondary)',
                                             border: '1px solid var(--border-color)'
@@ -141,9 +141,9 @@ function ContentList({ type, items, loading, onItemClick }) {
                                     </span>
                                 ))}
                                 {item.tags?.length > 3 && (
-                                    <span 
+                                    <span
                                         className="px-2 py-0.5 rounded text-[10px] uppercase tracking-wide"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: 'var(--bg-hover)',
                                             color: 'var(--text-secondary)',
                                             border: '1px solid var(--border-color)'
@@ -156,13 +156,13 @@ function ContentList({ type, items, loading, onItemClick }) {
                         </div>
 
                         {/* Right: Status & Actions */}
-                        <div 
+                        <div
                             className="flex flex-row md:flex-col items-center md:items-end gap-2 md:min-w-[140px] pl-0 md:pl-4"
                             style={{ borderLeft: 'none' }}
                         >
-                            <span 
+                            <span
                                 className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
-                                style={{ 
+                                style={{
                                     backgroundColor: statusStyle.bg,
                                     color: statusStyle.color,
                                     border: `1px solid ${statusStyle.border}`
@@ -172,9 +172,9 @@ function ContentList({ type, items, loading, onItemClick }) {
                             </span>
 
                             {item.nsfw && (
-                                <span 
+                                <span
                                     className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
-                                    style={{ 
+                                    style={{
                                         backgroundColor: 'var(--rejected-bg)',
                                         color: 'var(--rejected-text)',
                                         border: '1px solid var(--rejected-border)'
@@ -185,20 +185,20 @@ function ContentList({ type, items, loading, onItemClick }) {
                             )}
 
                             {priorityStyle && (
-                                <span 
+                                <span
                                     className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
-                                    style={{ 
+                                    style={{
                                         color: priorityStyle.color,
                                         border: `1px solid ${priorityStyle.border}`,
                                         backgroundColor: 'transparent'
                                     }}
                                 >
-                                    {mod.humanReviewPriority} Priority
+                                    {mod.violationSeverity || mod.humanReviewPriority} Severity
                                 </span>
                             )}
 
                             {mod.aiVerdict && (
-                                <span 
+                                <span
                                     className="text-[10px] font-mono mt-auto"
                                     style={{ color: 'var(--text-secondary)' }}
                                 >
@@ -206,7 +206,7 @@ function ContentList({ type, items, loading, onItemClick }) {
                                 </span>
                             )}
 
-                            <span 
+                            <span
                                 className="hidden md:inline-flex text-xs font-bold items-center opacity-0 group-hover:opacity-100 transition-opacity mt-2"
                                 style={{ color: 'var(--accent-secondary)' }}
                             >
