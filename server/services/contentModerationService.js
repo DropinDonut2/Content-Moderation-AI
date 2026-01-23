@@ -17,14 +17,17 @@
 // - Multimodal: Text + Images sent together
 // ============================================
 
-const OpenAI = require('openai'); //load openAI lib
-const Policy = require('../models/Policy'); //load policy model
+const OpenAI = require('openai');
+// Removes policy model dependency
+// const Policy = require('../models/Policy');
+const fs = require('fs');
+const path = require('path');
 
 // ============================================
 // OPENROUTER CLIENT SETUP
 // ============================================
 
-const openai = new OpenAI({ //create openAI client
+const openai = new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: process.env.OPENROUTER_API_KEY
 });
@@ -161,9 +164,9 @@ const moderationTool = {
     function: {
         name: "submit_moderation_result",
         description: "Submit the final content moderation analysis for both TEXT and IMAGES.",
-        parameters: {   //what AI must fill out 
+        parameters: {
             type: "object",
-            properties: {   //fields in the form
+            properties: {
                 verdict: {
                     type: "string",
                     enum: ["safe", "flagged", "rejected"],
@@ -289,7 +292,7 @@ const moderationTool = {
                     type: "string",
                     enum: ["approve", "review", "reject"]
                 },
-                humanReviewPriority: {
+                violationSeverity: {
                     type: "string",
                     enum: ["low", "medium", "high", "critical"]
                 },
@@ -436,7 +439,18 @@ const autoModerateContent = async (contentType, content, options = {}) => {
         }
 
         // STEP 2: Get policies
-        const policies = await Policy.find({ isActive: true });
+        // Read policy file directly from project root
+        // c:\Users\Lenovo\Documents\GitHub\Content-Moderation-AI\content-creation-policy.txt
+        // Accessing from server/services relative path: ../../content-creation-policy.txt
+        const policyPath = path.join(__dirname, '../../content-creation-policy.txt');
+        let policyContext = "";
+        try {
+            policyContext = fs.readFileSync(policyPath, 'utf8');
+            console.log(`   Loaded policy file from ${policyPath} (${policyContext.length} chars)`);
+        } catch (err) {
+            console.error("Failed to read policy file:", err);
+            policyContext = "Error loading policy file. Please proceed with standard safety guidelines.";
+        }
 
         // STEP 3: Build content strings
         let fieldsToAnalyze = {};
@@ -455,9 +469,7 @@ const autoModerateContent = async (contentType, content, options = {}) => {
                 fieldsToAnalyze = { raw: JSON.stringify(content) };
         }
 
-        const policyContext = policies.map(p =>
-            `- ${p.policyId}: ${p.title} (${p.severity.toUpperCase()}) - ${p.description}`
-        ).join('\n');
+        // policyContext is now the raw file content, mapped logic removed
 
         const fieldBreakdown = Object.entries(fieldsToAnalyze)
             .filter(([_, value]) => value && value.trim())
@@ -479,7 +491,7 @@ const autoModerateContent = async (contentType, content, options = {}) => {
         // STEP 5: Build prompt
         const prompt = `You are an expert content moderator for ISEKAI ZERO, a fictional roleplay and storytelling platform.
 
-Analyze the text content and any attached images for policy violations. Write your reasoning in natural prose - do NOT use step labels, numbered lists, or bold formatting in your reasoning field.
+Analyze the text content and any attached images against the provided CONTENT CREATION POLICY. Write your reasoning in natural prose.
 
 ## CONTENT METADATA
 - Content Type: ${contentType}
@@ -529,7 +541,7 @@ ANY sexual content where consent is absent, forced, or coerced:
 
 "It's fiction" or "NSFW tagged" does NOT make rape content acceptable.
 
-### 2. Minor Safety (POL-005)
+### 2. Minor Safety
 - ANY sexual content involving characters under 18 = REJECT
 - Characters who LOOK like minors in sexual context = REJECT
 - "Actually 1000 years old" loophole = STILL REJECT
@@ -560,7 +572,7 @@ IMPORTANT: Character ages are often listed in their descriptions like "Age: 20" 
 
 Note: Comfort themes (Mommy/Daddy dynamics), fantasy violence, and properly-tagged NSFW adult content are allowed.
 
-## POLICIES:
+## CONTENT CREATION POLICY:
 ${policyContext}
 
 ## CONTENT TO ANALYZE:
@@ -583,6 +595,8 @@ In your reasoning field, write 2-4 sentences in natural prose explaining what yo
 - Bullet points or numbered lists
 - Labels like "REASONABLE PERSON TEST"
 
+When citing policies in 'highlightedIssues', USE THE EXACT SECTION TITLE from the provided policy text (e.g., "2. Sexual and Nudity Content Policy" or "5. Child Safety Policy").
+
 Just write naturally, like: "This is an adult fantasy game with explicit content properly tagged as NSFW. All characters have stated ages of 18+ and appear visually adult in the images. No policy violations detected."
 
 Or if there's an issue: "While the text states the character is 20 years old, the image depicts a character with childlike proportions in revealing clothing. This combination requires review regardless of stated age."
@@ -596,7 +610,7 @@ Or if there's an issue: "While the text states the character is 20 years old, th
             messageContent = await buildMultimodalContent(prompt, images, maxImages);
             // Count valid images added
             const validImages = messageContent.filter(c => c.type === 'image_url').length;
-            console.log(`    Sending ${validImages} images for analysis (converted to base64)`);
+            console.log(`   📷 Sending ${validImages} images for analysis (converted to base64)`);
         } else {
             // TEXT ONLY: just the prompt string
             messageContent = prompt;
@@ -684,7 +698,7 @@ Always include the imageAnalysis field in your response, even if no images(set t
                 nsfw: result.nsfw || false,
                 nsfwReason: result.nsfwReason || null,
                 recommendedAction: result.recommendedAction,
-                humanReviewPriority: result.humanReviewPriority,
+                violationSeverity: result.violationSeverity,
                 moderatedAt: new Date()
             },
             suggestionsForCreator: [
@@ -753,7 +767,7 @@ Always include the imageAnalysis field in your response, even if no images(set t
                 categories: [],
                 flaggedPolicies: [],
                 recommendedAction: 'review',
-                humanReviewPriority: 'high',
+                violationSeverity: 'high',
                 moderatedAt: new Date()
             },
             flags: { needsManualReview: true }

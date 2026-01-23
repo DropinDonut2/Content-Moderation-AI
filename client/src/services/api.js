@@ -61,6 +61,18 @@ export const deletePolicy = async (id) => {
     return response.data;
 };
 
+// ============ POLICY FILE (NEW) ============
+
+export const getPolicyFile = async () => {
+    const response = await api.get('/policies/file');
+    return response.data;
+};
+
+export const savePolicyFile = async (content) => {
+    const response = await api.put('/policies/file', { content });
+    return response.data;
+};
+
 // ============ CHARACTERS ============
 
 export const getCharacters = async (params = {}) => {

@@ -27,4 +27,5 @@ Thumbs.db
 coverage/
 
 # vite config
-vite.config.js  
+client/vite.config.js  
+client/vite.config.js

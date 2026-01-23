@@ -55,5 +55,30 @@ module.exports = {
     getPolicyById,
     createPolicy,
     updatePolicy,
-    deletePolicy
+    deletePolicy,
+    // File-based operations
+    getPolicyFileContent: async () => {
+        try {
+            const path = require('path');
+            const fs = require('fs');
+            const policyPath = path.join(__dirname, '../../content-creation-policy.txt');
+            if (!fs.existsSync(policyPath)) return '';
+            return fs.readFileSync(policyPath, 'utf8');
+        } catch (error) {
+            console.error('Error reading policy file:', error);
+            throw error;
+        }
+    },
+    savePolicyFileContent: async (content) => {
+        try {
+            const path = require('path');
+            const fs = require('fs');
+            const policyPath = path.join(__dirname, '../../content-creation-policy.txt');
+            fs.writeFileSync(policyPath, content, 'utf8');
+            return true;
+        } catch (error) {
+            console.error('Error saving policy file:', error);
+            throw error;
+        }
+    }
 };
