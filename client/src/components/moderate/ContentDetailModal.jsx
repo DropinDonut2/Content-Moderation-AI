@@ -645,13 +645,123 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     </div>
                                 )}
 
-                                <div>
-                                    <h4 className="text-xs font-bold var(--text-primary) uppercase tracking-wider mb-2">Full Analysis</h4>
-                                    <div className="p-4 'var(--text-secondary)' border var(--border-color) rounded-lg text-xs font-mono var(--text-primary) leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
-                                        {mod.aiReasoning}
+                                    {/* Full Analysis / AI Reasoning */}
+                                    <div>
+                                        <h4 
+                                            className="text-xs font-bold uppercase tracking-widest mb-2"
+                                            style={{ color: 'var(--text-secondary)' }}
+                                        >
+                                            AI Reasoning
+                                        </h4>
+                                        <div 
+                                            className="p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto"
+                                            style={{ 
+                                                backgroundColor: 'var(--bg-secondary)',
+                                                border: '1px solid var(--border-color)',
+                                                color: 'var(--text-primary)'
+                                            }}
+                                        >
+                                            {mod.aiReasoning || 'No reasoning provided'}
+                                        </div>
                                     </div>
-                                </div>
-                   
+
+                                    {/* Usage Stats */}
+                                    {mod.usage && (
+                                        <div>
+                                            <h4 
+                                                className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
+                                                style={{ color: 'var(--text-secondary)' }}
+                                            >
+                                                <Activity size={12} />
+                                                Usage Stats
+                                            </h4>
+                                            <div 
+                                                className="grid grid-cols-2 sm:grid-cols-4 gap-2"
+                                            >
+                                                <div 
+                                                    className="p-3 rounded-lg text-center"
+                                                    style={{ 
+                                                        backgroundColor: 'var(--bg-card)',
+                                                        border: '1px solid var(--border-color)'
+                                                    }}
+                                                >
+                                                    <span 
+                                                        className="block text-base font-bold font-mono"
+                                                        style={{ color: 'var(--text-primary)' }}
+                                                    >
+                                                        {mod.usage.inputTokens?.toLocaleString() || 0}
+                                                    </span>
+                                                    <span 
+                                                        className="block text-[10px] uppercase font-bold tracking-widest"
+                                                        style={{ color: 'var(--text-secondary)' }}
+                                                    >
+                                                        Input
+                                                    </span>
+                                                </div>
+                                                <div 
+                                                    className="p-3 rounded-lg text-center"
+                                                    style={{ 
+                                                        backgroundColor: 'var(--bg-card)',
+                                                        border: '1px solid var(--border-color)'
+                                                    }}
+                                                >
+                                                    <span 
+                                                        className="block text-base font-bold font-mono"
+                                                        style={{ color: 'var(--text-primary)' }}
+                                                    >
+                                                        {mod.usage.outputTokens?.toLocaleString() || 0}
+                                                    </span>
+                                                    <span 
+                                                        className="block text-[10px] uppercase font-bold tracking-widest"
+                                                        style={{ color: 'var(--text-secondary)' }}
+                                                    >
+                                                        Output
+                                                    </span>
+                                                </div> 
+                                                <div 
+                                                    className="p-3 rounded-lg text-center"
+                                                    style={{ 
+                                                        backgroundColor: 'var(--bg-card)',
+                                                        border: '1px solid var(--border-color)'
+                                                    }}
+                                                >
+                                                    <span 
+                                                        className="block text-base font-bold font-mono"
+                                                        style={{ color: 'var(--text-primary)' }}
+                                                    >
+                                                        {mod.imagesAnalyzed || 0}
+                                                    </span>
+                                                    <span 
+                                                        className="block text-[10px] uppercase font-bold tracking-widest"
+                                                        style={{ color: 'var(--text-secondary)' }}
+                                                    >
+                                                        Images
+                                                    </span>
+                                                </div>
+                                                <div 
+                                                    className="p-3 rounded-lg text-center"
+                                                    style={{ 
+                                                        backgroundColor: 'var(--bg-card)',
+                                                        border: '1px solid var(--border-color)'
+                                                    }}
+                                                >
+                                                    <span 
+                                                        className="block text-base font-bold font-mono"
+                                                        style={{ color: 'var(--safe-text)' }}
+                                                    >
+                                                        {mod.usage.costFormatted || '$0.00'}
+                                                    </span>
+                                                    <span 
+                                                        className="block text-[10px] uppercase font-bold tracking-widest"
+                                                        style={{ color: 'var(--text-secondary)' }}
+                                                    >
+                                                        Cost
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                             </>
                         ) : (
                             <div
@@ -670,7 +780,145 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 </button>
                             </div>
                         )}
-
+                        {/* Creator Suggestions & Feedback */}
+                        {mod.suggestions && (
+                            <div>
+                                <h4 
+                                    className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
+                                    style={{ color: 'var(--text-secondary)' }}
+                                >
+                                    {mod.suggestions.type === 'great' ? (
+                                        <CheckCircle2 size={12} style={{ color: 'var(--safe-text)' }} />
+                                    ) : mod.suggestions.type === 'required_changes' ? (
+                                        <AlertOctagon size={12} style={{ color: 'var(--rejected-text)' }} />
+                                    ) : (
+                                        <Info size={12} style={{ color: 'var(--flagged-text)' }} />
+                                    )}
+                                    Creator Feedback
+                                </h4>
+                                
+                                {/* Summary Banner */}
+                                <div 
+                                    className="p-3 rounded-lg mb-3"
+                                    style={{ 
+                                        backgroundColor: mod.suggestions.type === 'great' 
+                                            ? 'var(--safe-bg)' 
+                                            : mod.suggestions.type === 'required_changes'
+                                                ? 'var(--rejected-bg)'
+                                                : 'var(--flagged-bg)',
+                                        border: `1px solid ${
+                                            mod.suggestions.type === 'great' 
+                                                ? 'var(--safe-border)' 
+                                                : mod.suggestions.type === 'required_changes'
+                                                    ? 'var(--rejected-border)'
+                                                    : 'var(--flagged-border)'
+                                        }`,
+                                        color: mod.suggestions.type === 'great' 
+                                            ? 'var(--safe-text)' 
+                                            : mod.suggestions.type === 'required_changes'
+                                                ? 'var(--rejected-text)'
+                                                : 'var(--flagged-text)'
+                                    }}
+                                >
+                                    <span className="font-medium">{mod.suggestions.summary}</span>
+                                </div>
+                                
+                                {/* Suggestion Items */}
+                                {mod.suggestions.items && mod.suggestions.items.length > 0 && (
+                                    <div className="space-y-2">
+                                        {mod.suggestions.items.map((item, idx) => (
+                                            <div 
+                                                key={idx}
+                                                className="p-3 rounded-lg"
+                                                style={{ 
+                                                    backgroundColor: 'var(--bg-card)',
+                                                    border: '1px solid var(--border-color)'
+                                                }}
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    {/* Priority Indicator */}
+                                                    <span 
+                                                        className="px-2 py-0.5 rounded text-[10px] font-bold uppercase mt-0.5"
+                                                        style={{ 
+                                                            backgroundColor: item.priority === 'required' 
+                                                                ? 'var(--rejected-bg)' 
+                                                                : item.priority === 'recommended'
+                                                                    ? 'var(--flagged-bg)'
+                                                                    : 'var(--bg-secondary)',
+                                                            color: item.priority === 'required' 
+                                                                ? 'var(--rejected-text)' 
+                                                                : item.priority === 'recommended'
+                                                                    ? 'var(--flagged-text)'
+                                                                    : 'var(--text-secondary)',
+                                                            border: `1px solid ${
+                                                                item.priority === 'required' 
+                                                                    ? 'var(--rejected-border)' 
+                                                                    : item.priority === 'recommended'
+                                                                        ? 'var(--flagged-border)'
+                                                                        : 'var(--border-color)'
+                                                            }`
+                                                        }}
+                                                    >
+                                                        {item.priority}
+                                                    </span>
+                                                    
+                                                    <div className="flex-1">
+                                                        {/* Field */}
+                                                        <span 
+                                                            className="text-xs font-mono px-1.5 py-0.5 rounded mr-2"
+                                                            style={{ 
+                                                                backgroundColor: 'var(--bg-secondary)',
+                                                                color: 'var(--text-secondary)'
+                                                            }}
+                                                        >
+                                                            {item.field}
+                                                        </span>
+                                                        
+                                                        {/* Issue (if present) */}
+                                                        {item.issue && (
+                                                            <p 
+                                                                className="text-sm mt-1"
+                                                                style={{ color: 'var(--text-secondary)' }}
+                                                            >
+                                                                {item.issue}
+                                                            </p>
+                                                        )}
+                                                        
+                                                        {/* Suggestion */}
+                                                        <p 
+                                                            className="text-sm mt-1"
+                                                            style={{ color: 'var(--text-primary)' }}
+                                                        >
+                                                             {item.suggestion}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            
+                                {/* No suggestions needed */}
+                                {mod.suggestions.type === 'great' && (!mod.suggestions.items || mod.suggestions.items.length === 0) && (
+                                    <div 
+                                        className="p-4 rounded-lg text-center"
+                                        style={{ 
+                                            backgroundColor: 'var(--bg-card)',
+                                            border: '1px solid var(--border-color)'
+                                        }}
+                                    >
+                                        <CheckCircle2 
+                                            size={32} 
+                                            className="mx-auto mb-2" 
+                                            style={{ color: 'var(--safe-text)' }} 
+                                        />
+                                        <p style={{ color: 'var(--text-primary)' }}>
+                                            This content looks great! No changes needed.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         {/* Review Panel */}
                         {isPending && (
                             <div
