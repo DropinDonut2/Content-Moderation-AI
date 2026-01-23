@@ -40,7 +40,7 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
     }
 
     // Filter highlights for this specific field
-    const fieldHighlights = highlights.filter(h => 
+    const fieldHighlights = highlights.filter(h =>
         h.field?.toLowerCase() === fieldName?.toLowerCase() ||
         h.field?.toLowerCase().includes(fieldName?.toLowerCase()) ||
         fieldName?.toLowerCase().includes(h.field?.toLowerCase())
@@ -74,11 +74,11 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
         if (!quote) return
 
         const normalizedQuote = normalize(quote)
-        
+
         // Try exact match first
         let startIndex = text.toLowerCase().indexOf(quote.toLowerCase(), lastIndex)
         let matchLength = quote.length
-        
+
         // If exact match fails, try normalized scanning
         if (startIndex === -1) {
             for (let i = lastIndex; i < text.length; i++) {
@@ -106,42 +106,43 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
         }
 
         const actualQuote = text.substring(startIndex, startIndex + matchLength)
-        
-        const severityColors = {
-            critical: { bg: 'rgba(239, 68, 68, 0.3)', border: '#ef4444', text: '#fca5a5' },
-            high: { bg: 'rgba(249, 115, 22, 0.3)', border: '#f97316', text: '#fdba74' },
-            medium: { bg: 'rgba(234, 179, 8, 0.3)', border: '#eab308', text: '#fde047' },
-            low: { bg: 'rgba(34, 197, 94, 0.3)', border: '#22c55e', text: '#86efac' }
+
+        const getSeverityInfo = (score) => {
+            if (score >= 80) return { label: 'CRITICAL', bg: 'rgba(239, 68, 68, 0.3)', border: '#ef4444', text: '#fca5a5' }
+            if (score >= 50) return { label: 'HIGH', bg: 'rgba(249, 115, 22, 0.3)', border: '#f97316', text: '#fdba74' }
+            if (score >= 20) return { label: 'MEDIUM', bg: 'rgba(234, 179, 8, 0.3)', border: '#eab308', text: '#fde047' }
+            return { label: 'LOW', bg: 'rgba(34, 197, 94, 0.3)', border: '#22c55e', text: '#86efac' }
         }
-        const colors = severityColors[highlight.severity] || severityColors.medium
+
+        const info = getSeverityInfo(highlight.severityScore)
 
         result.push(
             <mark
                 key={`highlight-${keyIndex++}`}
                 className="relative group cursor-help px-1 rounded"
                 style={{
-                    backgroundColor: colors.bg,
-                    borderBottom: `2px solid ${colors.border}`,
+                    backgroundColor: info.bg,
+                    borderBottom: `2px solid ${info.border}`,
                     color: 'inherit'
                 }}
                 title={`${highlight.policy}: ${highlight.reason}`}
             >
                 {actualQuote}
-                <span 
+                <span
                     className="absolute bottom-full left-0 mb-2 px-3 py-2 rounded-lg text-xs font-normal opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap max-w-xs"
                     style={{
                         backgroundColor: '#1f1f1f',
-                        border: `1px solid ${colors.border}`,
+                        border: `1px solid ${info.border}`,
                         color: '#fff',
                         boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
                     }}
                 >
-                    <span className="font-bold" style={{ color: colors.text }}>
+                    <span className="font-bold" style={{ color: info.text }}>
                         {highlight.policy}
                     </span>
                     <span className="mx-2">•</span>
-                    <span className="uppercase text-[10px] font-bold" style={{ color: colors.text }}>
-                        {highlight.severity}
+                    <span className="uppercase text-[10px] font-bold" style={{ color: info.text }}>
+                        {info.label} ({highlight.severityScore}%)
                     </span>
                     <br />
                     <span className="text-gray-300">{highlight.reason}</span>
@@ -275,6 +276,25 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
     const statusStyle = getStatusStyle(item.moderationStatus)
 
+    const getSeverityInfo = (score) => {
+        let s = 0;
+        if (typeof score === 'string') {
+            const lower = score.toLowerCase();
+            if (lower === 'critical') s = 90;
+            else if (lower === 'high') s = 75;
+            else if (lower === 'medium') s = 40;
+            else if (lower === 'low') s = 10;
+            else s = parseFloat(score) || 0;
+        } else {
+            s = score || 0;
+        }
+
+        if (s >= 80) return { label: 'CRITICAL', bg: 'rgba(239, 68, 68, 0.1)', border: '#ef4444', text: '#fca5a5', icon: AlertOctagon }
+        if (s >= 50) return { label: 'HIGH', bg: 'rgba(249, 115, 22, 0.1)', border: '#f97316', text: '#fdba74', icon: AlertTriangle }
+        if (s >= 20) return { label: 'MEDIUM', bg: 'rgba(234, 179, 8, 0.1)', border: '#eab308', text: '#fde047', icon: AlertCircle }
+        return { label: 'LOW', bg: 'rgba(34, 197, 94, 0.1)', border: '#22c55e', text: '#86efac', icon: CheckCircle2 }
+    }
+
     const modalContent = (
         <div
             className="fixed inset-0 flex items-center justify-center p-4"
@@ -398,7 +418,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                     </p>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-3 gap-3">
                                     <div
                                         className="p-3 rounded-lg text-center"
                                         style={{
@@ -417,6 +437,27 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             style={{ color: getStatusStyle(mod.aiVerdict).color }}
                                         >
                                             {mod.aiVerdict?.toUpperCase()}
+                                        </span>
+                                    </div>
+
+                                    <div
+                                        className="p-3 rounded-lg text-center"
+                                        style={{
+                                            backgroundColor: 'var(--bg-card)',
+                                            border: '1px solid var(--border-color)'
+                                        }}
+                                    >
+                                        <span
+                                            className="block text-[10px] uppercase font-bold tracking-widest mb-1"
+                                            style={{ color: 'var(--text-secondary)' }}
+                                        >
+                                            Severity
+                                        </span>
+                                        <span
+                                            className="block font-bold text-sm"
+                                            style={{ color: getSeverityInfo(mod.violationSeverity).text }}
+                                        >
+                                            {mod.violationSeverity || 0}%
                                         </span>
                                     </div>
                                     <div
@@ -478,86 +519,61 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             Highlighted Issues ({mod.highlightedIssues.length})
                                         </h4>
                                         <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
-                                            {mod.highlightedIssues.map((issue, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className="rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-white/20 transition-all"
-                                                    style={{
-                                                        backgroundColor: issue.severity === 'critical' 
-                                                            ? 'rgba(239, 68, 68, 0.1)' 
-                                                            : issue.severity === 'high'
-                                                            ? 'rgba(249, 115, 22, 0.1)'
-                                                            : 'rgba(234, 179, 8, 0.1)',
-                                                        border: `1px solid ${
-                                                            issue.severity === 'critical'
-                                                            ? 'rgba(239, 68, 68, 0.3)'
-                                                            : issue.severity === 'high'
-                                                            ? 'rgba(249, 115, 22, 0.3)'
-                                                            : 'rgba(234, 179, 8, 0.3)'
-                                                        }`
-                                                    }}
-                                                    onClick={() => handleIssueClick(issue.field)}
-                                                    title="Click to view in Details tab"
-                                                >
-                                                    {/* Issue Header */}
-                                                    <div 
-                                                        className="px-3 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider"
+                                            {mod.highlightedIssues.map((issue, idx) => {
+                                                const info = getSeverityInfo(issue.severityScore)
+                                                const Icon = info.icon
+
+                                                return (
+                                                    <div
+                                                        key={idx}
+                                                        className="rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-white/20 transition-all"
                                                         style={{
-                                                            backgroundColor: issue.severity === 'critical'
-                                                                ? 'rgba(239, 68, 68, 0.15)'
-                                                                : issue.severity === 'high'
-                                                                ? 'rgba(249, 115, 22, 0.15)'
-                                                                : 'rgba(234, 179, 8, 0.15)',
-                                                            color: issue.severity === 'critical'
-                                                                ? '#f87171'
-                                                                : issue.severity === 'high'
-                                                                ? '#fb923c'
-                                                                : '#fbbf24'
+                                                            backgroundColor: info.bg,
+                                                            border: `1px solid ${info.border.replace('1)', '0.3)')}`
                                                         }}
+                                                        onClick={() => handleIssueClick(issue.field)}
+                                                        title="Click to view in Details tab"
                                                     >
-                                                        {issue.severity === 'critical' ? (
-                                                            <AlertOctagon size={12} />
-                                                        ) : issue.severity === 'high' ? (
-                                                            <AlertTriangle size={12} />
-                                                        ) : (
-                                                            <AlertCircle size={12} />
-                                                        )}
-                                                        <span>{issue.severity}</span>
-                                                        <span style={{ color: 'var(--text-secondary)' }}>|</span>
-                                                        <span style={{ color: 'var(--text-primary)' }}>{issue.field}</span>
-                                                        <span style={{ color: 'var(--text-secondary)' }}>|</span>
-                                                        <span>{issue.policy}</span>
-                                                    </div>
-                                                    
-                                                    {/* Quoted Text */}
-                                                    <div className="px-3 py-2">
+                                                        {/* Issue Header */}
                                                         <div
-                                                            className="p-2 rounded text-xs font-mono italic leading-relaxed"
+                                                            className="px-3 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider"
                                                             style={{
-                                                                backgroundColor: 'rgba(0,0,0,0.3)',
-                                                                color: 'var(--text-primary)',
-                                                                borderLeft: `3px solid ${
-                                                                    issue.severity === 'critical'
-                                                                    ? '#ef4444'
-                                                                    : issue.severity === 'high'
-                                                                    ? '#f97316'
-                                                                    : '#eab308'
-                                                                }`
+                                                                backgroundColor: 'rgba(0,0,0,0.1)',
+                                                                color: info.text
                                                             }}
                                                         >
-                                                            "{issue.quote}"
+                                                            <Icon size={12} />
+                                                            <span>{info.label} ({issue.severityScore || 0}%)</span>
+                                                            <span style={{ color: 'var(--text-secondary)' }}>|</span>
+                                                            <span style={{ color: 'var(--text-primary)' }}>{issue.field}</span>
+                                                            <span style={{ color: 'var(--text-secondary)' }}>|</span>
+                                                            <span>{issue.policy}</span>
                                                         </div>
-                                                        {issue.reason && (
-                                                            <p 
-                                                                className="mt-2 text-[11px] leading-relaxed"
-                                                                style={{ color: 'var(--text-secondary)' }}
+
+                                                        {/* Quoted Text */}
+                                                        <div className="px-3 py-2">
+                                                            <div
+                                                                className="p-2 rounded text-xs font-mono italic leading-relaxed"
+                                                                style={{
+                                                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                                                    color: 'var(--text-primary)',
+                                                                    borderLeft: `3px solid ${info.border}`
+                                                                }}
                                                             >
-                                                                → {issue.reason}
-                                                            </p>
-                                                        )}
+                                                                "{issue.quote}"
+                                                            </div>
+                                                            {issue.reason && (
+                                                                <p
+                                                                    className="mt-2 text-[11px] leading-relaxed"
+                                                                    style={{ color: 'var(--text-secondary)' }}
+                                                                >
+                                                                    → {issue.reason}
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                )
+                                            })}
                                         </div>
                                     </div>
                                 )}
@@ -571,7 +587,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         >
                                             <Layers size={12} /> Field Status
                                         </h4>
-                                        <div 
+                                        <div
                                             className="grid grid-cols-2 gap-1 text-[10px] p-2 rounded-lg"
                                             style={{
                                                 backgroundColor: 'var(--bg-card)',
@@ -579,12 +595,12 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             }}
                                         >
                                             {Object.entries(mod.fieldAnalysis).map(([field, status]) => (
-                                                <div 
+                                                <div
                                                     key={field}
                                                     className="flex items-center gap-1.5 py-1 px-2 rounded"
                                                     style={{
-                                                        backgroundColor: status.status === 'flagged' 
-                                                            ? 'rgba(239, 68, 68, 0.1)' 
+                                                        backgroundColor: status.status === 'flagged'
+                                                            ? 'rgba(239, 68, 68, 0.1)'
                                                             : 'transparent'
                                                     }}
                                                 >
@@ -593,18 +609,18 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                     ) : (
                                                         <CheckCircle2 size={10} style={{ color: '#4ade80' }} />
                                                     )}
-                                                    <span 
+                                                    <span
                                                         className="truncate font-mono"
-                                                        style={{ 
-                                                            color: status.status === 'flagged' 
-                                                                ? '#f87171' 
-                                                                : 'var(--text-secondary)' 
+                                                        style={{
+                                                            color: status.status === 'flagged'
+                                                                ? '#f87171'
+                                                                : 'var(--text-secondary)'
                                                         }}
                                                     >
                                                         {field}
                                                     </span>
                                                     {status.issueCount > 0 && (
-                                                        <span 
+                                                        <span
                                                             className="ml-auto px-1.5 rounded-full font-bold"
                                                             style={{
                                                                 backgroundColor: 'rgba(239, 68, 68, 0.2)',
@@ -624,14 +640,14 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 {/* Legacy: Single offending snippet (fallback for old data) */}
                                 {!mod.highlightedIssues?.length && mod.offendingSnippet && (
                                     <div>
-                                        <h4 
+                                        <h4
                                             className="text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"
                                             style={{ color: 'var(--rejected-text)' }}
                                         >
                                             <AlertTriangle size={12} />
                                             Flagged Segment
                                         </h4>
-                                        <div 
+                                        <div
                                             className="p-3 rounded-lg text-xs font-mono italic"
                                             style={{
                                                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -651,7 +667,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         {mod.aiReasoning}
                                     </div>
                                 </div>
-                   
+
                             </>
                         ) : (
                             <div
@@ -869,8 +885,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             className="text-sm leading-relaxed"
                                             style={{ color: 'var(--text-primary)' }}
                                         >
-                                            <HighlightedText 
-                                                text={item.description || 'No description provided.'} 
+                                            <HighlightedText
+                                                text={item.description || 'No description provided.'}
                                                 highlights={highlightedIssues}
                                                 fieldName="description"
                                             />
@@ -882,8 +898,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
-                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('plotsummary')) 
-                                                        ? 'var(--rejected-text)' 
+                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('plotsummary'))
+                                                        ? 'var(--rejected-text)'
                                                         : 'var(--text-secondary)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
@@ -903,8 +919,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                     color: 'var(--text-primary)'
                                                 }}
                                             >
-                                                <HighlightedText 
-                                                    text={item.plotSummary} 
+                                                <HighlightedText
+                                                    text={item.plotSummary}
                                                     highlights={highlightedIssues}
                                                     fieldName="plotSummary"
                                                 />
@@ -917,8 +933,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
-                                                    color: highlightedIssues.some(h => h.field?.toLowerCase() === 'plot') 
-                                                        ? 'var(--rejected-text)' 
+                                                    color: highlightedIssues.some(h => h.field?.toLowerCase() === 'plot')
+                                                        ? 'var(--rejected-text)'
                                                         : 'var(--text-secondary)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
@@ -938,8 +954,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                     color: 'var(--text-primary)'
                                                 }}
                                             >
-                                                <HighlightedText 
-                                                    text={item.plot} 
+                                                <HighlightedText
+                                                    text={item.plot}
                                                     highlights={highlightedIssues}
                                                     fieldName="plot"
                                                 />
@@ -952,8 +968,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
-                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('promptplot')) 
-                                                        ? 'var(--rejected-text)' 
+                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('promptplot'))
+                                                        ? 'var(--rejected-text)'
                                                         : 'var(--flagged-text)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
@@ -975,8 +991,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                     color: 'var(--text-primary)'
                                                 }}
                                             >
-                                                <HighlightedText 
-                                                    text={item.promptPlot} 
+                                                <HighlightedText
+                                                    text={item.promptPlot}
                                                     highlights={highlightedIssues}
                                                     fieldName="promptPlot"
                                                 />
@@ -989,8 +1005,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
-                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('firstmessage')) 
-                                                        ? 'var(--rejected-text)' 
+                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('firstmessage'))
+                                                        ? 'var(--rejected-text)'
                                                         : 'var(--text-secondary)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
@@ -1010,8 +1026,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                     color: 'var(--text-primary)'
                                                 }}
                                             >
-                                                <HighlightedText 
-                                                    text={item.firstMessage} 
+                                                <HighlightedText
+                                                    text={item.firstMessage}
                                                     highlights={highlightedIssues}
                                                     fieldName="firstMessage"
                                                 />
@@ -1024,8 +1040,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
-                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('promptguideline')) 
-                                                        ? 'var(--rejected-text)' 
+                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('promptguideline'))
+                                                        ? 'var(--rejected-text)'
                                                         : 'var(--flagged-text)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
@@ -1047,8 +1063,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                     color: 'var(--text-primary)'
                                                 }}
                                             >
-                                                <HighlightedText 
-                                                    text={item.promptGuideline} 
+                                                <HighlightedText
+                                                    text={item.promptGuideline}
                                                     highlights={highlightedIssues}
                                                     fieldName="promptGuideline"
                                                 />
@@ -1061,8 +1077,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             <h4
                                                 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 pb-2"
                                                 style={{
-                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('reminder')) 
-                                                        ? 'var(--rejected-text)' 
+                                                    color: highlightedIssues.some(h => h.field?.toLowerCase().includes('reminder'))
+                                                        ? 'var(--rejected-text)'
                                                         : 'var(--flagged-text)',
                                                     borderBottom: '1px solid var(--border-color)'
                                                 }}
@@ -1084,8 +1100,8 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                     color: 'var(--text-primary)'
                                                 }}
                                             >
-                                                <HighlightedText 
-                                                    text={item.reminder} 
+                                                <HighlightedText
+                                                    text={item.reminder}
                                                     highlights={highlightedIssues}
                                                     fieldName="reminder"
                                                 />
@@ -1311,70 +1327,70 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                         )}
 
                                                         {/* Description Summary */}
-                                                            {char.descriptionSummary && (
-                                                                <div>
-                                                                    <h5
-                                                                        className="text-xs font-bold uppercase tracking-widest mb-2"
-                                                                        style={{ color: 'var(--text-secondary)' }}
-                                                                    >
-                                                                        Summary
-                                                                    </h5>
-                                                                    <div
-                                                                        className="text-sm leading-relaxed p-3 rounded-lg"
-                                                                        style={{ 
-                                                                            color: 'var(--text-primary)',
-                                                                            backgroundColor: 'var(--bg-card)',
-                                                                            border: '1px solid var(--border-color)'
-                                                                        }}
-                                                                    >
-                                                                        {char.descriptionSummary}
-                                                                    </div>
+                                                        {char.descriptionSummary && (
+                                                            <div>
+                                                                <h5
+                                                                    className="text-xs font-bold uppercase tracking-widest mb-2"
+                                                                    style={{ color: 'var(--text-secondary)' }}
+                                                                >
+                                                                    Summary
+                                                                </h5>
+                                                                <div
+                                                                    className="text-sm leading-relaxed p-3 rounded-lg"
+                                                                    style={{
+                                                                        color: 'var(--text-primary)',
+                                                                        backgroundColor: 'var(--bg-card)',
+                                                                        border: '1px solid var(--border-color)'
+                                                                    }}
+                                                                >
+                                                                    {char.descriptionSummary}
                                                                 </div>
-                                                            )}
+                                                            </div>
+                                                        )}
 
-                                                            {/* Full Description */}
-                                                            {char.description && (
-                                                                <div>
-                                                                    <h5
-                                                                        className="text-xs font-bold uppercase tracking-widest mb-2"
-                                                                        style={{ color: 'var(--text-secondary)' }}
-                                                                    >
-                                                                        Full Description
-                                                                    </h5>
-                                                                    <div
-                                                                        className="text-sm whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto p-3 rounded-lg"
-                                                                        style={{ 
-                                                                            color: 'var(--text-primary)',
-                                                                            backgroundColor: 'var(--bg-card)',
-                                                                            border: '1px solid var(--border-color)'
-                                                                        }}
-                                                                    >
-                                                                        {char.description}
-                                                                    </div>
+                                                        {/* Full Description */}
+                                                        {char.description && (
+                                                            <div>
+                                                                <h5
+                                                                    className="text-xs font-bold uppercase tracking-widest mb-2"
+                                                                    style={{ color: 'var(--text-secondary)' }}
+                                                                >
+                                                                    Full Description
+                                                                </h5>
+                                                                <div
+                                                                    className="text-sm whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto p-3 rounded-lg"
+                                                                    style={{
+                                                                        color: 'var(--text-primary)',
+                                                                        backgroundColor: 'var(--bg-card)',
+                                                                        border: '1px solid var(--border-color)'
+                                                                    }}
+                                                                >
+                                                                    {char.description}
                                                                 </div>
-                                                            )}
+                                                            </div>
+                                                        )}
 
-                                                            {/* Prompt Description (AI Instructions) */}
-                                                            {char.promptDescription && (
-                                                                <div>
-                                                                    <h5
-                                                                        className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
-                                                                        style={{ color: 'var(--flagged-text)' }}
-                                                                    >
-                                                                        <Bot size={14} /> Prompt Description (AI Instructions)
-                                                                    </h5>
-                                                                    <div
-                                                                        className="text-sm font-mono whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto p-3 rounded-lg"
-                                                                        style={{ 
-                                                                            color: 'var(--text-primary)',
-                                                                            backgroundColor: 'rgba(234, 179, 8, 0.05)',
-                                                                            border: '1px solid rgba(234, 179, 8, 0.2)'
-                                                                        }}
-                                                                    >
-                                                                        {char.promptDescription}
-                                                                    </div>
+                                                        {/* Prompt Description (AI Instructions) */}
+                                                        {char.promptDescription && (
+                                                            <div>
+                                                                <h5
+                                                                    className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
+                                                                    style={{ color: 'var(--flagged-text)' }}
+                                                                >
+                                                                    <Bot size={14} /> Prompt Description (AI Instructions)
+                                                                </h5>
+                                                                <div
+                                                                    className="text-sm font-mono whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto p-3 rounded-lg"
+                                                                    style={{
+                                                                        color: 'var(--text-primary)',
+                                                                        backgroundColor: 'rgba(234, 179, 8, 0.05)',
+                                                                        border: '1px solid rgba(234, 179, 8, 0.2)'
+                                                                    }}
+                                                                >
+                                                                    {char.promptDescription}
                                                                 </div>
-                                                            )}
+                                                            </div>
+                                                        )}
 
                                                         {/* Tags */}
                                                         {char.tagSnapshots && char.tagSnapshots.length > 0 && (
@@ -1591,7 +1607,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                                 </h5>
                                                                 <div
                                                                     className="text-sm whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto p-3 rounded-lg"
-                                                                    style={{ 
+                                                                    style={{
                                                                         color: 'var(--text-primary)',
                                                                         backgroundColor: 'var(--bg-card)',
                                                                         border: '1px solid var(--border-color)'
@@ -1794,59 +1810,61 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
             </div>
 
             {/* Lightbox for Full-Size Image Viewing */}
-            {lightboxImage && (
-                <div
-                    className="fixed inset-0 flex items-center justify-center p-4"
-                    style={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.95)',
-                        zIndex: 100001
-                    }}
-                    onClick={() => setLightboxImage(null)}
-                >
-                    <div className="relative max-w-5xl max-h-[90vh] flex flex-col items-center">
-                        {/* Close Button */}
-                        <button
-                            className="absolute -top-12 right-0 p-2 rounded-full transition-colors hover:bg-white/10"
-                            style={{ color: 'white' }}
-                            onClick={() => setLightboxImage(null)}
-                        >
-                            <X size={32} />
-                        </button>
-
-                        {/* Image Info Header */}
-                        <div
-                            className="absolute -top-12 left-0 flex items-center gap-3"
-                            style={{ color: 'white' }}
-                        >
-                            <span className="font-bold text-lg">{lightboxImage.name}</span>
-                            <span
-                                className="px-2 py-1 text-xs font-bold uppercase rounded"
-                                style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+            {
+                lightboxImage && (
+                    <div
+                        className="fixed inset-0 flex items-center justify-center p-4"
+                        style={{
+                            backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                            zIndex: 100001
+                        }}
+                        onClick={() => setLightboxImage(null)}
+                    >
+                        <div className="relative max-w-5xl max-h-[90vh] flex flex-col items-center">
+                            {/* Close Button */}
+                            <button
+                                className="absolute -top-12 right-0 p-2 rounded-full transition-colors hover:bg-white/10"
+                                style={{ color: 'white' }}
+                                onClick={() => setLightboxImage(null)}
                             >
-                                {lightboxImage.type}
-                            </span>
-                        </div>
+                                <X size={32} />
+                            </button>
 
-                        {/* Full Size Image */}
-                        <img
-                            src={lightboxImage.url}
-                            alt={`${lightboxImage.name} - ${lightboxImage.type}`}
-                            className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-                            style={{ border: '2px solid rgba(255,255,255,0.2)' }}
-                            onClick={(e) => e.stopPropagation()}
-                        />
+                            {/* Image Info Header */}
+                            <div
+                                className="absolute -top-12 left-0 flex items-center gap-3"
+                                style={{ color: 'white' }}
+                            >
+                                <span className="font-bold text-lg">{lightboxImage.name}</span>
+                                <span
+                                    className="px-2 py-1 text-xs font-bold uppercase rounded"
+                                    style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+                                >
+                                    {lightboxImage.type}
+                                </span>
+                            </div>
 
-                        {/* Image URL (for debugging/reference) */}
-                        <div
-                            className="mt-4 px-4 py-2 rounded-lg text-xs font-mono truncate max-w-full"
-                            style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)' }}
-                        >
-                            {lightboxImage.url}
+                            {/* Full Size Image */}
+                            <img
+                                src={lightboxImage.url}
+                                alt={`${lightboxImage.name} - ${lightboxImage.type}`}
+                                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                                style={{ border: '2px solid rgba(255,255,255,0.2)' }}
+                                onClick={(e) => e.stopPropagation()}
+                            />
+
+                            {/* Image URL (for debugging/reference) */}
+                            <div
+                                className="mt-4 px-4 py-2 rounded-lg text-xs font-mono truncate max-w-full"
+                                style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)' }}
+                            >
+                                {lightboxImage.url}
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     )
 
     return createPortal(modalContent, document.body)
