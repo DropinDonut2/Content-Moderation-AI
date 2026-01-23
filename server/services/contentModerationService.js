@@ -157,9 +157,11 @@ const validateFields = (contentType, content) => {
 // ============================================
 // STRUCTURED OUTPUT SCHEMA (Replaces Tool Definition)
 // ============================================
+// NOTE: All object types MUST have "additionalProperties: false" for Claude
 
 const moderationSchema = {
     type: "object",
+    additionalProperties: false,
     properties: {
         verdict: {
             type: "string",
@@ -183,6 +185,7 @@ const moderationSchema = {
             description: "Text-based issues found. Empty array if safe.",
             items: {
                 type: "object",
+                additionalProperties: false,
                 properties: {
                     field: { type: "string" },
                     quote: { type: "string" },
@@ -191,11 +194,12 @@ const moderationSchema = {
                     severity: { type: "string", enum: ["low", "medium", "high", "critical"] },
                     reason: { type: "string" }
                 },
-                required: ["field", "quote", "policy", "severity", "reason"]
+                required: ["field", "quote", "policy", "policyTitle", "severity", "reason"]
             }
         },
         imageAnalysis: {
             type: "object",
+            additionalProperties: false,
             description: "Analysis of all images in the content",
             properties: {
                 totalImages: {
@@ -216,6 +220,7 @@ const moderationSchema = {
                     description: "Specific image issues found",
                     items: {
                         type: "object",
+                        additionalProperties: false,
                         properties: {
                             imageType: {
                                 type: "string",
@@ -247,7 +252,7 @@ const moderationSchema = {
                                 description: "The age stated in the text for this character, if any"
                             }
                         },
-                        required: ["imageType", "issue", "severity", "category"]
+                        required: ["imageType", "imageName", "issue", "severity", "category", "visualAgeAssessment", "statedAge"]
                     }
                 }
             },
@@ -255,6 +260,7 @@ const moderationSchema = {
         },
         suggestions: {
             type: "object",
+            additionalProperties: false,
             description: "Detailed constructive feedback for the creator",
             properties: {
                 type: {
@@ -271,6 +277,7 @@ const moderationSchema = {
                     description: "List of specific issues, each clearly explained",
                     items: {
                         type: "object",
+                        additionalProperties: false,
                         properties: {
                             field: { type: "string", description: "Which field has the issue" },
                             problem: { type: "string", description: "What the problem is" },
@@ -291,16 +298,6 @@ const moderationSchema = {
             },
             required: ["type", "overallFeedback", "specificIssues", "strengths", "includeExampleLinks"]
         },
-        fieldAnalysis: {
-            type: "object",
-            additionalProperties: {
-                type: "object",
-                properties: {
-                    status: { type: "string", enum: ["safe", "flagged"] },
-                    issueCount: { type: "number" }
-                }
-            }
-        },
         nsfw: {
             type: "boolean",
             description: "Does content (text OR images) contain NSFW material?"
@@ -310,12 +307,13 @@ const moderationSchema = {
             type: "array",
             items: {
                 type: "object",
+                additionalProperties: false,
                 properties: {
                     category: { type: "string" },
                     flagged: { type: "boolean" },
                     confidence: { type: "number" }
                 },
-                required: ["category", "flagged"]
+                required: ["category", "flagged", "confidence"]
             }
         },
         flaggedPolicies: {
@@ -340,7 +338,11 @@ const moderationSchema = {
         "imageAnalysis", 
         "suggestions",
         "nsfw", 
-        "recommendedAction"
+        "nsfwReason",
+        "categories",
+        "flaggedPolicies",
+        "recommendedAction",
+        "violationSeverity"
     ]
 };
 
@@ -722,7 +724,7 @@ Always include suggestions with constructive feedback for the creator.`
             costFormatted: `$${totalCost.toFixed(4)}`
         };
         
-        console.log(` Token Usage: ${usageStats.totalTokens} tokens | ${usageStats.costFormatted}`);
+        console.log(`📊 Token Usage: ${usageStats.totalTokens} tokens | ${usageStats.costFormatted}`);
 
         // STEP 8: Parse response (SIMPLER with Structured Output!)
         let result;
@@ -774,7 +776,6 @@ Always include suggestions with constructive feedback for the creator.`
                 aiReasoning: result.reasoning,
                 aiSummary: result.summary,
                 highlightedIssues: highlightedIssues,
-                fieldAnalysis: result.fieldAnalysis || {},
 
                 // Image analysis results
                 imageAnalysis: imageAnalysis,
@@ -865,7 +866,6 @@ Always include suggestions with constructive feedback for the creator.`
                     strengths: [],
                     includeExampleLinks: false
                 },
-                fieldAnalysis: {},
                 categories: [],
                 flaggedPolicies: [],
                 recommendedAction: 'review',

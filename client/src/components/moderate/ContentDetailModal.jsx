@@ -827,140 +827,247 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                 </button>
                             </div>
                         )}
-                        {/* Creator Suggestions & Feedback */}
+
+                        {/* Creator Feedback */}
                         {mod.suggestions && (
                             <div>
                                 <h4 
-                                    className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
+                                    className="text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2"
                                     style={{ color: 'var(--text-secondary)' }}
                                 >
                                     {mod.suggestions.type === 'great' ? (
                                         <CheckCircle2 size={12} style={{ color: 'var(--safe-text)' }} />
-                                    ) : mod.suggestions.type === 'required_changes' ? (
+                                    ) : mod.suggestions.type === 'rejected' ? (
                                         <AlertOctagon size={12} style={{ color: 'var(--rejected-text)' }} />
+                                    ) : mod.suggestions.type === 'needs_work' ? (
+                                        <AlertCircle size={12} style={{ color: 'var(--flagged-text)' }} />
                                     ) : (
-                                        <Info size={12} style={{ color: 'var(--flagged-text)' }} />
+                                        <Info size={12} style={{ color: 'var(--pending-text)' }} />
                                     )}
                                     Creator Feedback
                                 </h4>
                                 
-                                {/* Summary Banner */}
+                                {/* Overall Feedback Banner */}
                                 <div 
-                                    className="p-3 rounded-lg mb-3"
+                                    className="p-4 rounded-lg mb-3"
                                     style={{ 
                                         backgroundColor: mod.suggestions.type === 'great' 
                                             ? 'var(--safe-bg)' 
-                                            : mod.suggestions.type === 'required_changes'
+                                            : mod.suggestions.type === 'rejected'
                                                 ? 'var(--rejected-bg)'
-                                                : 'var(--flagged-bg)',
+                                                : mod.suggestions.type === 'needs_work'
+                                                    ? 'var(--flagged-bg)'
+                                                    : 'var(--pending-bg)',
                                         border: `1px solid ${
                                             mod.suggestions.type === 'great' 
                                                 ? 'var(--safe-border)' 
-                                                : mod.suggestions.type === 'required_changes'
+                                                : mod.suggestions.type === 'rejected'
                                                     ? 'var(--rejected-border)'
-                                                    : 'var(--flagged-border)'
-                                        }`,
-                                        color: mod.suggestions.type === 'great' 
-                                            ? 'var(--safe-text)' 
-                                            : mod.suggestions.type === 'required_changes'
-                                                ? 'var(--rejected-text)'
-                                                : 'var(--flagged-text)'
+                                                    : mod.suggestions.type === 'needs_work'
+                                                        ? 'var(--flagged-border)'
+                                                        : 'var(--pending-border)'
+                                        }`
                                     }}
                                 >
-                                    <span className="font-medium">{mod.suggestions.summary}</span>
+                                    {/* Status Badge */}
+                                    <span 
+                                        className="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
+                                        style={{ 
+                                            backgroundColor: mod.suggestions.type === 'great' 
+                                                ? 'var(--safe-text)' 
+                                                : mod.suggestions.type === 'rejected'
+                                                    ? 'var(--rejected-text)'
+                                                    : mod.suggestions.type === 'needs_work'
+                                                        ? 'var(--flagged-text)'
+                                                        : 'var(--pending-text)',
+                                            color: 'white'
+                                        }}
+                                    >
+                                        {mod.suggestions.type === 'great' && '✓ Excellent'}
+                                        {mod.suggestions.type === 'minor_improvements' && 'Minor Suggestions'}
+                                        {mod.suggestions.type === 'needs_work' && 'Needs Improvement'}
+                                        {mod.suggestions.type === 'rejected' && '✗ Changes Required'}
+                                    </span>
+                                    
+                                    {/* Main Feedback Text */}
+                                    <p 
+                                        className="text-sm leading-relaxed whitespace-pre-line"
+                                        style={{ 
+                                            color: mod.suggestions.type === 'great' 
+                                                ? 'var(--safe-text)' 
+                                                : mod.suggestions.type === 'rejected'
+                                                    ? 'var(--rejected-text)'
+                                                    : 'var(--text-primary)'
+                                        }}
+                                    >
+                                        {mod.suggestions.overallFeedback}
+                                    </p>
                                 </div>
-                                
-                                {/* Suggestion Items */}
-                                {mod.suggestions.items && mod.suggestions.items.length > 0 && (
-                                    <div className="space-y-2">
-                                        {mod.suggestions.items.map((item, idx) => (
-                                            <div 
-                                                key={idx}
-                                                className="p-3 rounded-lg"
-                                                style={{ 
-                                                    backgroundColor: 'var(--bg-card)',
-                                                    border: '1px solid var(--border-color)'
-                                                }}
-                                            >
-                                                <div className="flex items-start gap-3">
-                                                    {/* Priority Indicator */}
-                                                    <span 
-                                                        className="px-2 py-0.5 rounded text-[10px] font-bold uppercase mt-0.5"
-                                                        style={{ 
-                                                            backgroundColor: item.priority === 'required' 
-                                                                ? 'var(--rejected-bg)' 
-                                                                : item.priority === 'recommended'
-                                                                    ? 'var(--flagged-bg)'
-                                                                    : 'var(--bg-secondary)',
-                                                            color: item.priority === 'required' 
-                                                                ? 'var(--rejected-text)' 
-                                                                : item.priority === 'recommended'
-                                                                    ? 'var(--flagged-text)'
-                                                                    : 'var(--text-secondary)',
-                                                            border: `1px solid ${
-                                                                item.priority === 'required' 
-                                                                    ? 'var(--rejected-border)' 
-                                                                    : item.priority === 'recommended'
-                                                                        ? 'var(--flagged-border)'
-                                                                        : 'var(--border-color)'
-                                                            }`
-                                                        }}
-                                                    >
-                                                        {item.priority}
-                                                    </span>
-                                                    
-                                                    <div className="flex-1">
-                                                        {/* Field */}
-                                                        <span 
-                                                            className="text-xs font-mono px-1.5 py-0.5 rounded mr-2"
-                                                            style={{ 
-                                                                backgroundColor: 'var(--bg-secondary)',
-                                                                color: 'var(--text-secondary)'
-                                                            }}
-                                                        >
-                                                            {item.field}
-                                                        </span>
-                                                        
-                                                        {/* Issue (if present) */}
-                                                        {item.issue && (
-                                                            <p 
-                                                                className="text-sm mt-1"
-                                                                style={{ color: 'var(--text-secondary)' }}
-                                                            >
-                                                                {item.issue}
-                                                            </p>
-                                                        )}
-                                                        
-                                                        {/* Suggestion */}
-                                                        <p 
-                                                            className="text-sm mt-1"
-                                                            style={{ color: 'var(--text-primary)' }}
-                                                        >
-                                                             {item.suggestion}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
+
+                                {/* Strengths (What they did well) */}
+                                {mod.suggestions.strengths && mod.suggestions.strengths.length > 0 && (
+                                    <div 
+                                        className="p-3 rounded-lg mb-3"
+                                        style={{ 
+                                            backgroundColor: 'var(--safe-bg)',
+                                            border: '1px solid var(--safe-border)'
+                                        }}
+                                    >
+                                        <p 
+                                            className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
+                                            style={{ color: 'var(--safe-text)' }}
+                                        >
+                                            <ThumbsUp size={12} />
+                                            What You Did Well
+                                        </p>
+                                        <ul className="space-y-1">
+                                            {mod.suggestions.strengths.map((strength, idx) => (
+                                                <li 
+                                                    key={idx}
+                                                    className="text-sm flex items-start gap-2"
+                                                    style={{ color: 'var(--text-primary)' }}
+                                                >
+                                                    <span style={{ color: 'var(--safe-text)' }}>✓</span>
+                                                    {strength}
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 )}
-                            
-                                {/* No suggestions needed */}
-                                {mod.suggestions.type === 'great' && (!mod.suggestions.items || mod.suggestions.items.length === 0) && (
+
+                                {/* Specific Issues & How to Fix */}
+                                {mod.suggestions.specificIssues && mod.suggestions.specificIssues.length > 0 && (
                                     <div 
-                                        className="p-4 rounded-lg text-center"
+                                        className="p-3 rounded-lg mb-3"
+                                        style={{ 
+                                            backgroundColor: 'var(--bg-card)',
+                                            border: '1px solid var(--border-color)'
+                                        }}
+                                    >
+                                        <p 
+                                            className="text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2"
+                                            style={{ color: 'var(--text-secondary)' }}
+                                        >
+                                            <FileWarning size={12} />
+                                            Issues & How to Fix
+                                        </p>
+                                        <div className="space-y-3">
+                                            {mod.suggestions.specificIssues.map((issue, idx) => (
+                                                <div 
+                                                    key={idx}
+                                                    className="p-3 rounded-lg"
+                                                    style={{ 
+                                                        backgroundColor: 'var(--bg-secondary)',
+                                                        border: '1px solid var(--border-color)'
+                                                    }}
+                                                >
+                                                    {/* Field Tag */}
+                                                    <span 
+                                                        className="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded mb-2"
+                                                        style={{ 
+                                                            backgroundColor: 'var(--rejected-bg)',
+                                                            color: 'var(--rejected-text)',
+                                                            border: '1px solid var(--rejected-border)'
+                                                        }}
+                                                    >
+                                                        {issue.field}
+                                                    </span>
+                                                    
+                                                    {/* Problem */}
+                                                    <p 
+                                                        className="text-sm mb-2"
+                                                        style={{ color: 'var(--text-primary)' }}
+                                                    >
+                                                        <strong style={{ color: 'var(--rejected-text)' }}>Problem:</strong> {issue.problem}
+                                                    </p>
+                                                    
+                                                    {/* How to Fix */}
+                                                    <p 
+                                                        className="text-sm flex items-start gap-2"
+                                                        style={{ color: 'var(--text-primary)' }}
+                                                    >
+                                                        <span style={{ color: 'var(--safe-text)' }}>💡</span>
+                                                        <span><strong style={{ color: 'var(--safe-text)' }}>Fix:</strong> {issue.howToFix}</span>
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Example Links */}
+                                {mod.suggestions.includeExampleLinks && (
+                                    <div 
+                                        className="p-4 rounded-lg mb-3"
+                                        style={{ 
+                                            backgroundColor: 'var(--bg-secondary)',
+                                            border: '1px solid var(--border-color)'
+                                        }}
+                                    >
+                                        <p 
+                                            className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"
+                                            style={{ color: 'var(--text-secondary)' }}
+                                        >
+                                            📚 Reference Examples
+                                        </p>
+                                        <p 
+                                            className="text-sm mb-3"
+                                            style={{ color: 'var(--text-primary)' }}
+                                        >
+                                            You may use these links to help you out:
+                                        </p>
+                                        <div className="space-y-2">
+                                            <a 
+                                                href="https://www.isekai.world/storylines/69266b059b88456aafac748b?referralCode=QVY53ZG8"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
+                                                style={{ color: 'var(--accent-primary)' }}
+                                            >
+                                                <span>•</span>
+                                                <span className="underline">Example Storyline 1</span>
+                                                <span style={{ color: 'var(--text-secondary)' }}>↗</span>
+                                            </a>
+                                            <a 
+                                                href="https://www.isekai.world/storylines/692df6b671619f94a86f7ba8?referralCode=QVY53ZG8"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
+                                                style={{ color: 'var(--accent-primary)' }}
+                                            >
+                                                <span>•</span>
+                                                <span className="underline">Example Storyline 2</span>
+                                                <span style={{ color: 'var(--text-secondary)' }}>↗</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Great Content - No Changes Needed */}
+                                {mod.suggestions.type === 'great' && (!mod.suggestions.specificIssues || mod.suggestions.specificIssues.length === 0) && (
+                                    <div 
+                                        className="p-6 rounded-lg text-center"
                                         style={{ 
                                             backgroundColor: 'var(--bg-card)',
                                             border: '1px solid var(--border-color)'
                                         }}
                                     >
                                         <CheckCircle2 
-                                            size={32} 
-                                            className="mx-auto mb-2" 
+                                            size={40} 
+                                            className="mx-auto mb-3" 
                                             style={{ color: 'var(--safe-text)' }} 
                                         />
-                                        <p style={{ color: 'var(--text-primary)' }}>
-                                            This content looks great! No changes needed.
+                                        <p 
+                                            className="text-base font-medium mb-1"
+                                            style={{ color: 'var(--text-primary)' }}
+                                        >
+                                            Excellent work!
+                                        </p>
+                                        <p 
+                                            className="text-sm"
+                                            style={{ color: 'var(--text-secondary)' }}
+                                        >
+                                            This content is well-crafted and ready to go.
                                         </p>
                                     </div>
                                 )}
