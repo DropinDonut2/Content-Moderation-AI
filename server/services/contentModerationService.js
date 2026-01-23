@@ -17,14 +17,14 @@
 // - Multimodal: Text + Images sent together
 // ============================================
 
-const OpenAI = require('openai');
-const Policy = require('../models/Policy');
+const OpenAI = require('openai'); //load openAI lib
+const Policy = require('../models/Policy'); //load policy model
 
 // ============================================
 // OPENROUTER CLIENT SETUP
 // ============================================
 
-const openai = new OpenAI({
+const openai = new OpenAI({ //create openAI client
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: process.env.OPENROUTER_API_KEY
 });
@@ -161,9 +161,9 @@ const moderationTool = {
     function: {
         name: "submit_moderation_result",
         description: "Submit the final content moderation analysis for both TEXT and IMAGES.",
-        parameters: {
+        parameters: {   //what AI must fill out 
             type: "object",
-            properties: {
+            properties: {   //fields in the form
                 verdict: {
                     type: "string",
                     enum: ["safe", "flagged", "rejected"],
@@ -596,7 +596,7 @@ Or if there's an issue: "While the text states the character is 20 years old, th
             messageContent = await buildMultimodalContent(prompt, images, maxImages);
             // Count valid images added
             const validImages = messageContent.filter(c => c.type === 'image_url').length;
-            console.log(`   📷 Sending ${validImages} images for analysis (converted to base64)`);
+            console.log(`    Sending ${validImages} images for analysis (converted to base64)`);
         } else {
             // TEXT ONLY: just the prompt string
             messageContent = prompt;
