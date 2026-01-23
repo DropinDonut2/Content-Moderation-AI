@@ -107,14 +107,30 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
 
         const actualQuote = text.substring(startIndex, startIndex + matchLength)
 
-        const getSeverityInfo = (score) => {
-            if (score >= 80) return { label: 'CRITICAL', bg: 'rgba(239, 68, 68, 0.3)', border: '#ef4444', text: '#fca5a5' }
-            if (score >= 50) return { label: 'HIGH', bg: 'rgba(249, 115, 22, 0.3)', border: '#f97316', text: '#fdba74' }
-            if (score >= 20) return { label: 'MEDIUM', bg: 'rgba(234, 179, 8, 0.3)', border: '#eab308', text: '#fde047' }
-            return { label: 'LOW', bg: 'rgba(34, 197, 94, 0.3)', border: '#22c55e', text: '#86efac' }
+        const getSeverityInfo = (score, severityString) => {
+            let s = 0;
+
+            if (typeof score === 'string') {
+                s = parseFloat(score) || 0;
+            } else {
+                s = score || 0;
+            }
+
+            if (s === 0 && severityString) {
+                const lower = severityString.toLowerCase();
+                if (lower === 'critical') s = 90;
+                else if (lower === 'high') s = 75;
+                else if (lower === 'medium') s = 40;
+                else if (lower === 'low') s = 10;
+            }
+
+            if (s >= 80) return { label: 'CRITICAL', bg: 'rgba(239, 68, 68, 0.3)', border: '#ef4444', text: '#fca5a5', score: s }
+            if (s >= 50) return { label: 'HIGH', bg: 'rgba(249, 115, 22, 0.3)', border: '#f97316', text: '#fdba74', score: s }
+            if (s >= 20) return { label: 'MEDIUM', bg: 'rgba(234, 179, 8, 0.3)', border: '#eab308', text: '#fde047', score: s }
+            return { label: 'LOW', bg: 'rgba(34, 197, 94, 0.3)', border: '#22c55e', text: '#86efac', score: s }
         }
 
-        const info = getSeverityInfo(highlight.severityScore)
+        const info = getSeverityInfo(highlight.severityScore, highlight.severity)
 
         result.push(
             <mark
@@ -142,7 +158,7 @@ const HighlightedText = ({ text, highlights, fieldName }) => {
                     </span>
                     <span className="mx-2">•</span>
                     <span className="uppercase text-[10px] font-bold" style={{ color: info.text }}>
-                        {info.label} ({highlight.severityScore}%)
+                        {info.label} ({info.score}%)
                     </span>
                     <br />
                     <span className="text-gray-300">{highlight.reason}</span>
@@ -276,23 +292,38 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
 
     const statusStyle = getStatusStyle(item.moderationStatus)
 
-    const getSeverityInfo = (score) => {
+    const getSeverityInfo = (score, severityString) => {
         let s = 0;
+
+        // Try to get score from string or number
         if (typeof score === 'string') {
+            s = parseFloat(score) || 0;
+        } else {
+            s = score || 0;
+        }
+
+        // If score is 0 but we have a severity string, fallback to default scores
+        if (s === 0 && severityString) {
+            const lower = severityString.toLowerCase();
+            if (lower === 'critical') s = 90;
+            else if (lower === 'high') s = 75;
+            else if (lower === 'medium') s = 40;
+            else if (lower === 'low') s = 10;
+        }
+
+        // Also handle case where score might be encoded in the string directly without being a number type
+        if (s === 0 && typeof score === 'string') {
             const lower = score.toLowerCase();
             if (lower === 'critical') s = 90;
             else if (lower === 'high') s = 75;
             else if (lower === 'medium') s = 40;
             else if (lower === 'low') s = 10;
-            else s = parseFloat(score) || 0;
-        } else {
-            s = score || 0;
         }
 
-        if (s >= 80) return { label: 'CRITICAL', bg: 'rgba(239, 68, 68, 0.1)', border: '#ef4444', text: '#fca5a5', icon: AlertOctagon }
-        if (s >= 50) return { label: 'HIGH', bg: 'rgba(249, 115, 22, 0.1)', border: '#f97316', text: '#fdba74', icon: AlertTriangle }
-        if (s >= 20) return { label: 'MEDIUM', bg: 'rgba(234, 179, 8, 0.1)', border: '#eab308', text: '#fde047', icon: AlertCircle }
-        return { label: 'LOW', bg: 'rgba(34, 197, 94, 0.1)', border: '#22c55e', text: '#86efac', icon: CheckCircle2 }
+        if (s >= 80) return { label: 'CRITICAL', bg: 'rgba(239, 68, 68, 0.1)', border: '#ef4444', text: '#fca5a5', icon: AlertOctagon, score: s }
+        if (s >= 50) return { label: 'HIGH', bg: 'rgba(249, 115, 22, 0.1)', border: '#f97316', text: '#fdba74', icon: AlertTriangle, score: s }
+        if (s >= 20) return { label: 'MEDIUM', bg: 'rgba(234, 179, 8, 0.1)', border: '#eab308', text: '#fde047', icon: AlertCircle, score: s }
+        return { label: 'LOW', bg: 'rgba(34, 197, 94, 0.1)', border: '#22c55e', text: '#86efac', icon: CheckCircle2, score: s }
     }
 
     const modalContent = (
@@ -457,7 +488,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                             className="block font-bold text-sm"
                                             style={{ color: getSeverityInfo(mod.violationSeverity).text }}
                                         >
-                                            {mod.violationSeverity || 0}%
+                                            {mod.violationSeverity || getSeverityInfo(0, mod.violationSeverity).score}%
                                         </span>
                                     </div>
                                     <div
@@ -520,7 +551,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                         </h4>
                                         <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                                             {mod.highlightedIssues.map((issue, idx) => {
-                                                const info = getSeverityInfo(issue.severityScore)
+                                                const info = getSeverityInfo(issue.severityScore, issue.severity)
                                                 const Icon = info.icon
 
                                                 return (
@@ -543,7 +574,7 @@ function ContentDetailModal({ type, item, onClose, onReviewComplete }) {
                                                             }}
                                                         >
                                                             <Icon size={12} />
-                                                            <span>{info.label} ({issue.severityScore || 0}%)</span>
+                                                            <span>{info.label} ({info.score}%)</span>
                                                             <span style={{ color: 'var(--text-secondary)' }}>|</span>
                                                             <span style={{ color: 'var(--text-primary)' }}>{issue.field}</span>
                                                             <span style={{ color: 'var(--text-secondary)' }}>|</span>
