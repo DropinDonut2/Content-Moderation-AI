@@ -1,2344 +1,1394 @@
-Content Creation Policy
+ISEKAI ZERO Content Moderation Guidelines
+For Internal Use Only - Moderator Team
+ Last Updated: 13th January, 2026
+ Version: 1.0
+Table of Contents
+Moderator Role & Responsibilities
+Moderation Workflow
+Content Types & Review Scope
+Approval Criteria
+Rejection Categories
+Decision-Making Framework
+Zero Tolerance Violations
+Standardized Rejection Messages
+Edge Cases & Escalation
+Quality Standards Checklist
+
+1. Moderator Role & Responsibilities
+Your Core Mission
+As a content moderator, you are the first line of defense protecting our community while enabling creative expression. You will review creator-submitted content before it goes live on the platform.
+What You Review
+Storyline submissions
+Character submissions
+
+Key Responsibilities
+✅ Review all public submissions within 24-48 hours
+✅ Apply policies consistently and fairly
+✅ Provide clear, helpful rejection feedback
+✅ Report zero tolerance violations immediately
+✅ Flag edge cases for senior review
+✅ Document unusual patterns or issues
+
+2. Moderation Workflow
+Step-by-Step Review Process
+1. OPEN SUBMISSION
+   ↓
+2. QUICK SCAN
+   - Check for Zero Tolerance violations → If YES: IMMEDIATE REJECT + REPORT
+   - Check for obvious technical errors
+   ↓
+3. DETAILED REVIEW 
+   - Use Quality Standards Checklist (Section 10)
+   - Check all required fields
+   - Verify image compliance/quality
+   - Assess content quality
+   ↓
+4. MAKE DECISION
+   - APPROVE: Content meets all standards
+   - REJECT: Select appropriate rejection reason(s)
+   - ESCALATE: Unclear case, needs senior review
+   ↓
+5. PROVIDE FEEDBACK
+   - Use standardized messages (Section 8)
+   - Be clear, specific, and helpful
+   - Include actionable guidance
+   ↓
+6. LOG & MOVE TO NEXT
+   - Document decision
+   - Note any patterns or concerns
+
+3. Content Types & Review Scope
+A. STORYLINE SUBMISSIONS
+What Creators Submit:
+Images
+Language 
+Title
+Characters (AI-controlled characters)
+Plot Summary
+Plot (User)
+Prompt Plot (AI)
+Prompt Guideline
+AI Reminder
+First Messages (Scenarios)
+Persona list (player character options)
+NSFW Tag
+
+What You Must Check:
+Element
+Check For
+Images
+✅ At least ONE cover image present
+✅ Image relates to storyline content/theme
+✅ Image quality is adequate (not pixelated/blurry)
+✅ Image is SFW even for NSFW storylines
+✅ NO exposed genitalia (illustrated, AI-generated, or photographic)
+✅ NO explicit sexual acts
+✅ NO graphic nudity meant for sexual gratification
+✅ NO completely unrelated/misleading images
+✅ No hate symbols or discriminatory imagery
+✅ Appropriate for platform
+✅ NO images of real people
+Language
+✅ Language setting matches actual content language
+✅ Content written in ONE language only (no mixing)
+If set to English → all text is in English
+If set to Spanish → all text is in Spanish
+✅ Mixed language content will cause issue in translation system
+✅ Exception: Character names in different languages is OK
+✅ Exception: Single flavor words/phrases OK (e.g., "arigato" in English text)
+Title
+✅ Title is present (not blank)
+✅ Clear and understandable
+✅ Not misleading compared to actual content
+✅ No offensive language or slurs
+✅ No spam-like text ("CLICK NOW!!!" "BEST EVER!!!")
+✅ Reasonable length
+✅ Gives indication of storyline content
+✅ No hate speech
+✅ Professional presentation
+Characters 
+(Character List - AI-controlled)
+✅ ONE character per entry (no "Character A & B" in single entry)
+✅ All characters have images uploaded
+✅ Character names match their descriptions
+✅ Character images are SFW (even if storyline is NSFW)
+✅ Character images relate to character descriptions
+✅ No duplicate characters
+✅ Names properly capitalized
+✅ No system-breaking formatting errors
+✅ NO names/character of real people
+Plot Summary
+✅ Summary is present (not blank)
+✅ Provides clear overview of storyline premise
+✅ Sufficient detail about setting, theme, or concept
+✅ Grammar is comprehensible
+✅ Proper capitalization and punctuation
+✅ Not misleading about actual content
+✅ Appropriate length (not just 1 sentence if complex story)
+✅ Gives potential players understanding of what to expect
+✅ No policy violations in description
+✅ Language matches setting
+Plot (User)
+✅ Clearly defines the player's role in the story
+✅ Explains what the player will do/experience
+✅ Provides context for player's character
+✅ Sufficient detail about player's objectives/situation
+✅ Grammar is comprehensible
+✅ Matches the Persona List configuration
+✅ Doesn't contradict First Messages
+✅ No confusing or unclear role assignment
+✅ Makes sense within the storyline context
+✅ No policy violations
+Prompt Plot (AI)
+✅ Provides clear narrative direction for AI
+✅ Establishes setting, context, and world rules
+✅ Defines AI-controlled characters' roles and behaviors
+✅ Sufficient detail for coherent AI responses
+✅ Grammar is comprehensible
+✅ Doesn't instruct AI to create prohibited content
+✅ Aligns with overall storyline premise
+✅ No contradictions with other fields
+✅ Reasonable length and clarity
+✅ No policy violations in AI instructions
+Prompt Guideline
+✅ Provides instructions for AI behavior/tone
+✅ Clear about narrative style (e.g., descriptive, concise, dramatic)
+✅ Defines boundaries or special rules for the storyline
+✅ Grammar is comprehensible
+✅ Doesn't instruct AI to ignore platform policies
+✅ Doesn't encourage prohibited content generation
+✅ Makes sense for the storyline type
+✅ Not contradicting other prompt instructions
+✅ Reasonable and implementable guidelines
+✅ No attempts to bypass content moderation
+AI Reminder
+✅ Reinforces key storyline elements AI should remember
+✅ Highlights critical plot points or character traits
+✅ Ensures consistency in AI responses
+✅ Grammar is comprehensible
+✅ Not instructing AI to create prohibited content
+✅ Aligns with storyline premise and guidelines
+✅ Reasonable and clear
+✅ Helps maintain narrative coherence
+✅ No policy violations
+✅ No attempts to circumvent moderation
+First Messages (Scenarios)
+✅ At least ONE first message/scenario present
+✅ Clearly sets up the opening scene
+✅ Defines player's starting situation
+✅ Grammar is comprehensible
+✅ Proper capitalization and punctuation
+✅ Player role matches Persona List configuration
+✅ Player role matches "Plot (User)" description
+✅ Appropriate length (not too brief, provides context)
+✅ Matches NSFW/SFW designation
+✅ No policy violations (rape scenarios, minor sexualization, etc.)
+✅ Not misleading about storyline content
+✅ Makes sense within storyline context
+Persona List (Player Character Options)
+✅ Correctly configured if storyline requires player character
+✅ Persona names match those mentioned in First Messages
+✅ Persona names match those in "Plot (User)"
+✅ One persona per entry (no multiple personas in single slot)
+✅ Personas are properly linked/created
+✅ Character vs Persona distinction is correct:
+Character List = AI-controlled NPCs
+Persona List = Player's character options
+✅ No confusion between Character List and Persona List
+✅ If no player character needed, Persona List can be empty
+✅ Names properly capitalized
+✅ System configuration is functional
+
+
+SFW/NSFW Tag
+
+
+✅ Tag accurately reflects content maturity level
+✅ Tag as NSFW if storyline includes:
+Explicit sexual content in any field
+Detailed sexual scenarios
+Sexual language/themes in character descriptions
+Adult sexual situations in first messages
+Sexual fetishes or kinks mentioned
+Content designed for sexual roleplay
+✅ Tag as SFW if storyline includes:
+Romance without explicit sexual content
+"Fade to black" implications only
+Mild flirting/innuendo
+No explicit sexual descriptions
+✅ If tagged NSFW:
+Cover images are still SFW (no exposed genitalia)
+Character images are still SFW
+No minor-like characters in sexual contexts
+No prohibited sexual content (rape, bestiality, incest)
+✅ If tagged SFW:
+Content doesn't contain explicit sexual material
+First messages don't have sexual scenarios
+✅ Age restriction appropriate for content
+✅ Content warnings present if needed
+
+
+Quick Reference Table:
+Element
+Key Red Flags to Watch For
+Images
+Missing image, exposed genitalia, completely unrelated, extremely low quality
+Language
+Mixed languages (eg. Spanish + English), setting does not match content - will caused translation issue
+Title
+All lowercase, misleading, spam-like, offensive
+Characters 
+(Character List - AI-controlled)
+Multiple characters in one entry, missing images, name mismatches, player character listed here (should be in Persona List)
+Plot Summary
+Too vague, incomprehensible grammar and spelling errors, misleading
+Plot (User)
+Unclear player role, contradicts Persona List or First Message
+Prompt Plot (AI)
+Instructs AI to create prohibited content, contradictions
+Prompt Guideline
+Attempts to bypass policies, encourage violations
+AI Reminder
+Reinforces prohibited content, circumvents moderation
+First Messages (Scenarios)
+Player role mismatch, severe grammar and or spelling issues, misleading, Zero tolerance violations theme
+Persona List (Player Character Options)
+Wrong configuration, AI-controlled NPC characters listed here (should be in Character List), persona name doesn't match First Message, missing when player has specific identity
+SFW/NSFW Tag
+Mistagged (explicit content tagged SFW or vice versa), exposed genitalia in images
+
+
+B. CHARACTER SUBMISSIONS
+What Creators Submit:
+Image
+Language
+Name
+Description summary
+Description (User)
+Tags 
+Prompt Description (AI) 
+Example Dialogues
+NSFW Tag
+
+What You Must Check:
+Element
+Check For
+Image
+✅ At least ONE character image present
+✅ Image relates to character description
+✅ Image quality is adequate (not pixelated/blurry)
+✅ Image quality is adequate (not pixelated/blurry, head not cropped out, character clearly visible)
+✅ Images are consistent (all showing SAME character)
+✅ Image is SFW even for NSFW characters
+✅ NO exposed genitalia (illustrated, AI-generated, or photographic)
+✅ NO explicit sexual acts
+✅ NO graphic nudity meant for sexual gratification
+✅ For NSFW characters: Must visually appear as ADULT (no minor-like features, child-like proportions, youthful/adolescent appearance)
+✅ No hate symbols or discriminatory imagery
+✅ Appropriate for platform
+✅ NO images of real people
+Language
+✅ Language setting matches actual content language
+✅ Content written in ONE language only (no mixing)
+✅ If set to English → all text is in English
+✅ If set to Spanish → all text is in Spanish
+✅ No mixed language content that will break translation system
+Name
+✅ Name is present (not blank)
+✅ Proper capitalization (not all lowercase or ALL CAPS)
+✅ Name is consistent across ALL fields
+✅ Name in title matches name in description
+✅ Name matches what's in Description field
+✅ No offensive or inappropriate names
+✅ No system-breaking characters in name
+✅ Reasonable length
+✅ Clear and readable
+✅ NO names/character of real people
+Description Summary 
+✅ CRITICAL CHECK: NO critical character traits ONLY in summary
+✅ Summary is for display/preview purposes ONLY
+✅ This field should be SHORT overview/teaser
+✅ All important character information MUST be in Description field
+✅ Grammar acceptable but less critical (AI doesn't read it)
+✅ No misleading information
+✅ Matches overall character concept
+Common Mistake:
+❌ Creator puts "She is mute and uses paper to communicate" ONLY in Summary
+❌ Critical personality traits only in Summary
+✅ These MUST be in Description field (where AI reads)
+Description 
+✅ Description is present and substantial
+✅ ALL critical character information is HERE (not just in Summary)
+✅ Sufficient detail about:
+Personality traits
+Background/history
+Appearance
+Motivations
+Key behaviors or quirks
+✅ Grammar is comprehensible
+✅ Proper capitalization and punctuation
+✅ Not too brief (more than 1-2 sentences)
+✅ Language matches language setting
+✅ No policy violations (minor sexualization, hate speech, etc.)
+✅ For NSFW characters: Character described as adult
+✅ Provides enough depth for engaging interaction
+Tags
+✅ Tags accurately reflect character
+✅ NSFW/SFW tag is correct
+✅ Genre tags match character concept
+✅ No misleading tags
+✅ Appropriate content warnings if needed
+✅ Tags help users discover relevant content
+Prompt Description (AI) 
+✅ Provides clear instructions for AI on how to portray character
+✅ Defines character's speech patterns, mannerisms, behavior
+✅ Establishes character's role and relationships
+✅ Grammar is comprehensible
+✅ Doesn't instruct AI to create prohibited content
+✅ Aligns with Description (User) field
+✅ No contradictions with other fields
+✅ Reasonable and implementable
+✅ No policy violations
+✅ No attempts to bypass content moderation
+Example Dialogues
+✅ Consistent with character description
+✅ Grammar is comprehensible
+✅ Proper formatting (clear who's speaking)
+✅ No policy violations in dialogue examples
+✅ Dialogues are appropriate for character's NSFW/SFW designation
+✅ No prohibited content (rape scenarios, minor sexualization, etc.)
+✅ Helps AI understand character voice
+✅ Reasonable length and quality
+SFW/NSFW Tag
+✅ Tag accurately reflects character maturity level
+✅ Tag as NSFW if character:
+Designed for sexual roleplay
+Has sexual traits in description
+Has sexual dialogue examples
+Has sexual/suggestively sexual images
+Mentions fetishes or sexual kinks
+Has sexual personality traits
+✅ Tag as SFW if character:
+No explicit sexual content
+Romance without sexual detail
+Flirty but not explicit
+✅ If tagged NSFW:
+Character image is still SFW (no exposed genitalia)
+Character visually appears as ADULT (no minor-like features)
+No prohibited sexual content
+✅ If tagged SFW:
+Description doesn't contain explicit sexual material
+Example dialogues are appropriate
+
+
+4. Approval Criteria
+Content is APPROVED if it meets ALL of the following:
+✅ POLICY COMPLIANCE
+No zero tolerance violations
+No prohibited content (see Section 7)
+Appropriate age rating and tagging
+Complies with all platform policies
+✅ TECHNICAL CORRECTNESS
+All required fields completed
+Character/Persona lists properly configured
+Names consistent across fields
+Language setting matches content
+No system-breaking errors (e.g., multiple characters in one entry, mixed language)
+✅ QUALITY STANDARDS
+Grammar & Language: Readable, coherent, minimal errors
+Detail & Context: Sufficient information for gameplay (not overly brief)
+Images: Present, appropriate quality, related to content, consistent
+Formatting: Proper capitalization, punctuation, paragraph breaks
+✅ USER EXPERIENCE
+Not misleading (title/images match content)
+Clear player role and expectations
+
+5. Rejection Categories
+SEVERITY LEVELS
+Level
+Description
+Action
+Example
+ZERO TOLERANCE
+Immediate permanent ban violations
+Reject + Escalate + Report
+CSAM, hate speech, rape content
+MAJOR
+Serious policy violations
+Reject + Warning
+Misleading NSFW, minor sexualization
+MODERATE
+Quality/technical issues requiring significant fixes
+Reject + Guidance
+Poor grammar, missing personas, insufficient detail
+MINOR
+Small fixable issues
+Reject + Helpful feedback
+Capitalization errors, slightly low image quality
+
+
+REJECTION REASON CATEGORIES
+CATEGORY 1: Zero Tolerance Violations 🚨
+Action: IMMEDIATE REJECTION + ESCALATE TO SENIOR MODERATOR + PERMANENT BAN
+Child sexual abuse material (CSAM)
+Sexualization of minors or minor-like characters in NSFW
+Non-consensual sexual content (rape, sexual assault)
+Hate speech or discrimination
+Terrorism or violent extremism
+Content promoting self-harm or suicide
+Bestiality
+Incest themes
+⚠️ DO NOT provide detailed feedback. Use standard message and escalate immediately.
+
+CATEGORY 2: Major Policy Violations
+Action: REJECT + Warning + Request significant revision
+2.1 Prohibited Sexual Content (NSFW Violations)
+Exposed genitalia in images (illustrated, AI-generated, or photographic)
+Explicit sexual acts in cover images/character images
+NSFW characters with minor-like appearances/child-like features
+Graphic nudity meant for sexual gratification in images
+Pornographic imagery in covers/profiles
+2.2 Misleading Content
+Cover images/character images completely unrelated to content
+Title promises different content than delivered
+False advertising of storyline premise
+2.3 Harmful Content
+Instructions for dangerous activities (suicide, self harm, etc.)
+Medical/health misinformation
+Election misinformation
+Promoting illegal activities
+2.4 Use of Real People's Names or Images
+Using real people's names (especially celebrities, public figures, politicians)
+Using real people's photos or likenesses without permission
+Creating characters based on real living individuals
+Impersonating real people through names or images
+Why this is a violation:
+Legal liability (right of publicity, defamation, privacy rights)
+Can cause harm to real individuals
+Potential harassment or targeted content
+Exceptions:
+Historical figures (deceased, public domain)
+Generic common names (John, Maria, etc.) not clearly referencing specific famous person
+Clearly labeled parody/satire with appropriate disclaimers
+
+CATEGORY 3: Technical Errors
+Action: REJECT + Clear instructions to fix
+3.1 System-Breaking Errors
+❌ Multiple characters in single character list entry
+❌ Character/Persona list confusion (wrong assignments)
+3.2 Configuration Errors
+❌ Language setting doesn't match content (e.g., set to Spanish but mixed Spanish/English)
+❌ Missing cover image for storyline
+❌ Missing character images
+3.3 Data Inconsistencies
+❌ Character name in title ≠ name in description
+❌ Player role in first message ≠ persona list assignment
+❌ Critical character traits in Description Summary instead of Description field
+
+CATEGORY 4: Quality Issues
+Action: REJECT + Constructive feedback
+4.1 Insufficient Content Detail
+Storyline too brief, lacks plot/setting/background context
+Character description too vague or minimal
+Missing critical information for gameplay
+Examples:
+❌ Storyline: "You meet a girl. She's nice."
+❌ Character: "A warrior. He fights."
+Minimum: Context, setting, character motivation, clear premise
+4.2 Language Quality Issues
+Severe grammar and or spelling errors making content incomprehensible
+Run-on sentences with no punctuation
+Inconsistent or missing capitalization
+Spelling errors throughout
+When to reject for grammar:
+Content is incomprehensible (cannot understand meaning)
+Errors severely impact user experience
+Professional basic standards not met
+When to approve despite minor errors:
+Meaning is clear
+Errors are minimal (1-3 minor mistakes)
+Overall quality is acceptable
+English may be creator's second language (be understanding)
+4.3 Image Quality Issues
+Extremely low resolution (pixelated, blurry)
+Images inconsistent (showing different characters)
+Image quality detracts from user experience
+Guidelines:
+Don't reject for slightly imperfect images
+Reject only if quality is notably poor or unprofessional
+Suggest AI Image Generator for improvements
+
+CATEGORY 5: Formatting & Presentation
+Action: REJECT (minor) + Helpful suggestions
+No proper capitalization (all lowercase or ALL CAPS)
+No paragraph breaks (wall of text)
+Missing punctuation throughout
+Unprofessional presentation
+
+6. Decision-Making Framework
+The 3-Question Method
+Before making a decision, ask yourself:
+Question 1: "Does this violate Zero Tolerance policies?"
+YES → Immediate reject + escalate + ban
+NO → Continue to Question 2
+Question 2: "Does this meet minimum technical & policy requirements?"
+Check:
+All required fields present?
+
+
+No system-breaking errors?
+
+
+Follows NSFW/age restrictions?
+
+
+Language setting correct?
+
+
+No major policy violations?
+
+
+NO → Reject with specific technical guidance
+
+
+YES → Continue to Question 3
+
+
+Question 3: "Does this meet quality standards?"
+Consider:
+Is it comprehensible?
+
+
+Does it provide sufficient detail for gameplay?
+
+
+Is grammar acceptable (not perfect, but functional)?
+
+
+Are images appropriate quality and related?
+
+
+Would you personally want to interact with this content?
+
+
+NO → Reject with constructive feedback
+
+
+YES → APPROVE ✅
+
+
+
+When to ESCALATE (Don't Decide Alone)
+Escalate to senior moderator when:
+❓ Unclear if content violates policy (gray area)
+❓ Potential zero tolerance violation but you're unsure
+❓ Content seems inappropriate but doesn't fit existing categories
+❓ Cultural/religious content you're uncertain about
+❓ Complex copyright/IP concerns
+❓ Medical/legal advice that might be harmful
+❓ Repeated submissions from same user after rejections
+❓ Unusual case not covered in guidelines
+❓ You feel uncomfortable approving but can't identify specific violation
+Golden Rule: When in doubt, escalate. Better safe than sorry.
+
+7. Zero Tolerance Violations
+CRITICAL: These result in IMMEDIATE PERMANENT BAN
+You MUST escalate these immediately - do not just reject.
+7.1 Child Sexual Abuse Material (CSAM) / Minor Sexualization
+REJECT if content includes:
+Any sexualization of minors (under 18)
+Characters appearing to be minors in sexual/NSFW contexts
+NSFW characters with minor-like features:
+Child-like faces or body proportions
+Youthful/adolescent appearance
+School-age characteristics
+Baby faces, small statures
+Regardless of stated age in description
+Red Flags:
+"18 year old high school student" with child-like appearance in NSFW context
+"Petite" or "looks young" characters in NSFW storylines
+School uniforms in NSFW content
+Age statements like "just turned 18" with youthful depiction
+Anime "loli" or "shota" style characters in NSFW
+Important: Visual appearance matters more than stated age. If a character looks underage in NSFW content, reject and escalate.
+
+7.2 Non-Consensual Sexual Content
+REJECT if storyline/character describes:
+Rape or sexual assault
+Sexual coercion or manipulation
+Drugging for sexual purposes
+Kidnapping for sexual purposes
+Any sexual activity without clear consent
+Red Flags:
+"Forces," "makes," "doesn't take no for an answer"
+Scenarios where player character is restrained/trapped in sexual context
+"Surprise" sexual encounters without consent setup
+Power imbalances exploited for sex (captive, unconscious, etc.)
+
+7.3 Hate Speech & Discrimination
+REJECT if content:
+Promotes hatred toward protected groups
+Uses slurs or derogatory language toward races, religions, sexual orientations, etc.
+Dehumanizes people based on identity
+Denies genocides or violent historical events
+Mocks or demeans cultural/religious practices maliciously
+Examples:
+Nazi symbolism glorification
+Holocaust denial
+Racial slurs in character descriptions
+Religious mockery promoting hatred
+Anti-LGBTQ+ hate content
+
+7.4 Other Zero Tolerance Content
+Terrorism/Violent Extremism: Content promoting terrorist organizations or acts
+Self-Harm Promotion: Content encouraging suicide, self-harm, or eating disorders
+Bestiality: Sexual content involving animals
+Incest Themes: Sexual content between family members
+
+Escalation Protocol for Zero Tolerance
+DO NOT APPROVE under any circumstances
+Mark as: ZERO TOLERANCE VIOLATION
+Use standardized message (no detailed explanation)
+ESCALATE to senior moderator within 1 hour
+Document in incident log:
+Submission ID
+Creator username
+Violation type
+Time of discovery
+Senior moderator will initiate ban process
+
+8. Standardized Rejection Messages
+How to Use These Messages
+Select the appropriate category
+Copy the message template
+Customize with specific details in [brackets]
+Always be professional, clear, and helpful
+Avoid being harsh or judgmental
+
+ZERO TOLERANCE MESSAGES (Use Exact Wording)
+ZT-1: Child Safety Violation / CSAM
+Rejection message: Zero tolerance violation. Your submission has been rejected for violating our Child Safety Policy. 
+
+ZT-2: Non-Consensual Sexual Content
+Rejection message: Zero tolerance violation. Your submission contains explicit depictions of consensual-non-consent/sexual assault/coercion/rape theme. This cannot be hosted on our platform. 
+
+ZT-3: Hate Speech
+Rejection message: Zero tolerance violation. Your submission has been rejected for violating our Hate Speech Policy. This cannot be hosted on our platform. 
+
+ZT-4: Terrorism/Extremism
+Rejection message: Zero tolerance violation. Your submission promotes terrorism or violent extremism. This cannot be hosted on our platform. 
+
+ZT-5: Self-Harm/Suicide Promotion
+Rejection message: Zero tolerance violation. Your submission promotes or encourages self-harm or suicide. This cannot be hosted on our platform.  
+
+ZT-6: Bestiality
+Rejection message: Your submission contains content involving bestiality (sexual content with animals, including implied or suggestive scenarios). This is a zero-tolerance violation and cannot be hosted on our platform.   
+
+STORYLINE REJECTION MESSAGES
+ST-1: Missing Cover Image
+Rejection message: Your storyline is missing a cover image. All storylines must include at least one cover image. Please add a cover image and resubmit.
+
+ST-2: Unrelated/Misleading Cover Image
+Rejection message: Your cover image is unrelated or misleading compared to your storyline content. Cover images must accurately represent the story premise. Please replace with an appropriate image that matches your storyline and resubmit.
+
+ST-3: Insufficient Detail
+Rejection message: Insufficient content quality. Please add more detail to storyline backgrounds, plot and setting information. Please revise and resubmit.
+
+If repeated submission still provide insufficient details
+Rejection message: Insufficient content quality. Please add more detail to storyline backgrounds, plot and setting information. Try using these guidelines to help build better quality https://docs.isekai.world/books/creators-guides. You're welcome to resubmit after making improvements.
+
+ST-4: Character List Technical Error (Choose whichever that applies)
+Rejection message:
+
+Character list contains multiple characters in one entry - please create separate entries for each character and resubmit.
+
+Characters are missing images - please add images for all characters and resubmit.
+
+Character names don't match their descriptions - please ensure name consistency and resubmit.
+
+
+ST-5: Persona Configuration Error
+Rejection message: Missing or incorrectly configured persona. According to your [first message/prompt], {{user}} is supposed to play as [character name], but this persona is missing or not linked correctly. Please correct and resubmit.
+
+ST-6: Character/Persona List Confusion
+Important clarification needed:
+- **Character List** = AI-controlled characters in your story
+- **Persona List** = The player's character options
+
+Rejection message: Character List is for AI-controlled NPCs, Persona List is for the player's character. Your submission shows confusion between these. Please correct it and resubmit.
+
+ST-7: Language Configuration Error
+Case 1: 
+Rejection message: Language configuration error: Your content is set to [language 1] but contains mixed [language 1] and [language 2] text - please write in ONE language only. This will cause translation issues. Ensure the language setting matches, and resubmit.
+
+Case 2:
+Rejection message: Your content is written in [language 1] but your language setting is set to [language 2] - please change your language setting to match your content and resubmit.
+
+ST-8: Player Role Inconsistency
+Rejection message:  Player role inconsistency detected: Your first message indicates the player is [name], but your [persona list/prompt] assigns the player as [different name]. This will confuse players. Please clarify and correct this inconsistency before resubmitting.
+
+ST-9: NSFW Policy Violation - Image
+Rejection message: Your cover image violates our NSFW policy (exposed genitalia/explicit sexual acts/graphic nudity) - even NSFW storylines must have SFW cover images, please replace with appropriate image and resubmit.
+
+ST-10: Insufficient Quality - Multiple Issues (Choose whichever that applies)
+Content Length Issues
+Too brief (only 1-2 sentences)
+Too short to provide meaningful gameplay
+Lacks substance (minimal content)
+Detail/Information Issues
+Too vague (no specifics)
+Lacks plot detail
+Lacks setting information
+Lacks character background
+Missing player role information
+Insufficient context for gameplay
+AI prompt too vague/unclear
+AI prompt too brief (not enough direction for AI)
+Not enough information for AI to generate coherent responses
+Grammar/Language Issues
+Severe grammar errors (incomprehensible)
+Spelling errors throughout
+No capitalization (all lowercase)
+ALL CAPS
+No punctuation (run-on sentences)
+Incorrect punctuation usage
+Formatting Issues
+No paragraph breaks (wall of text)
+Incomprehensible formatting
+Messy structure
+Unreadable layout
+Comprehension Issues
+Cannot understand what the content is about
+Incoherent/makes no sense
+Contradictory information
+Confusing narrative
+
+Rejection message: Insufficient content quality. Please add more detail to storyline backgrounds, plot and setting information.
+
+
+OR
+
+Rejection message: Insufficient content quality. [State the issue accordingly.]
+
+
+ST-11: Incomprehensible Content
+Submission cannot be approved due to comprehension issues:
+- [Incomprehensible formatting/no punctuation/severe grammar errors]
+
+Rejection message: Your submission is incomprehensible due to [severe grammar errors/no punctuation/poor formatting] - please completely rewrite with clear sentences, proper punctuation, and readable structure, then resubmit.
+
+CHARACTER REJECTION MESSAGES
+CH-1: Insufficient Detail
+Empty submission
+
+Rejection message: Insufficient content quality. Please add more detail to character backgrounds and descriptions.
+
+CH-2: Name Inconsistency
+Rejection message: Character name inconsistency: Your character is named "[name 1]" in the title but described as "[name 2]" in the description. Please ensure name consistency across all fields and resubmit.
+
+CH-3: Image Quality Issue
+Rejection message: Your character image quality needs improvement. The image is [too low resolution/blurry/pixelated/poor quality]. Please provide a higher-quality image. 
+
+CH-4: Image Inconsistency
+Rejection message: Your character images are inconsistent. [Two different people are shown/images don't match each other/images contradict description - choose accordingly to the case]. Please clarify which character you are submitting and use consistent images that match your description.
+
+CH-5: Unrelated/Misleading Image
+Rejection message: Your character image is unrelated or misleading compared to your character description. Images must accurately represent the character described. Please replace with an appropriate image that matches your character description and resubmit.
+
+CH-6: Multiple Characters in One Entry
+Rejection message: Your submission contains multiple characters in a single entry. This will cause complications on the system. Please create separate character entries for each character and resubmit them individually.
+
+CH-7: Field Misuse - Description vs Summary
+Critical error in character organization:
+- Critical traits [specific traits] are only in the Description Summary
+- The AI cannot read the Description Summary
+- All important character information must be in the Description/Prompt Description (AI) - if secret mode is on
+
+Rejection message: The Description Summary is for display purposes only. Please move all important details to the main Description/Prompt Description (if secret mode is on) field and resubmit.
+
+CH-8: NSFW Minor-Like Appearance
+Character displays [specific concerns: youthful features/child-like proportions/adolescent appearance/etc.].
+
+Rejection message: Your character cannot be approved. Characters in NSFW content must not have minor-like appearances or child-like features, regardless of stated age.
+
+CH-9: Language Configuration Error
+Rejection message: Language configuration error: Your content is set to [language 1] but contains mixed [language 1] and [language 2] text. This will cause translation issues.
+
+OR
+Rejection message: Language configuration error: Your content is set to [language 1] but content is written in [language 2]. This will cause translation issues.
+
+Optional additional message
+Please:
+1. Write content in ONE language only
+2. Ensure language setting matches your content
+
+CH-10: Quality Issues - Grammar/Formatting
+Rejection message: Your submission requires improvement in the following area(s):
+- Proper capitalization/spelling accuracy/grammar/formatting/detail (choose concerned area(s) accordingly)
+Please revise your content with attention to [specific areas]. You're welcome to resubmit after making improvements.
+
+CH-11: Image + Quality Combined Issues/Multiple Issues
+Rejection message: Your submission has multiple issues -
+Refer to any CH-1 to CH-10.
+Complete revision required. Please resubmit after addressing all issues.
+
+HELPFUL/ENCOURAGING ADDITIONS (Optional)
+Add these to rejection messages when appropriate:
+
+For beginner creators issues - repeated rejected content:
+Rejection message: Insufficient content quality. Please add more detail to storyline backgrounds, plot and setting information. Try using these bot creation tools to help build better quality storylines: Bot Bot (assists with bot building): https://isekai.world/storylines/69266b059b88456aafac748b?referralCode=QVY53ZG8 OR Singularity Stories (generates storylines): https://isekai.world/storylines/692df6b671619f94a86f7ba8?referralCode=QVY53ZG8. You're welcome to resubmit after making improvements.
+For image issues:
+Image quality needs improvement. Please provide a higher-quality image. You are welcome to use our AI Image Generator, Gemini Pro (free), or any other tool of your choice.
+
+9. Edge Cases & Escalation
+Common Edge Cases
+EC-1: Fan Fiction & Copyright
+Issue: Creator submits storyline/character based on or inspired by existing IP (Harry Potter, Marvel, Warhammer 40k, anime, etc.)
+
+Monetization Decision Framework:
+DEMONETIZE (No Profit Sharing) if:
+❌ Text uses copyrighted elements:
+Copyrighted character names (e.g., "Harry Potter", "Iron Man", "Goku", "Space Marines")
+Copyrighted locations (e.g., "Hogwarts", "Stark Tower", "Konohagakure", "Terra")
+Copyrighted organization names (e.g., "Avengers", "Akatsuki", "Adeptus Astartes")
+Copyrighted terminology unique to that IP (e.g., "Quirks" from My Hero Academia)
+100% direct copy or obvious reference to existing IP
+❌ Images contain copyrighted elements:
+Official character art from anime/manga/games/movies
+Recognizable copyrighted character designs (even if renamed)
+Copyrighted logos or symbols
+Screenshots from copyrighted media
+Fan art of copyrighted characters
+Examples requiring demonetization:
+❌ "You are Harry Potter at Hogwarts"
+❌ "Join the Avengers with Iron Man"
+❌ Original name "Alex"(example) but image shows Iron Man suit
+❌ "Satoshi the ninja" but image is clearly Naruto
+❌ Original story but uses Avengers logo in image
+
+MONETIZABLE (Profit Sharing Allowed) if:
+✅ "Inspired by" with ALL original elements:
+Similar concepts/settings but ORIGINAL names
+Transformative work with NO direct copyrighted references
+New characters, new locations, new organizations
+Original or generic images (not recognizable copyrighted designs)
+No copyrighted logos or symbols
+
+Examples allowed for monetization (Inspired Work):
+✅ Warhammer-inspired: "30th Battalion"(not an existing copyrighted material) with original names/locations (not existing chapters/legions)
+✅ MHA-inspired: "Your Hero Academia" with original characters, original school, original powers
+✅ Marvel-inspired: "Superhero team" with original hero names and original/generic superhero images
+✅ Harry Potter-inspired: "Magic school" with original school name, original characters, original images
+The Complete Monetization Rule: For content to be MONETIZABLE, ALL must be true:
+✅ No copyrighted character names
+✅ No copyrighted location names
+✅ No copyrighted organization names
+✅ No copyrighted unique terms
+✅ No copyrighted character images
+✅ No copyrighted logos/symbols
+
+If ANY element uses copyrighted material → Demonetize
+The Recognition Test:
+"If you removed context, could someone still identify the exact copyrighted work?"
+YES → Demonetize (too direct)
+NO → Can monetize (sufficiently transformative)
+"Would the IP holder recognize their property in this content?"
+YES → Demonetize
+NO → Monetizable
+
+Moderator Decision Process:
+Step 1: Check Text Content
+Copyrighted names? → Demonetize
+Copyrighted terms? → Demonetize
+All original? → Continue to Step 2
+Step 2: Check Images
+Copyrighted character design? → Demonetize
+Copyrighted logo/symbol? → Demonetize
+Original/generic art? → Continue to Step 3
+Step 3: Make Decision
+✅ APPROVE content if meets quality/policy standards
+⚠️ DEMONETIZE if ANY copyrighted elements found
+✅ MONETIZABLE if ALL elements are original/transformative
+Step 4: Document Add note specifying reason:
+"Approved as fan fiction. Demonetized due to copyrighted character names: [names]"
+"Approved. Demonetized due to copyrighted character imagery"
+"Approved. Monetizable - inspired work with original elements"
+
+Examples with Decisions:
+Text
+Image
+Decision
+"Naruto's adventure in Konoha"
+Official Naruto art
+✅ Approve, ⚠️ Demonetize
+"Ninja Academy Chronicles" (original)
+AI-generated ninja (generic)
+✅ Approve, ✅ Monetizable
+"Alex the superhero" (original name)
+Iron Man suit image
+✅ Approve, ⚠️ Demonetize
+"Join Space Wolves chapter"
+Warhammer Space Marine
+✅ Approve, ⚠️ Demonetize
+"30th Galactic Battalion" (original)
+Original sci-fi soldier art
+✅ Approve, ✅ Monetizable
+"Hero with quirks at U.A."
+Original character art
+✅ Approve, ⚠️ Demonetize ("quirks" is MHA term)
+"Superhero with powers at academy"
+Original character art
+✅ Approve, ✅ Monetizable
+
+
+Gray Area Guidelines:
+"Looks Similar But Not Exact" Images:
+If reasonably recognizable as specific copyrighted character → Demonetize
+If generic archetype (elf, knight, robot, ninja) → May be monetizable
+Test: "Would fans of the IP recognize this?" YES → Demonetize
+
+Borderline Cases:
+Unique IP terminology (even one term) → Demonetize
+Generic genre terms (magic, hero, ninja) → Monetizable
+Character design "inspired by but different" → If recognizable, demonetize
+When uncertain: Escalate to senior moderator with specific concerns
+
+
+AI-Generated Images That Are Too Similar
+Issue: Creator uses AI-generated image (not official art), but the result is 90%+ similar to copyrighted character(s) and difficult to distinguish.
+Rule: Even if AI-generated, if the likeness is too close to distinguish from the original copyrighted character → Demonetize
+Why: The image is still effectively a reproduction of copyrighted character design, regardless of generation method.
+Examples:
+❌ AI-generated image that looks exactly like Naruto (orange jumpsuit, headband, whisker marks, blonde spiky hair) → Demonetize
+❌ AI-generated image 90% similar to Goku (orange gi, spiky black hair, same face/body structure) → Demonetize
+✅ AI-generated blonde spiky-haired ninja in different outfit/style → May be monetizable
+✅ AI-generated warrior with some similar features but clearly different design → Monetizable
+
+The Test:
+"If you showed this image to fans of the original IP, would they immediately recognize it as [character name]?"
+YES (90%+ similar, hard to distinguish) → Demonetize
+NO (inspired but clearly different) → Monetizable
+Moderator note: AI generation isn't exempt from copyright concerns. Judge the final output, not the creation method.
+
+Important Notes:
+✅ Both fan fiction AND inspired works are APPROVED
+We don't reject content for being fan-made
+Monetization status is separate from approval
+⚠️ Demonetization is NOT rejection or punishment
+Protects platform from copyright claims
+Content still goes live
+Creator can revise to make it monetizable (remove copyrighted elements)
+
+Reject ONLY if:
+Violates other policies (beyond copyright)
+Quality doesn't meet standards
+Contains other policy violations
+Fan fiction itself is NOT a rejection reason
+
+EC-2: Cultural/Religious Content
+Issue: Storyline/character involves religious figures, cultural practices, or sensitive historical events
+Decision Framework:
+Is it respectful? (Educational, fictional exploration, not mocking)
+
+
+YES → Approve
+NO → Reject
+
+Does it promote hate or discrimination?
+
+
+YES → REJECT (zero tolerance)
+NO → Continue evaluation
+
+Is there historical/cultural context provided?
+
+
+YES → Strengthen approval case
+NO → May need additional detail
+
+When to Escalate:
+Unsure if content is respectful vs. offensive
+Sensitive cultural topics you're unfamiliar with
+Potential hate speech disguised as "cultural commentary"
+Depictions of religious figures in controversial contexts
+Examples:
+✅ APPROVE: "Historical storyline set during Crusades with educational context"
+✅ APPROVE: "Character inspired by Greek mythology"
+❌ REJECT: "Religious figure depicted in explicitly sexual or gore NSFW context"
+⚠️ ESCALATE: "Storyline reimagining religious event with modern twist" (unclear if respectful)
+Rejection message:  Your submission contains content that mocks/promotes hatred toward [religious/cultural group]. This violates our Hate Speech policy. Please create respectful content and resubmit.
+
+EC-3: Dark/Mature Themes (Non-Sexual)
+Issue: Content involves dark themes like death, violence, trauma, war, abuse
+Decision Framework:
+APPROVE if:
+Content has narrative purpose (not glorifying)
+Properly tagged as mature/NSFW if needed
+No zero tolerance violations
+Provides appropriate context
+Not promoting harmful behavior
+REJECT if:
+Glorifies violence, abuse, or harm
+Promotes suicide or self-harm (Zero Tolerance Violations)
+Graphically violent without narrative purpose
+Designed to shock/disgust rather than tell story
+Depicts real-world tragedies insensitively
+Examples:
+✅ APPROVE: "Post-apocalyptic survival storyline with dark themes"
+✅ APPROVE: "Character with traumatic backstory (handled maturely)"
+❌ REJECT: "Storyline celebrating school shootings"
+⚠️ ESCALATE: "Graphic torture scenario - unclear if gratuitous or plot-driven"
+
+Rejection message: 
+EC3-1: Glorifying Violence/Harm
+Your submission glorifies violence, abuse, or harm toward individuals. Content must have narrative purpose and cannot promote or celebrate harmful acts. Please revise to ensure violence is not glorified and resubmit, or choose a different premise.
+
+EC3-2: Insensitive Real-World Tragedies
+Your submission depicts real-world tragedies or sensitive events in an insensitive or exploitative manner. Please approach serious historical/current events with appropriate respect and context, or choose a different premise, then resubmit.
+
+EC-4: Suggestive but Not Explicit (NSFW Gray Area)
+Issue: Content is suggestive/romantic but creator unclear on SFW vs NSFW tagging,OR content seems mistagged
+Moderator Authority: You CAN manually change the NSFW tag. You have the ability to tick/untick the NSFW box during approval.
+
+
+Decision Framework:
+Scenario 1: Creator tagged NSFW, content is actually SFW
+Decision: ✅ Approve as usual
+No action needed - NSFW tag doesn't harm anything
+Scenario 2: Creator tagged SFW, but content is clearly NSFW
+Decision: ✅ Manually tick NSFW box and approve
+Don't reject - just correct the tag
+Scenario 3: Creator tagged SFW, content is very suggestive toward NSFW direction
+Decision: ✅ Manually tick NSFW box and approve
+Better to age-gate than risk inappropriate access
+Scenario 4: Text is SFW, but images are NSFW/suggestive Examples: Climax/orgasm faces, undressing, lingerie in bedroom settings, suggestive poses
+Decision: ✅ Manually tick NSFW box and approve
+Remember: Images also determine tag, not just text
+Scenario 5: "Secret Mode" / Conditional NSFW
+Content has secret mode prompt: "Only allow NSFW response if {{user}} initiates, otherwise keep SFW"
+Decision: ✅ Tag as NSFW regardless
+Reason: Potential for NSFW content = needs age-gating
+Scenario 6: Genuinely borderline (unclear SFW vs NSFW)
+Decision: ✅ Manually tick NSFW box and approve
+Default to NSFW when uncertain (safety first)
+
+
+Quick Decision Guide:
+Creator Tagged
+Actual Content
+Moderator Action
+NSFW
+SFW
+✅ Approve as-is (no change needed)
+SFW
+Clearly NSFW
+✅ Tick NSFW, approve
+SFW
+Suggestive/borderline
+✅ Tick NSFW, approve
+SFW
+SFW text but NSFW images
+✅ Tick NSFW, approve
+SFW
+Has "conditional NSFW" mode
+✅ Tick NSFW, approve
+Either
+Genuinely unsure, apply parent test
+✅ Tick SFW/NSFW accordingly, approve
+
+
+When Unsure:
+Refer to NSFW Tagging Document (separate guide)
+Apply Parent Test: "Would I show this to my 13-year-old child?"
+NO → Tag as NSFW
+YES → SFW is okay
+UNSURE → Tag as NSFW (default to safety)
+When still uncertain: Escalate to senior moderator
+
+Important Notes:
+✅ You have the power to correct tags - don't reject for wrong tagging, just fix it 
+✅ Default to NSFW when borderline - over-protection is better than under-protection 
+✅ Images matter - even SFW text with suggestive images = NSFW 
+✅ Conditional NSFW still needs tag - if it CAN be NSFW, tag it as NSFW 
+✅ NSFW ≠ rejection - it's just proper age-gating
+
+
+EC-5: Non-English Content Quality
+Issue: Content in languages you don't fully understand
+Approach:
+Use translation tools (claude.ai, chatgpt, Google Translate, etc) for basic understanding
+Check technical elements:
+Images present and appropriate?
+Fields properly filled?
+No obvious formatting disasters?
+Look for policy violations as usual (even in translation)
+When to Escalate:
+Translated content suggests possible policy violation but you're unsure
+Content in language you cannot evaluate at all
+Cultural context needed for fair judgment
+DO NOT reject solely for:
+Grammar errors in non-English content
+Language you personally don't understand
+Different cultural storytelling styles
+
+EC-6: Resubmissions After Rejection
+Issue: Creator keeps resubmitting after rejection
+Protocol:
+First Resubmission:
+Review normally
+If still doesn't meet standards → Reject with more detailed feedback
+Second Resubmission (same issues):
+Review carefully
+If minimal improvement → Reject with guidance
+Keep rejecting until improvement are made
+Consider escalation if creator seems intentionally non-compliant
+Third+ Resubmission (same issues):
+ESCALATE to senior moderator
+Pattern of non-compliance or misunderstanding
+May need direct creator communication
+Possible restriction if deliberate policy circumvention
+If issues ARE fixed:
+Approve and move on
+No penalty for taking multiple tries to get it right
+
+EC-7: Romantic Content Involving Large Age Gaps
+Issue: Adult characters with significant age differences (e.g., 18 year old + 40 year old)
+Decision Framework:
+APPROVE if:
+All characters are clearly adults (18+)
+No grooming or predatory dynamics described
+Age gap acknowledged naturally in narrative
+Properly tagged if NSFW
+REJECT if:
+Characters appear underage despite stated age
+Grooming dynamics present (adult pursued minor, then "waited until 18")
+Power imbalance exploited for sexual/predatory purposes
+Description emphasizes "barely legal" or similar language
+ESCALATE if:
+Unsure whether dynamics are predatory
+"Teacher/student" "boss/employee" with unclear consent
+"Raised by then romanced" scenarios
+
+Rejection messages: 
+EC7-1: Grooming Dynamics
+Your submission contains grooming dynamics (adult pursued minor, then relationship begins when "of age"). This depicts predatory behavior and is not allowed. Please revise to remove grooming elements or choose a different premise, then resubmit.
+
+EC-8: Mental Health Content
+Issue: Characters with mental illness, trauma, or psychological conditions
+APPROVE if:
+Mental health portrayed realistically/sensitively
+Not promoting harm or dangerous stereotypes
+Proper content warnings if intense
+REJECT if:
+Romanticizes self-harm or suicide
+Promotes dangerous mental health stereotypes
+Encourages not seeking help
+Depicts severe mental illness as "quirky" trait without depth
+
+EC-9: Real People's Names or Images
+Issue: Creator uses real person's name, photo, or creates character based on real living individual (celebrities, politicians, influencers, public figures)
+Policy: Using real people's names or images is NOT allowed.
+
+REJECT if:
+❌ Celebrity/Famous Person:
+Character named after real celebrity (e.g., "Taylor Swift", "Elon Musk", "Lionel Messi")
+Uses real celebrity's photo as character image
+Character clearly based on real famous person (even if name slightly changed)
+❌ Politicians/Public Figures:
+Any current politician's name or image
+Government officials, world leaders
+Even for satire/parody (to avoid political/legal issues)
+❌ Influencers/Content Creators:
+YouTubers, streamers, TikTokers
+Using their name, image, or persona
+❌ Any Living Person:
+Regular people whose photos are used without permission
+Recognizable real individuals
+
+APPROVE if:
+✅ Historical Figures (Deceased):
+Abraham Lincoln, Cleopatra, Leonardo da Vinci, etc.
+Public domain historical figures
+Must be educational/respectful context
+✅ Generic Common Names:
+"John Smith", "Maria Garcia", "Ahmed Khan"
+Common names NOT clearly referencing specific famous person
+No image resembling real person
+✅ Fictional "Inspired By" (with safeguards):
+"A pop star" without naming specific artist
+"A tech billionaire" without naming specific person
+Generic archetype, not specific individual
+
+Examples:
+Submission
+Decision
+Reason
+Character named "Taylor Swift"
+❌ REJECT
+Real celebrity name
+Character using Taylor Swift's photo
+❌ REJECT
+Real person's image
+"Famous pop star with blonde hair" (original name)
+✅ APPROVE
+Generic archetype, not specific person
+Character named "Abraham Lincoln"
+✅ APPROVE
+Historical figure (deceased)
+Character named "Joe Biden"
+❌ REJECT
+Current politician
+Character named "John Smith the carpenter"
+✅ APPROVE
+Generic common name
+"Meet MrBeast" (YouTuber)
+❌ REJECT
+Real influencer
+
+
+Escalation Checklist
+Before escalating, ask yourself:
+[ ] Have I thoroughly reviewed all policies?
+[ ] Have I checked edge case examples?
+[ ] Can I articulate WHY I'm uncertain?
+[ ] Is this genuinely complex or am I overthinking?
+[ ] Would another moderator likely have the same question?
+
+Rejection message: 
+EC-9.1: Real Person Usage
+Your submission uses a real person's name/image, which is not permitted due to legal and privacy concerns. Please create an original character with a fictional name and appropriate images, then resubmit.
+
+EC-9.2: AI-Generated Resemblance to Real Person
+Your submission uses an image that closely resembles a real person. Please create a unique character that does not resemble any real individual and resubmit.
+
+EC-10: Nudity & Transparent/See-Through Clothing
+Issue: Character image shows clothing that is transparent, sheer, or see-through enough to reveal nudity underneath (lace, mesh, sheer fabric, etc.)
+
+The Principle:
+"Functionally nude = Actually nude"
+If clothing is so transparent that you can see nipples, genitalia, or intimate body parts clearly through the fabric → Treat as nudity violation.
+
+Rejection message: 
+EC-10.1: Full nudity - Exposed Genitalia
+Your character image contains full nudity with exposed genitalia/nipples. This violates our image policy. All character images must be SFW with appropriate clothing coverage, even for NSFW characters. Please replace with a properly clothed image and resubmit.
+
+EC-10.2:Full nudity - "Strategic Covering" (Hands/Hair/Small Objects)
+Your character image shows nudity with hands/hair/small objects covering intimate parts. This is still considered nudity and violates our policy. Character images must show the character wearing actual clothing, not attempting to cover nudity with body parts or objects. Please replace with an appropriately clothed image and resubmit.
+
+Transparent/See-Through Clothing
+Your character image shows transparent/see-through clothing that reveals nudity (nipples/genitalia visible through fabric). This violates our nudity policy. Please replace with an image that has appropriate coverage and resubmit.
+
+10. Quality Standards Checklist
+Use this for every submission review
+
+✅ STORYLINE CHECKLIST
+TECHNICAL REQUIREMENTS
+[ ] Cover image present
+[ ] Cover image related to storyline
+[ ] Cover image is SFW (no exposed genitalia, even if storyline is NSFW)
+[ ] All characters in Character List have images
+[ ] One character per Character List entry (no "Character 1 & 2" entries)
+[ ] Persona List correctly configured (if storyline uses player character)
+[ ] Player role in first message matches Persona List
+[ ] Language setting matches content language (no mixed languages)
+POLICY COMPLIANCE
+[ ] No zero tolerance violations (CSAM, hate speech, non-consent, etc.)
+[ ] NSFW/SFW tagged correctly
+[ ] No minor sexualization and harm
+[ ] No prohibited sexual content (bestiality, incest)
+[ ] No misleading content
+[ ] No harmful instructions
+[ ] Appropriate age rating
+QUALITY STANDARDS
+[ ] Title is clear and properly capitalized
+[ ] Description provides sufficient detail (plot, setting, context)
+[ ] Grammar is comprehensible (doesn't have to be perfect)
+[ ] Proper punctuation and formatting
+[ ] First message sets up scenario clearly
+[ ] Character descriptions are adequate
+[ ] Overall presentation is professional
+USER EXPERIENCE
+[ ] Clear what player will experience
+[ ] Not misleading about content
+[ ] Provides value for community
+[ ] Would I personally want to play this? (gut check)
+
+✅ CHARACTER CHECKLIST
+TECHNICAL REQUIREMENTS
+[ ] Character image(s) present
+[ ] Character image is SFW (no exposed genitalia, even if character is NSFW)
+[ ] Images are consistent (showing same character)
+[ ] Images relate to character description
+[ ] Name consistent across all fields
+[ ] Critical traits in Description field (NOT just in Summary)
+[ ] Language setting matches content language
+POLICY COMPLIANCE
+[ ] No zero tolerance violations
+[ ] NSFW/SFW tagged correctly
+[ ] If NSFW: Character clearly appears as adult (no minor-like features)
+[ ] No minor sexualization
+[ ] No prohibited content
+[ ] Appropriate for platform
+QUALITY STANDARDS
+[ ] Name properly capitalized
+[ ] Description provides sufficient detail (personality, background, appearance)
+[ ] Grammar is comprehensible
+[ ] Proper formatting
+[ ] Image quality acceptable (not extremely pixelated/blurry)
+[ ] Overall presentation is professional
+USER EXPERIENCE
+[ ] Clear character personality and role
+[ ] Enough depth for engaging interaction
+[ ] Images match description
+[ ] Would I personally want to interact with this character? (gut check)
+
+Final Moderator Reminders
+Core Principles
+Consistency: Apply standards equally to all creators
+Fairness: Give helpful feedback, not harsh criticism
+Safety First: Zero tolerance violations = immediate action
+Quality Matters: Platform reputation depends on content standards
+When Uncertain: Escalate, don't guess
+Stay Professional: Don't make things personal. Judge the content objectively, not the creator. Apply policies fairly regardless of whether you like or dislike the content style, theme, or creator's previous submissions.
+Your Moderator Mindset
+✅ DO:
+Be thorough but efficient
+Provide clear, actionable feedback
+Escalate uncertain cases
+Document patterns you notice
+Support creator success
+Protect community safety
+❌ DON'T:
+Rush through reviews
+Be unnecessarily harsh
+Approve "borderline" zero tolerance content
+Let personal preferences override policies
+Feel pressured to approve poor quality
+Ignore red flags
+Getting Help
+Questions about:
+Policies: Review this guide, escalate if still unclear
+Technical issues: Contact moderation team lead
+Translation help: Use claude ai, Chatgpt, DeepL, Google Translate
+Edge cases: Escalate to senior moderator
+Reporting bugs: Document and report to tech team
+Contact:
+Moderation Team Lead: @Cloudy [discord]
+Technical Support: @Louis [discord]
+
+Document Version History
+Version
+Date
+Changes
+Author
+1.0
+13th January, 2026
+Initial guideline creation
+ISEKAI ZERO Team
+
+
+Remember: You're protecting our community while enabling creativity. Thank you for your important work! 
+
+This document is confidential and for internal moderator use only. Do not share outside the moderation team.
 
-Last Updated: 15 DECEMBER 2025 
 
- 
-
- This Content Creation Policy applies to ISEKAI ZERO services (the "Platform"), which include all apps, websites, software, and related services accessed via any platform or device that are linked to this Content Creation Policy. The Platform is provided and controlled by ARx Media Sdn. Bhd. ("ISEKAI ZERO", "we", "our" or "us"). 
-
- This Content Creation Policy is designed to keep our community of creators and players protected, and to encourage creators to take responsibility for their part in this effort. It sets out what is and is not allowed on the Platform, and applies to all content across the platform. 
-
- This Content Creation Policy applies to all types of creator-authored content on the Platform, including Character profiles, Storyline descriptions, images, thumbnails, first messages, comments, metadata, and any other content directly created and controlled by users. These guidelines are designed to protect the community from harmful content, harassment, and spam, and are regularly updated in consultation with external experts and ISEKAI ZERO creators. 
-
- 
-
- Scope of Creator Responsibility 
-
- This policy applies to content that creators directly author and control. As an AI-powered platform, it's important to distinguish between content creators are responsible for and content generated by the AI system during gameplay. 
-
- Creators Are Responsible For: 
-
- Character profiles - Names, descriptions, personality traits, backgrounds, appearance descriptions 
-
- 
-
- 
-
- Storyline content - Titles, descriptions, synopsis, plot summaries, premises 
-
- 
-
- 
-
- Storyline cover images - Thumbnails, cover artwork 
-
- 
-
- 
-
- First messages/Opening scenarios - The initial scene or message that begins a Storyline 
-
- 
-
- 
-
- Character images - Avatar images, character artwork, visual designs 
-
- 
-
- 
-
- Tags and metadata - SFW/NSFW classification, age ratings, content warnings, genre tags 
-
- 
-
- 
-
- Comments - Any comments creators post on the platform 
-
- 
-
- 
-
- Collections - Curated collections of Storylines or Characters 
-
- 
-
- 
-
- External links - Any links included in descriptions or profiles 
-
- 
-
- 
-
- 
-
- Creators Are NOT Responsible For: 
-
- 
-
- 
-
- AI-generated dialogue - The actual responses generated by the AI during player interactions 
-
- 
-
- 
-
- Player inputs - What players type or how they interact with Characters 
-
- 
-
- 
-
- Unexpected AI behavior - Unintended responses that occur despite appropriate character design 
-
- 
-
- 
-
- Important Note: While you are not responsible for real-time AI responses, you ARE responsible for how you design and set up your Characters and Storylines. Content deliberately designed to circumvent policies or generate violations will be treated as a policy violation. 
-
- 
-
- 1. Spam, Scams and Deceptive Practices Policies 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Character/Storyline Spam 
-
- 
-
- 
-
- Content that is excessively posted, repetitive, or untargeted and does one or more of the following: 
-
- 
-
- 
-
- Character descriptions or Storyline synopsis that promise players something but deliver different content. 
-
- 
-
- 
-
- Gets clicks, views, or traffic off the Platform by promising viewers that they will make quick money. 
-
- 
-
- 
-
- Sends audiences to sites that spread harmful software, try to gather personal information, or other sites that have negative impacts. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Misleading thumbnails or metadata 
-
- 
-
- 
-
- Using the Character names, descriptions, images, Storyline titles, or cover images to trick users into believing the content is something it is not what it is. 
-
- 
-
- 
-
- 
-
- 
-
- Incentivization spam 
-
- 
-
- 
-
- Content that sells engagement metrics such as views, likes, comments, or any other metric on the Platform. This type of spam can also include content where the only purpose is to boost subscribers, views, or other metrics. 
-
- 
-
- 
-
- 
-
- 
-
- Comments spam 
-
- 
-
- 
-
- Comments where the sole purpose is to gather personal info from viewers, misleadingly drive viewers off ISEKAI ZERO, or perform any of the prohibited behaviors noted above. 
-
- 
-
- 
-
- 
-
- 
-
- Repetitive comments 
-
- 
-
- 
-
- Leaving large amounts of identical, untargeted or repetitive comments. 
-
- 
-
- 
-
- 
-
- 
-
- Scams 
-
- 
-
- 
-
- Content offering cash gifts, pyramid schemes or “get rich quick” schemes to lure users. 
-
- 
-
- 
-
- 
-
- 
-
- 3rd party content 
-
- 
-
- 
-
- Character profiles or Storyline descriptions directly copied from other creators without permission or significant modification. Creators should actively ensure their content is original or properly attributed. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 2. Sexual and Nudity Content Policy 
-
- ISEKAI ZERO allows NSFW content for users 18 years and older, provided it is properly tagged and complies with the restrictions below. 
-
- Explicit content that violates this Policy could result in account termination. This Policy applies to creator-authored content including Character profiles, Character images, Storyline descriptions, cover images, first messages, and all other content you directly create. 
-
- Do not create content such as the following: 
-
- 
-
- 
-
- The depiction of exposed genitalia in Character images or Storyline covers (illustrated, AI-generated, or photographic) that are meant for sexual gratification. 
-
- 
-
- 
-
- Character descriptions depicting minors in sexual situations, or Storylines designed around sexual content involving minors. 
-
- 
-
- Characters in NSFW content that appear to be minors or have minor-like features. This includes characters with child-like appearances, youthful features, or any visual characteristics suggesting the character is underage, regardless of stated age in the description. All NSFW characters must be clearly depicted as adults in both appearance and description. 
-
- 
-
- Character profiles or Storyline descriptions that depict non-consensual sexual content, including rape, sexual assault, or coercion. 
-
- 
-
- 
-
- Character descriptions or Storyline setups involving incest themes. 
-
- 
-
- 
-
- Character descriptions or Storyline setups involving bestiality. 
-
- 
-
- 
-
- Pornography or fetishes in Character images, cover images, or opening scenarios that are meant for sexual gratification. 
-
- 
-
- 
-
- This policy applies to Character profiles, Character images, Storyline descriptions, Storyline covers, first messages, comments, metadata, and any other creator-authored content. Remember these are just some examples, and don't post content if you think it might violate this policy. 
-
- What is Allowed with Proper NSFW Tagging (18+ only): 
-
- 
-
- 
-
- Suggestive Character descriptions without explicit detail 
-
- 
-
- 
-
- Romantic or intimate Storyline scenarios (non-explicit) 
-
- 
-
- 
-
- Character images with artistic/partial nudity that does not show genitalia 
-
- 
-
- 
-
- Mature themes in Storyline premises (within boundaries above) 
-
- 
-
- 
-
- Adult language in Character personalities or Storyline descriptions 
-
- 
-
- 
-
- NSFW Tagging Requirements: 
-
- 
-
- 
-
- All NSFW Character profiles and Storylines must be properly tagged upon creation 
-
- 
-
- Character images and Storyline cover images may contain suggestive or mildly NSFW content, provided they do not include: - Exposed genitalia (illustrated, AI-generated, or photographic) - Explicit sexual acts or simulations - Graphic nudity meant for sexual gratification - Content that would violate the Thumbnails and Images Policy (Section 6) 
-
- Acceptable for NSFW covers include: - Artistic partial nudity (e.g., strategic covering, silhouettes) - Suggestive poses or clothing without explicit exposure - Romantic or intimate imagery that is not explicitly sexual - Content that clearly conveys mature themes without graphic depiction 
-
- 
-
- First messages should match the NSFW/SFW designation 
-
- 
-
- 
-
- For public content: Final NSFW classification may be adjusted by moderators after review 
-
- 
-
- 
-
- For private/unlisted content: You are responsible for accurate tagging 
-
- 
-
- 
-
- 
-
- 3. External Links Policy 
-
- Do not post links in your Character descriptions, Storyline descriptions, comments, or any creator-authored content that direct users to content that violates our Policies. This includes links that are as stated but not limited to the following: 
-
- 
-
- 
-
- Links to pornography. 
-
- 
-
- 
-
- Links to websites or apps that install malware. 
-
- 
-
- 
-
- Links to websites or apps phishing for a user's sign in info, financial info, etc. 
-
- 
-
- 
-
- Links to websites, apps, or other sources that give unauthorized access to audio content, audio-visual content, video games, software, or streaming services that normally require payment. 
-
- 
-
- 
-
- Links to websites that seek to raise funds or recruit for terrorist organizations. 
-
- 
-
- 
-
- Links to sites containing Child Sexual Abuse Imagery (CSAI). 
-
- 
-
- 
-
- Links to content containing hate or harassment elements. 
-
- 
-
- 
-
- Links to content encouraging others to commit violent acts. 
-
- 
-
- 
-
- Links to websites or apps that spread misleading or deceptive content that can cause serious risk of egregious harm, such as interfering with democratic processes. 
-
- 
-
- 
-
- This Policy applies to Character profiles, Storyline descriptions, comments, and any other creator-authored content on the Platform. Links can take any form that would direct a user to a site off the Platform. These links include: clickable URLs, showing text of URLs in videos or images, and obfuscated URLs (such as writing “dot com” instead of “.com”). These links can also include verbally directing users to other sites, encouraging viewers to visit creator profiles or pages on other sites, or promising violative content on other sites. This list is not complete. Please note that affiliate content does not violate the Platform’s Terms of Use. Excessively posting affiliate content in dedicated accounts may violate our policies around spam. 
-
- 
-
- 4. Age-Restricted Content 
-
- We may add an age restriction to creator-authored content that includes any of the following: 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Harmful or dangerous acts that minors could imitate 
-
- 
-
- 
-
- Character descriptions or Storyline setups containing adults participating in dangerous activities that minors could easily imitate. 
-
- 
-
- 
-
- 
-
- 
-
- Adult themes in family content 
-
- 
-
- 
-
- Content meant for adult audiences but could easily be confused with family content. This includes Characters or Storylines that contain adult themes such as violence, sex, or death. Please age restrict your content upon upload if it is intended for mature audiences. 
-
- 
-
- 
-
- 
-
- 
-
- Vulgar languages 
-
- 
-
- 
-
- Content using sexually explicit language or excessive profanity may lead to age restriction as some languages are not appropriate for younger audiences. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- If your Character description or Storyline setup warns minors not to perform dangerous activities, we may allow this content without restriction. It will also need to explain the need for professional adult supervision. 
-
- 
-
- 5. Child Safety Policy 
-
- This policy applies to Character profiles, Character images, Storyline descriptions, Storyline covers, first messages, comments, and any other creator-authored content. Do not post content on the Platform if it fits any of the following: 
-
- 
-
- 
-
- Inflicting or advocating for the infliction of physical, sexual or emotional maltreatment or neglect of a child in Character descriptions, Storyline premises, or images, including inflicting emotional distress on minors. 
-
- 
-
- 
-
- Content that contains infliction of physical, sexual, or emotional abuse of a child within an educational, documentary, scientific, or artistic context and with blurring may receive an exception. 
-
- 
-
- 
-
- Content in Character descriptions or Storyline setups that could cause minor participants or viewers emotional distress, including: 
-
- 
-
- 
-
- 
-
- Exposing minors to mature themes 
-
- 
-
- 
-
- Simulating parental abuse 
-
- 
-
- 
-
- Coercing minors 
-
- 
-
- 
-
- Violence 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Sexualization of minors 
-
- 
-
- 
-
- Sexually explicit content featuring minors and content that sexually exploits minors including minor nudity posted with comedic intent. 
-
- This includes NSFW characters with minor-like appearances, child-like features, or youthful characteristics, regardless of stated age. Characters tagged NSFW  must clearly appear as adults in all visual depictions and descriptions. 
-
- 
-
- 
-
- 
-
- 
-
- Harmful or dangerous acts involving minors 
-
- 
-
- 
-
- Character descriptions or Storyline setups showing a minor participating in dangerous activities or encouraging minors to do dangerous activities. Never create content that puts minors in harmful situations that may lead to injury, including dangerous stunts, challenges, dares, or pranks. 
-
- 
-
- 
-
- 
-
- 
-
- Misleading family content 
-
- 
-
- 
-
- Character profiles or Storyline descriptions that appear suitable for children but contain: 
-
- 
-
- 
-
- Sexual themes. 
-
- 
-
- 
-
- Violence. 
-
- 
-
- 
-
- Obscenity or other mature themes not suitable for young audiences. 
-
- 
-
- 
-
- Medical procedures. 
-
- 
-
- 
-
- Self-harm. 
-
- 
-
- 
-
- Use of adult horror characters. 
-
- 
-
- 
-
- Other inappropriate themes intended to shock young audiences. 
-
- 
-
- 
-
- Content that targets young minors and families with age-inappropriate themes within an educational, documentary, scientific, or artistic context may receive an exception. This is not a pass to target young minors and families with mature themes intended to shock young audiences. 
-
- 
-
- 
-
- Content labeled as suitable for kids in the Character/Storyline title, description, tags, or metadata that contains age-inappropriate themes such as violence, sex, death, drugs, and more. Content labelled as suitable for kids in the video's title, description, tags, or in the audience selection if it contains age-inappropriate themes are not allowed. 
-
- 
-
- 
-
- Make sure your titles, descriptions, and tags match the audience you're targeting. In addition, ensure your audience selection accurately represents the audience your content is suitable for. You can also age restrict your content upon upload if it’s intended for mature audiences. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Cyberbullying and harassment involving minors 
-
- 
-
- 
-
- 
-
- 
-
- Intends to shame, deceive or insult a minor. 
-
- 
-
- 
-
- Reveals personal information like email addresses or bank account numbers. 
-
- 
-
- 
-
- Contains sexualization. 
-
- 
-
- 
-
- Encourages others to bully or harass. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 6. Thumbnails and Images Policy 
-
- Do not post a Character image, Storyline cover image, or other image on the Platform if it shows the following: 
-
- 
-
- 
-
- Pornographic imagery 
-
- 
-
- 
-
- Sexual acts, the use of sex toys, fetishes, or other sexually gratifying imagery 
-
- 
-
- 
-
- Exposed genitalia (illustrated, AI-generated, or photographic) 
-
- 
-
- 
-
- Imagery that depicts unwanted sexualization 
-
- 
-
- 
-
- Violent imagery that intends to shock or disgust 
-
- 
-
- 
-
- Graphic or disturbing imagery with blood or gore 
-
- 
-
- 
-
- Vulgar or lewd languages 
-
- 
-
- 
-
- An image that misleads users to think they are about to experience something that is not in the Character or Storyline 
-
- 
-
- 
-
- 
-
- For NSFW Characters and Storylines: 
-
- 
-
- Character images and Storyline cover images may contain suggestive or mildly NSFW content, provided they do not include: - Exposed genitalia (illustrated, AI-generated, or photographic) - Explicit sexual acts or simulations - Graphic nudity meant for sexual gratification 
-
- Acceptable for NSFW covers include: - Artistic partial nudity (e.g., strategic covering, silhouettes) - Suggestive poses or clothing without explicit exposure - Romantic or intimate imagery that is not explicitly sexual - Content that clearly conveys mature themes without graphic depiction 
-
- 
-
- Suggestive but non-explicit imagery is acceptable 
-
- 
-
- NSFW Character Appearance Requirement: - Characters in NSFW content must not have minor-like appearances or child-like features. This applies regardless of stated age in descriptions. Characters must be visually depicted as adults with mature physical characteristics. Content featuring characters that appear underage will be removed and may result in permanent ban. 
-
- 
-
- 
-
- 7. Suicide, Self-Harm and Eating Disorders Policy 
-
- At ISEKAI ZERO, we take the health and well-being of all our creators, users and viewers seriously. Awareness and understanding of mental health is important and we support creators sharing their stories, such as posting content discussing their experiences with depression, self-harm, eating disorders, or other mental health issues. However, we do not allow content on the Platform that promotes suicide, self-harm, or eating disorders, that is intended to shock or disgust, or that poses a considerable risk to viewers. If you find yourself being negatively affected by any mental health, suicide, self-harm, or eating disorder related content you come across, know that there is support available and you are not alone. 
-
- 
-
- 8. Harmful or Dangerous Content Policy 
-
- Do not post any harmful or dangerous acts, challenges, and pranks. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Extremely dangerous challenges 
-
- 
-
- 
-
- Challenges that pose an imminent risk of physical injury or fatality. 
-
- 
-
- 
-
- 
-
- 
-
- Dangerous or threatening pranks 
-
- 
-
- 
-
- Pranks that lead victims to fear imminent serious physical danger, or that create serious emotional distress in minors. 
-
- 
-
- 
-
- 
-
- 
-
- Harmful or dangerous acts 
-
- 
-
- 
-
- Content that promotes, encourages, or instructs others to engage in activities that could cause serious injury or death. 
-
- 
-
- 
-
- 
-
- 
-
- Minors participating in dangerous activities 
-
- 
-
- 
-
- Content that endangers the emotional and physical well-being of minors. For more info, please read our "Child Safety Policy" . 
-
- 
-
- 
-
- 
-
- 
-
- Instructions to kill or harm 
-
- 
-
- 
-
- Instructions that show or tell viewers how to perform activities that are meant to kill or severely harm others. 
-
- 
-
- 
-
- 
-
- 
-
- Explosives 
-
- 
-
- 
-
- Giving instructions to make explosive devices or compounds meant to injure or kill others. 
-
- 
-
- 
-
- 
-
- 
-
- Firearms 
-
- 
-
- 
-
- Instructions that show or tell viewers how to obtain and operate firearms that are meant to kill or severely harm others. 
-
- 
-
- 
-
- 
-
- 
-
- Instructional theft 
-
- 
-
- 
-
- Character descriptions or Storyline setups posted with the express intent to steal physical goods or get something for free. 
-
- 
-
- 
-
- 
-
- 
-
- Hacking 
-
- 
-
- 
-
- Demonstrating how to use computers or information technology with the intent to steal credentials, compromise personal data, or cause serious harm to others. 
-
- 
-
- 
-
- 
-
- 
-
- Bypassing payment for digital content or services 
-
- 
-
- 
-
- Content that shows viewers how to get unauthorized access to content, software, or services that usually require payment. 
-
- 
-
- 
-
- 
-
- 
-
- Phishing 
-
- 
-
- 
-
- Content that tries to get or gives instructions for how to get non-public personal identifying information from viewers by deceiving them. 
-
- 
-
- 
-
- 
-
- 
-
- Cryptophishing 
-
- 
-
- 
-
- Requests for cryptocurrency or cryptocurrency-related wallet details as a part of a phishing scheme. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 9. Violent or Graphic Content Policies 
-
- We do not allow the following kinds of content in creator-authored materials even if there is educational, documentary, scientific, or artistic context provided: 
-
- 
-
- 
-
- Violent physical sexual assaults described in Character profiles or Storyline setups (text descriptions or imagery). 
-
- 
-
- 
-
- Detailed descriptions or imagery from the perspective of a perpetrator during a deadly or major violent event in Character backgrounds or Storyline premises. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Violent or graphic content 
-
- 
-
- 
-
- 
-
- 
-
- Inciting others to commit violent acts against individuals or a defined group of people. 
-
- 
-
- 
-
- Fights involving minors. 
-
- 
-
- 
-
- Character descriptions, Storyline setups, or images depicting graphic violence, gore, torture, or disturbing scenarios where the primary purpose is to shock or disgust rather than serve a legitimate narrative, educational, or artistic purpose. 
-
- 
-
- 
-
- Character images or Storyline covers showing excessive gore, graphic bodily harm, or disturbing imagery where the primary intent is to shock or disgust rather than convey the content's theme or genre. 
-
- 
-
- 
-
- Images of corpses with massive injuries, such as severed limbs. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Animal abuse content 
-
- 
-
- 
-
- 
-
- 
-
- Content where humans coerce animals to fight. 
-
- 
-
- 
-
- Content where a human maliciously mistreats an animal and causes them to experience distress outside of traditional or standard practices. Examples of traditional or standard practices include hunting or food preparation. 
-
- 
-
- 
-
- Content where a human unnecessarily puts an animal in poor conditions outside of traditional or standard practices. Examples of traditional or standard practices include hunting or food preparation. 
-
- 
-
- 
-
- Content that glorifies or promotes serious neglect, mistreatment, or harm toward animals. 
-
- 
-
- 
-
- Content that shows animal rescue that is staged and puts the animal in harmful scenarios. 
-
- 
-
- 
-
- Graphic content that features animals and intends to shock or disgust. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Dramatized or fictional content 
-
- 
-
- 
-
- 
-
- 
-
- Character descriptions or Storyline setups that impersonate real people or depict real events without clear fictional/parody disclaimers, where players might be misled into believing they are interacting with real individuals or true events. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 10. Hate Speech and Discrimination Policy 
-
- Do not create content on the Platform that promotes hatred or discrimination. This applies to all creator-authored content including Character profiles, Storyline descriptions, images, and comments. 
-
- Do not create Character profiles or Storyline descriptions that: 
-
- 
-
- 
-
- Promote hatred or discrimination based on: 
-
- 
-
- 
-
- 
-
- Race or ethnicity 
-
- 
-
- 
-
- Religion 
-
- 
-
- 
-
- Gender or gender identity 
-
- 
-
- 
-
- Sexual orientation 
-
- 
-
- 
-
- Nationality 
-
- 
-
- 
-
- Disability 
-
- 
-
- 
-
- Age 
-
- 
-
- 
-
- Any other protected characteristic 
-
- 
-
- 
-
- 
-
- Include slurs or derogatory language targeting protected groups 
-
- 
-
- 
-
- Promote conspiracy theories that target or vilify specific groups 
-
- 
-
- 
-
- Dehumanize or devalue people based on protected characteristics 
-
- 
-
- 
-
- Promote violence or hatred against groups 
-
- 
-
- 
-
- Deny well-documented violent events (Holocaust denial, genocide denial, etc.) 
-
- 
-
- 
-
- Defame, mock, or create hateful content targeting real-world royalty and royal families 
-
- 
-
- 
-
- Violation of this policy will result in immediate permanent ban. 
-
- 
-
- 11. Cultural Sensitivity 
-
- We operate globally and respect cultural diversity. All content creators must adhere to the following when creating Characters and Storylines: 
-
- Respect Cultural Practices 
-
- 
-
- 
-
- Character descriptions and Storyline setups should not mock or demean cultural practices 
-
- 
-
- 
-
- Respectful exploration and education about cultures is encouraged 
-
- 
-
- 
-
- Stereotypes and caricatures that demean cultures are not allowed 
-
- 
-
- 
-
- 
-
- Religious Content 
-
- 
-
- 
-
- Character profiles and Storyline descriptions involving religious themes must be respectful 
-
- 
-
- 
-
- Content that mocks, insults, or promotes hatred of religious groups is prohibited 
-
- 
-
- 
-
- Respectful fictional portrayals of religious themes are acceptable 
-
- 
-
- 
-
- 
-
- Political Content 
-
- 
-
- 
-
- Character descriptions or Storyline premises involving political themes should not incite violence or hatred 
-
- 
-
- 
-
- Respectful discussion of political topics is allowed in content setups 
-
- 
-
- 
-
- Content that promotes terrorism or violent extremism is strictly prohibited 
-
- 
-
- 
-
- Misinformation about elections and democratic processes is not allowed 
-
- 
-
- 
-
- 
-
- Historical Content 
-
- 
-
- 
-
- Historical Characters or Storylines should be educational, not glorifying harmful events 
-
- 
-
- 
-
- Content about historical atrocities should provide appropriate context 
-
- 
-
- 
-
- Content that glorifies war crimes, genocide, or other historical atrocities is prohibited 
-
- 
-
- 
-
- Educational content about difficult historical topics is allowed with proper framing and content warnings 
-
- 
-
- 
-
- 
-
- 12. Misinformation Policy 
-
- Do not create content on the Platform if it fits any of the following: 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Suppression of census participation 
-
- 
-
- 
-
- Character descriptions or Storyline setups aiming to mislead census participants about the time, place, means, or eligibility requirements of the census, or false claims that could materially discourage census participation. 
-
- 
-
- 
-
- 
-
- 
-
- Manipulated content 
-
- 
-
- 
-
- Character descriptions or Storyline premises that present manipulated or doctored information in a way that misleads users and may pose a serious risk of egregious harm. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 13. Elections Misinformation Policy 
-
- Do not create content on the Platform if it fits any of the following: 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Voter suppression 
-
- 
-
- 
-
- Content aiming to mislead voters about the time, place, means, or eligibility requirements for voting, or false claims that could materially discourage voting. 
-
- 
-
- 
-
- 
-
- 
-
- Candidate eligibility 
-
- 
-
- 
-
- Content that advances false claims related to the technical eligibility requirements for current political candidates and sitting elected government officials to serve in office. Eligibility requirements considered are based on applicable national law, and include age, citizenship, or vital status. 
-
- 
-
- 
-
- 
-
- 
-
- Incitement to interfere with democratic processes 
-
- 
-
- 
-
- Content encouraging others to interfere with democratic processes. This includes obstructing or interrupting voting procedures. 
-
- 
-
- 
-
- 
-
- 
-
- Election integrity 
-
- 
-
- 
-
- Content advancing false claims that widespread fraud, errors, or glitches occurred in certain past elections to determine heads of government or content that claims that the certified results of those elections were false. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 14. Medical Misinformation Policy 
-
- Do not create content on the Platform if it fits any of the following: 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- Prevention misinformation 
-
- 
-
- 
-
- Character descriptions or Storyline setups that promote information that contradicts health authority guidance on the prevention or transmission of specific health conditions, or on the safety, efficacy or ingredients of currently approved and administered vaccines. 
-
- 
-
- 
-
- 
-
- 
-
- Treatment misinformation 
-
- 
-
- 
-
- Content in Character profiles or Storyline descriptions that promotes information that contradicts health authority guidance on treatments for specific health conditions, including promotion of specific harmful substances or practices that have not been approved by local health authorities or the World Health Organization as safe or effective, or that have been confirmed to cause severe harm. 
-
- 
-
- 
-
- 
-
- 
-
- Denial misinformation 
-
- 
-
- 
-
- Character descriptions or Storyline setups that deny the existence of specific health conditions. 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 15. Educational, Documentary, Scientific, and Artistic (EDSA) Content 
-
- ISEKAI ZERO allows certain creator-authored content that might otherwise violate guidelines if it offers compelling reasons and context for players. This is known as the EDSA exception, and we evaluate such content based on the following factors: 
-
- a. Copyright and Intellectual Property 
-
- ISEKAI ZERO's policies include respecting copyright and intellectual property laws. Creators are responsible for ensuring that their Character profiles, Storyline descriptions, and images do not violate copyright laws. Please keep in mind that: 
-
- 
-
- 
-
- Sometimes you can use someone else's content without infringing their copyright, such as in cases of fair use. You can also use someone else's content when you have permission from them. 
-
- 
-
- 
-
- If you create a Character or Storyline that contains someone else's work, your content could be removed due to a copyright takedown request. 
-
- 
-
- 
-
- If your copyright-protected content was posted on the Platform without your permission, you can submit a copyright removal request to contact@isekai.world. 
-
- 
-
- 
-
- ISEKAI ZERO does not decide copyright ownership or mediate ownership disputes. 
-
- 
-
- 
-
- Fan fiction and transformative works are generally allowed but must not violate other policies. 
-
- 
-
- 
-
- 
-
- b. Enforcement and Compliance 
-
- ISEKAI ZERO uses a combination of human reviewers and machine learning to enforce its policies. The platform also allows the community to flag content they find inappropriate. ISEKAI ZERO's approach to enforcement includes age-restricting content that may not be suitable for users under 18 years of age. 
-
- What We Moderate: 
-
- 
-
- 
-
- Public creator-authored content (Character profiles, Storyline descriptions, images, metadata) is subject to AI flagging and human moderator review 
-
- 
-
- 
-
- Private/unlisted creator-authored content is not proactively moderated unless reported for illegal content 
-
- 
-
- 
-
- AI-generated chat responses are not proactively monitored 
-
- 
-
- 
-
- 
-
- c. Data Privacy and Security 
-
- Protecting user data and privacy is a priority for ISEKAI ZERO. The platform has policies and practices in place to maintain user privacy and safeguard content. 
-
- 
-
- Content Moderation Process 
-
- How We Moderate Creator-Authored Content 
-
- For Public Content: 
-
- 
-
- 
-
- AI Detection - Our AI system automatically scans public Character profiles, Storyline descriptions, images, and metadata for potential policy violations 
-
- 
-
- 
-
- Human Review - Flagged content is reviewed by trained human moderators 
-
- 
-
- 
-
- Context Consideration - Moderators consider intent, context, and artistic merit 
-
- 
-
- 
-
- Decision - Content is approved, age-restricted, or removed based on policy compliance 
-
- 
-
- 
-
- Notification - Creators are notified of moderation decisions 
-
- 
-
- 
-
- 
-
- For Private/Unlisted Content: 
-
- 
-
- 
-
- Not subject to proactive moderation 
-
- 
-
- 
-
- Creators are responsible for compliance 
-
- 
-
- 
-
- Can be reviewed if reported for illegal content 
-
- 
-
- 
-
- Still must comply with all laws and policies 
-
- 
-
- 
-
- 
-
- Reporting Content 
-
- All users can report creator-authored content they believe violates these policies: 
-
- 
-
- 
-
- Use the in-app reporting feature 
-
- 
-
- 
-
- Email: contact@isekai.world 
-
- 
-
- 
-
- Include specific details (Character/Storyline names, IDs, screenshots) 
-
- 
-
- 
-
- 
-
- Appeals Process 
-
- If your Character or Storyline is removed or restricted: 
-
- 
-
- 
-
- Review the reason provided in your notification 
-
- 
-
- 
-
- Submit an appeal to contact@isekai.world within 30 days 
-
- 
-
- 
-
- Include your username and content details 
-
- 
-
- 
-
- Appeals are reviewed within 7 business days 
-
- 
-
- 
-
- Decisions on appeals are final 
-
- 
-
- 
-
- Note: Appeals are not available for Zero Tolerance Policy violations (CSAM, terrorism, hate speech, etc.). 
-
- 
-
- Consequences for Violations 
-
- Depending on the severity and frequency of violations: 
-
- First Violation (Minor): 
-
- 
-
- 
-
- Content removal 
-
- 
-
- 
-
- Warning issued 
-
- 
-
- 
-
- Educational guidance provided 
-
- 
-
- 
-
- 
-
- Repeated Violations: 
-
- 
-
- 
-
- Temporary suspension (3-30 days) 
-
- 
-
- 
-
- Limited platform features 
-
- 
-
- 
-
- Loss of creator privileges 
-
- 
-
- 
-
- 
-
- Severe Violations: 
-
- 
-
- 
-
- Immediate permanent ban 
-
- 
-
- 
-
- Removal of all content 
-
- 
-
- 
-
- Report to authorities if legally required (CSAM, terrorism, etc.) 
-
- 
-
- 
-
- No refunds on Arcane credits or subscriptions 
-
- 
-
- 
-
- IP address and device identifiers permanently blocked 
-
- 
-
- 
-
- 
-
- Zero Tolerance Violations: 
-
- The following result in IMMEDIATE AND PERMANENT BAN with NO WARNINGS, NO SECOND CHANCES, NO APPEALS: 
-
- 
-
- 
-
- Child sexual abuse material (CSAM) or sexualization of minors 
-
- 
-
- 
-
- Non-consensual intimate imagery 
-
- 
-
- 
-
- Terrorism or violent extremism 
-
- 
-
- 
-
- Hate speech 
-
- 
-
- 
-
- Content promoting self-harm or suicide 
-
- 
-
- 
-
- 
-
- Removal of Demonetized Content 
-
- Demonetized content refers to content approved for the platform but ineligible for creator earnings due to: 
-
- 
-
- Copyright infringement (fan fiction, copyrighted characters, settings, plots) 
-
- Use of intellectual property without authorization 
-
- Failure to meet monetization eligibility requirements 
-
- 
-
- Content may be approved as demonetized during the review process, allowing it to remain on the platform without generating earnings. 
-
- ISEKAI ZERO reserves the right to remove any demonetized content at any time without notice. Removal decisions are final. 
-
- 
-
- Special Notes for ISEKAI ZERO Creators 
-
- NSFW Content Best Practices 
-
- If you create NSFW content (18+ only): 
-
- 
-
- 
-
- Always tag properly upon creation 
-
- 
-
- 
-
- Keep Character images and Storyline covers SFW even for NSFW content 
-
- 
-
- 
-
- Provide content warnings in descriptions 
-
- 
-
- 
-
- Respect boundaries - Never include prohibited content 
-
- 
-
- 
-
- Understand the rules - Review the Sexual and Nudity Content Policy carefully 
-
- 
-
- Ensure NSFW characters visually appear as adults - characters must not have child-like features, minor-like appearances, or youthful characteristics regardless of stated age 
-
- 
-
- 
-
- Creating Characters 
-
- When creating Character profiles, ensure they: 
-
- 
-
- 
-
- Don't impersonate real living people without clear fictional/parody context 
-
- 
-
- 
-
- Don't sexualize minors or depict them in harmful situations 
-
- 
-
- 
-
- Include appropriate content warnings in descriptions 
-
- 
-
- 
-
- Are tagged correctly (SFW/NSFW, age restrictions) 
-
- 
-
- 
-
- Have SFW profile images even if the Character is NSFW-tagged 
-
- 
-
- 
-
- 
-
- Creating Storylines 
-
- When creating Storylines, ensure they: 
-
- 
-
- 
-
- Have accurate titles and descriptions that match the content 
-
- 
-
- 
-
- Include appropriate content warnings in descriptions 
-
- 
-
- 
-
- Are tagged correctly for age and content type 
-
- 
-
- 
-
- Don't mislead players about the content 
-
- 
-
- 
-
- Respect copyright and intellectual property 
-
- 
-
- 
-
- Have SFW cover images even if the Storyline is NSFW-tagged 
-
- 
-
- 
-
- 
-
- Popular Content Preservation 
-
- If a Character or Storyline you create and set to "Public" reaches significant popularity (over 10,000 unique user interactions), we reserve the right to preserve that content and keep it active on the Services, even if you delete your account or request content removal. 
-
- This ensures: 
-
- 
-
- 
-
- Continuity for other users who have formed attachments to the content 
-
- 
-
- 
-
- You retain ownership but grant us an irrevocable license to maintain popular content 
-
- 
-
- 
-
- We will notify you if your content reaches the preservation threshold 
-
- 
-
- 
-
- 
-
- Platform Support for Quality Content 
-
- Storyline Cover Modifications 
-
- ISEKAI ZERO reserves the right to modify or replace storyline cover images for aesthetic purposes, including but not limited to: 
-
- 
-
- Enhancing image quality and visual appeal 
-
- Replacing low-quality or improperly formatted covers 
-
- Standardizing covers to meet platform aesthetic standards 
-
- Optimizing images for display across different devices 
-
- Adding platform branding or quality badges 
-
- 
-
- By creating public storylines, you grant ISEKAI ZERO permission to make these aesthetic improvements while you retain ownership of your original content. 
-
- 
-
- Featured Content Support 
-
- Storylines that demonstrate exceptional quality, creativity, and engagement may receive platform support, including: 
-
- 
-
- Enhanced cover artwork created by our design team 
-
- Featured placement in discovery sections 
-
- Promotional support across platform channels 
-
- 
-
- 
-
- We identify quality content based on: 
-
- 
-
- Engaging writing and well-developed plots 
-
- Clear, detailed character development 
-
- Strong user engagement and positive feedback 
-
- Compliance with all platform policies 
-
- Overall production effort 
-
- 
-
- This support is provided at ISEKAI ZERO's discretion to promote outstanding creators and enhance platform quality. Creators will be notified if their content is selected for platform support. 
-
- 
-
- Updates to This Policy 
-
- This Content Creation Policy may be updated periodically to reflect changes in community standards, legal requirements, or platform features. 
-
- We will notify creators of major changes through: 
-
- 
-
- 
-
- In-app notifications 
-
- 
-
- 
-
- Email to registered creators 
-
- 
-
- 
-
- Announcements on our website 
-
- 
-
- 
-
- 
-
- Continued creation of content on ISEKAI ZERO after changes constitutes acceptance of the updated Policy. 
-
- Changes addressing new functions, legal requirements, zero tolerance policy, or child safety will be effective immediately upon posting. 
-
- 
-
- Contact Us 
-
- For General Policy Questions: 
-
- 
-
- 
-
- Email: contact@isekai.world 
-
- 
-
- 
-
- 
-
- For Content Reports or Appeals: 
-
- 
-
- 
-
- Email: contact@isekai.world 
-
- 
-
- 
-
- In-app: Use the report feature on any content 
-
- 
-
- 
-
- To Report Objectionable Content (24/7 Response): 
-
- 
-
- 
-
- Email: contact@isekai.world 
-
- 
-
- 
-
- Subject Line: "Urgent - Objectionable Content Report" 
-
- 
-
- 
-
- 
-
- © 2025 ARx Media Sdn. Bhd. All rights reserved. 
-
- Company Registration: 201901016532 (1325860-T) 
-
-  SST No.: Y60-2012-32000004 
-
- 
-
- By creating content on ISEKAI ZERO, you acknowledge that you have read, understood, and agree to comply with this Content Creation Policy. Violation of these policies may result in content removal, account suspension, or permanent termination depending on severity.
-
-[NEW POLICY SECTION]
-[ID]: POL-XXX
-[TITLE]: New Policy Title
-[SEVERITY]: Medium
-[ACTION]: Flag
-
-[DESCRIPTION]:
-Enter detailed description of the policy here. Explain what is allowed and what is prohibited.
-
-[EXAMPLES]:
-- Violation example 1
-- Violation example 2
-
-
-[NEW POLICY SECTION]
-[ID]: POL-XXX
-[TITLE]: New Policy Title
-[SEVERITY]: Medium
-[ACTION]: Flag
-
-[DESCRIPTION]:
-Enter detailed description of the policy here. Explain what is allowed and what is prohibited.
-
-[EXAMPLES]:
-- Violation example 1
-- Violation example 2
