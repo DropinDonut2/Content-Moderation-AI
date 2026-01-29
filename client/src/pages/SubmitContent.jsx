@@ -325,7 +325,7 @@ const SubmitContent = () => {
                                 className="btn-primary-new flex items-center gap-2 px-8 py-3"
                             >
                                 {isLoading ? (
-                                    <span className="animate-spin">⏳</span>
+                                    <span className="animate-spin">🍩</span>
                                 ) : (
                                     <Upload size={20} />
                                 )}

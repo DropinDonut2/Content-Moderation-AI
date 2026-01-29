@@ -179,6 +179,58 @@ const storylineSchema = new mongoose.Schema({
         // Recommendation
         recommendedAction: { type: String },  // 'approve', 'review', 'reject'
         humanReviewPriority: { type: String }, // 'low', 'medium', 'high', 'critical'
+        violationSeverity: { type: String },  // 'none', 'low', 'medium', 'high', 'critical'
+
+        // =============================================
+        // IMAGE ANALYSIS
+        // =============================================
+        imageAnalysis: {
+            totalImages: { type: Number, default: 0 },
+            flaggedImages: { type: Number, default: 0 },
+            overallImageVerdict: { type: String },  // 'safe', 'flagged', 'rejected'
+            issues: [{
+                imageType: { type: String },
+                imageName: { type: String },
+                issue: { type: String },
+                severity: { type: String },
+                category: { type: String },
+                visualAgeAssessment: { type: String },
+                statedAge: { type: String }
+            }]
+        },
+        imagesAnalyzed: { type: Number, default: 0 },
+        imagesFlagged: { type: Number, default: 0 },
+
+        // =============================================
+        // CREATOR SUGGESTIONS / FEEDBACK
+        // =============================================
+        suggestions: {
+            type: {
+                type: String,
+                enum: ['great', 'minor_improvements', 'needs_work', 'rejected']
+            },
+            overallFeedback: { type: String },
+            specificIssues: [{
+                field: { type: String },
+                problem: { type: String },
+                howToFix: { type: String }
+            }],
+            strengths: [{ type: String }],
+            includeExampleLinks: { type: Boolean, default: false }
+        },
+
+        // =============================================
+        // USAGE / COST TRACKING
+        // =============================================
+        usage: {
+            inputTokens: { type: Number },
+            outputTokens: { type: Number },
+            totalTokens: { type: Number },
+            inputCost: { type: Number },
+            outputCost: { type: Number },
+            totalCost: { type: Number },
+            costFormatted: { type: String }
+        },
 
         // Timestamp
         moderatedAt: { type: Date }
@@ -204,10 +256,14 @@ const storylineSchema = new mongoose.Schema({
         hasViolence: { type: Boolean, default: false },
         hasHateSpeech: { type: Boolean, default: false },
         hasChildSafetyConcern: { type: Boolean, default: false },
+        hasImageIssues: { type: Boolean, default: false },
         needsManualReview: { type: Boolean, default: false },
         hasFieldErrors: { type: Boolean, default: false },
         hasFieldWarnings: { type: Boolean, default: false },
-        highlightedIssueCount: { type: Number, default: 0 }
+        highlightedIssueCount: { type: Number, default: 0 },
+        imageIssueCount: { type: Number, default: 0 },
+        autoRejectedByProvider: { type: Boolean, default: false },
+        flaggedByProvider: { type: Boolean, default: false }
     },
 
     // Suggestions for creator

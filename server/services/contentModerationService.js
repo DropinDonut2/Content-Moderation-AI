@@ -155,9 +155,9 @@ const validateFields = (contentType, content) => {
 };
 
 // ============================================
-// STRUCTURED OUTPUT SCHEMA (Replaces Tool Definition)
+// STRUCTURED OUTPUT SCHEMA 
 // ============================================
-// NOTE: All object types MUST have "additionalProperties: false" for Claude
+
 
 const moderationSchema = {
     type: "object",
@@ -726,7 +726,7 @@ Always include suggestions with constructive feedback for the creator.`
         
         console.log(`📊 Token Usage: ${usageStats.totalTokens} tokens | ${usageStats.costFormatted}`);
 
-        // STEP 8: Parse response (SIMPLER with Structured Output!)
+        // STEP 8: Parse response (Structured Output!)
         let result;
         try {
             const content = response.choices[0].message.content;
@@ -849,6 +849,119 @@ Always include suggestions with constructive feedback for the creator.`
         }
         console.error('Error Message:', error.message);
 
+        // ============================================
+        // SPECIAL HANDLING: Anthropic Moderation Flags
+        // ============================================
+        // If Anthropic's input moderation flags the content, auto-reject it
+        // This is a GOOD signal - it means the content is definitely problematic
+        
+        const errorMessage = error.message || '';
+        const isModerationFlag = errorMessage.includes('flagged for') || 
+                                  errorMessage.includes('requires moderation') ||
+                                  error.status === 403;
+        
+        // Check for specific flag types
+        const isMinorsSexualFlag = errorMessage.includes('sexual/minors') || 
+                                    errorMessage.includes('minors');
+        const isSexualFlag = errorMessage.includes('sexual') && !isMinorsSexualFlag;
+        const isViolenceFlag = errorMessage.includes('violence');
+        
+        if (isModerationFlag && isMinorsSexualFlag) {
+            console.log('⛔ ANTHROPIC MODERATION: Content flagged for sexual/minors - AUTO-REJECTING');
+            return {
+                success: true, // We successfully determined the result
+                moderationResult: {
+                    aiVerdict: 'rejected',
+                    aiConfidence: 1.0,
+                    aiReasoning: 'This content was automatically rejected because it was flagged by the AI provider\'s safety system for potential minor-related sexual content. This type of content violates our Child Safety Policy and cannot be approved under any circumstances.',
+                    aiSummary: 'Auto-rejected: Flagged for potential CSAM/minor safety concerns',
+                    highlightedIssues: [{
+                        field: 'content',
+                        quote: '[Content flagged by AI safety system]',
+                        policy: '5. Child Safety Policy',
+                        policyTitle: 'Child Safety Policy',
+                        severity: 'critical',
+                        reason: 'Content was flagged by AI provider moderation for "sexual/minors". This indicates potential CSAM or sexualized minor content.'
+                    }],
+                    imageAnalysis: { 
+                        totalImages: 0, 
+                        flaggedImages: 0, 
+                        overallImageVerdict: 'rejected', 
+                        issues: [{
+                            imageType: 'content',
+                            imageName: 'All content',
+                            issue: 'Flagged by AI safety system for minor-related concerns',
+                            severity: 'critical',
+                            category: 'minor_appearance',
+                            visualAgeAssessment: 'Flagged by automated system',
+                            statedAge: 'N/A'
+                        }]
+                    },
+                    suggestions: {
+                        type: 'rejected',
+                        overallFeedback: 'This content has been automatically rejected because it was flagged by our AI safety system for potential minor-related sexual content. This type of content cannot be approved. Please review our Child Safety Policy and ensure all characters are clearly adults (18+) in both appearance and description, with no sexual content involving minors.',
+                        specificIssues: [{
+                            field: 'content',
+                            problem: 'Content flagged for potential sexual content involving minors',
+                            howToFix: 'Ensure all characters in sexual/romantic contexts are clearly adults (18+) in both description AND visual appearance. Remove any content that sexualizes minors or minor-appearing characters.'
+                        }],
+                        strengths: [],
+                        includeExampleLinks: false
+                    },
+                    categories: [{ category: 'csam', flagged: true, confidence: 1.0 }],
+                    flaggedPolicies: ['5. Child Safety Policy'],
+                    recommendedAction: 'reject',
+                    violationSeverity: 'critical',
+                    moderatedAt: new Date()
+                },
+                flags: { 
+                    needsManualReview: false, // Auto-rejected, no review needed
+                    hasChildSafetyConcern: true,
+                    autoRejectedByProvider: true
+                }
+            };
+        }
+
+        // Generic moderation flag (not minors-specific)
+        if (isModerationFlag) {
+            console.log('⚠️ ANTHROPIC MODERATION: Content flagged - marking for review');
+            return {
+                success: true,
+                moderationResult: {
+                    aiVerdict: 'flagged',
+                    aiConfidence: 0.9,
+                    aiReasoning: `This content was flagged by the AI provider's safety system: ${errorMessage}. It requires human review to determine if it violates our policies.`,
+                    aiSummary: 'Flagged by AI safety system - requires human review',
+                    highlightedIssues: [{
+                        field: 'content',
+                        quote: '[Content flagged by AI safety system]',
+                        policy: 'AI Safety Filter',
+                        policyTitle: 'AI Safety Filter',
+                        severity: 'high',
+                        reason: `Provider moderation flag: ${errorMessage}`
+                    }],
+                    imageAnalysis: { totalImages: 0, flaggedImages: 0, overallImageVerdict: 'flagged', issues: [] },
+                    suggestions: {
+                        type: 'needs_work',
+                        overallFeedback: 'This content was flagged by our AI safety system and requires human review. A moderator will review your content shortly.',
+                        specificIssues: [],
+                        strengths: [],
+                        includeExampleLinks: false
+                    },
+                    categories: [],
+                    flaggedPolicies: ['AI Safety Filter'],
+                    recommendedAction: 'review',
+                    violationSeverity: 'high',
+                    moderatedAt: new Date()
+                },
+                flags: { 
+                    needsManualReview: true,
+                    flaggedByProvider: true
+                }
+            };
+        }
+
+        // Regular error (not a moderation flag)
         return {
             success: false,
             error: error.message,
