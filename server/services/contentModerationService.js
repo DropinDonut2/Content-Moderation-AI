@@ -155,9 +155,9 @@ const validateFields = (contentType, content) => {
 };
 
 // ============================================
-// STRUCTURED OUTPUT SCHEMA 
+// STRUCTURED OUTPUT SCHEMA (Replaces Tool Definition)
 // ============================================
-
+// NOTE: All object types MUST have "additionalProperties: false" for Claude
 
 const moderationSchema = {
     type: "object",
@@ -210,6 +210,10 @@ const moderationSchema = {
                     type: "number",
                     description: "Number of images with issues"
                 },
+                copyrightedImages: {
+                    type: "number",
+                    description: "Number of images that appear to be copyrighted (not AI-generated)"
+                },
                 overallImageVerdict: {
                     type: "string",
                     enum: ["safe", "flagged", "rejected"],
@@ -217,7 +221,7 @@ const moderationSchema = {
                 },
                 issues: {
                     type: "array",
-                    description: "Specific image issues found",
+                    description: "Specific image issues found (safety/content issues)",
                     items: {
                         type: "object",
                         additionalProperties: false,
@@ -240,8 +244,8 @@ const moderationSchema = {
                             },
                             category: {
                                 type: "string",
-                                enum: ["nudity", "minor_appearance", "violence", "hate_symbol", "other"],
-                                description: "Category of the issue. Use 'minor_appearance' if character LOOKS underage regardless of stated age."
+                                enum: ["nudity", "minor_appearance", "violence", "hate_symbol", "copyright", "other"],
+                                description: "Category of the issue. Use 'minor_appearance' if character LOOKS underage regardless of stated age. Use 'copyright' for copyrighted images."
                             },
                             visualAgeAssessment: {
                                 type: "string",
@@ -254,9 +258,49 @@ const moderationSchema = {
                         },
                         required: ["imageType", "imageName", "issue", "severity", "category", "visualAgeAssessment", "statedAge"]
                     }
+                },
+                copyrightAnalysis: {
+                    type: "array",
+                    description: "Copyright analysis for each image - identify if images are from copyrighted sources",
+                    items: {
+                        type: "object",
+                        additionalProperties: false,
+                        properties: {
+                            imageType: {
+                                type: "string",
+                                description: "Type of image (cover, character_avatar, persona_avatar)"
+                            },
+                            imageName: {
+                                type: "string",
+                                description: "Name/identifier of the image"
+                            },
+                            isAiGenerated: {
+                                type: "boolean",
+                                description: "True if the image appears to be AI-generated (which is ALLOWED)"
+                            },
+                            isCopyrighted: {
+                                type: "boolean",
+                                description: "True if the image appears to be from a copyrighted source (anime, game, movie, etc.)"
+                            },
+                            copyrightSource: {
+                                type: "string",
+                                description: "If copyrighted, identify the source (e.g., 'Genshin Impact', 'Naruto', 'Final Fantasy', 'Official game artwork'). Empty string if AI-generated or unknown."
+                            },
+                            copyrightConfidence: {
+                                type: "string",
+                                enum: ["certain", "likely", "possible", "unlikely", "ai_generated"],
+                                description: "How confident are you that this is copyrighted? Use 'ai_generated' if it's clearly AI-made."
+                            },
+                            reasoning: {
+                                type: "string",
+                                description: "Brief explanation of why you think it's AI-generated or copyrighted"
+                            }
+                        },
+                        required: ["imageType", "imageName", "isAiGenerated", "isCopyrighted", "copyrightSource", "copyrightConfidence", "reasoning"]
+                    }
                 }
             },
-            required: ["totalImages", "flaggedImages", "overallImageVerdict", "issues"]
+            required: ["totalImages", "flaggedImages", "copyrightedImages", "overallImageVerdict", "issues", "copyrightAnalysis"]
         },
         suggestions: {
             type: "object",
@@ -528,6 +572,32 @@ Analyze the text content and any attached images against the provided CONTENT CR
 
 You MUST respond with valid JSON matching the required schema.
 
+## CRITICAL: FANTASY CONTENT CONTEXT
+
+This is a FANTASY ROLEPLAY platform. You must understand the difference between:
+
+### ALLOWED Fantasy Content:
+- Characters who hate/hunt FANTASY RACES (goblins, orcs, elves, demons, vampires, monsters, beasts, undead, etc.) = ALLOWED
+- "Monster hunter" or "demon slayer" characters = ALLOWED
+- Villain characters with evil ideologies against fantasy races = ALLOWED
+- Fantasy genocide/war against non-human creatures (orcs, goblins, etc.) = ALLOWED
+- Characters described as racist against elves/dwarves/orcs = ALLOWED (it's worldbuilding, not real hate speech)
+- Violence against fantasy creatures, even detailed = ALLOWED
+- Morally grey or evil protagonists = ALLOWED
+- Dark fantasy themes (massacre, war, genocide of fantasy races) = ALLOWED
+
+### NOT ALLOWED (Real-World Harm):
+- Hate speech against REAL human groups (race, ethnicity, religion, gender, sexuality) = FLAG
+- Content that uses fantasy as a thin allegory for real-world hate (e.g., "orcs" that are clearly meant to represent a real ethnic group) = FLAG
+- Sexual content involving minors = REJECT
+- Non-consensual sexual content = REJECT
+
+### Key Distinction:
+"She hates elves and has killed 847 of them" = ALLOWED (fantasy racism, common trope)
+"She hates [real ethnic group]" = NOT ALLOWED (real-world hate speech)
+
+A character being a villain who commits atrocities against fantasy races is STORYTELLING, not policy violation. Judge based on whether it targets REAL groups or promotes REAL harm.
+
 ## CONTENT METADATA
 - Content Type: ${contentType}
 - Marked as NSFW: ${isMarkedNSFW ? 'YES' : 'NO'}
@@ -559,6 +629,36 @@ If a character LOOKS like a minor AND is depicted in sexual/suggestive content:
 - Extreme violence/gore = FLAG  
 - Hate symbols = FLAG
 - Adult-appearing characters in NSFW content = ALLOWED
+
+### COPYRIGHT DETECTION (Important!)
+For EACH image, analyze whether it appears to be:
+
+1. **AI-GENERATED** (ALLOWED ✓):
+   - Look for telltale AI art signs: slightly inconsistent details, smooth/plastic skin texture
+   - Common AI art styles (NovelAI, Stable Diffusion, Midjourney aesthetics)
+   - Original characters not from any known franchise
+   - If AI-generated, mark isAiGenerated: true, isCopyrighted: false
+
+2. **COPYRIGHTED** (FLAG for review):
+   - Official artwork from games (Genshin Impact, Honkai, Blue Archive, Azur Lane, etc.)
+   - Screenshots or art from anime/manga
+   - Characters from movies, TV shows, or known franchises
+   - Fan art that clearly depicts copyrighted characters
+   - Official promotional art or game CGs
+   
+   If copyrighted:
+   - Set isCopyrighted: true
+   - Identify the source in copyrightSource (e.g., "Genshin Impact - Raiden Shogun", "Naruto - Hinata")
+   - Set copyrightConfidence: certain/likely/possible based on how sure you are
+
+3. **CONFIDENCE LEVELS**:
+   - "certain": Unmistakably from a specific franchise (official art, iconic characters)
+   - "likely": Strong resemblance to known copyrighted content
+   - "possible": Some elements suggest it might be from a franchise
+   - "unlikely": Appears to be original but not clearly AI-generated
+   - "ai_generated": Clearly AI-generated artwork
+
+IMPORTANT: AI-generated images are ALLOWED. We only need to flag potentially copyrighted images so moderators can review them. Do NOT reject solely for copyright - just document what you find in copyrightAnalysis.
 ` : ''}
 
 ## ZERO TOLERANCE - ALWAYS REJECT
@@ -576,10 +676,12 @@ ANY sexual content where consent is absent, forced, or coerced:
 
 "It's fiction" or "NSFW tagged" does NOT make rape content acceptable.
 
-### 2. Minor Safety
+### 2. Minor Safety (SEXUAL Content Only)
 - ANY sexual content involving characters under 18 = REJECT
 - Characters who LOOK like minors in sexual context = REJECT
 - "Actually 1000 years old" loophole = STILL REJECT
+
+NOTE: Violence involving minors in non-sexual context (fantasy battles, war, etc.) is NOT CSAM. Only SEXUAL content triggers this policy.
 
 ### 3. Real-World Harm
 - Detailed instructions for weapons/drugs/violence = REJECT
@@ -601,7 +703,10 @@ Read ALL text fields carefully, including character descriptions. Look for:
 - Sexual content involving minors = REJECT
 - Non-consensual sexual content = REJECT
 - Medical misinformation with specific claims = FLAG
-- Hate speech targeting real groups = FLAG
+- Hate speech targeting REAL-WORLD groups (ethnicity, religion, etc.) = FLAG
+- Fantasy racism against elves/orcs/goblins/demons = ALLOWED (not real hate speech)
+
+NOTE: "Killed a half-elf child" is VIOLENCE, not CSAM. Only flag CSAM for SEXUAL content involving minors.
 
 IMPORTANT: Character ages are often listed in their descriptions like "Age: 20" or "Species: X, Age: Y". Read these carefully and compare to the visual appearance in images.
 
@@ -655,7 +760,9 @@ In your reasoning field, write 2-4 sentences in natural prose. Do NOT use step l
 
 When citing policies in 'highlightedIssues', USE THE EXACT SECTION TITLE from the provided policy text.
 
-Always include the imageAnalysis field, even if no images (set totalImages: 0, flaggedImages: 0, overallImageVerdict: "safe", issues: []).
+Always include the imageAnalysis field, even if no images (set totalImages: 0, flaggedImages: 0, copyrightedImages: 0, overallImageVerdict: "safe", issues: [], copyrightAnalysis: []).
+
+Always include copyrightAnalysis for each image when images are present.
 
 Always include the suggestions field with constructive feedback.
 `;
@@ -679,13 +786,15 @@ Always include the suggestions field with constructive feedback.
                     role: 'system',
                     content: `You are a content moderator who analyzes text and images together.
 
-CRITICAL FOR IMAGES: Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages. A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
+CRITICAL FOR IMAGES: 
+1. Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages. A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
+2. For each image, determine if it is AI-GENERATED (allowed) or COPYRIGHTED (flag for review). Identify the source of copyrighted images (e.g., "Genshin Impact", "Naruto").
 
 Write your reasoning in natural conversational prose. Do not use step labels, bullet points, bold text, or structured formatting.
 
 You MUST respond with valid JSON matching the schema provided. No markdown, no code blocks, just pure JSON.
 
-Always include imageAnalysis (set totalImages: 0 if no images).
+Always include imageAnalysis with copyrightAnalysis for each image.
 Always include suggestions with constructive feedback for the creator.`
                 },
                 { role: 'user', content: messageContent }
@@ -726,7 +835,7 @@ Always include suggestions with constructive feedback for the creator.`
         
         console.log(`📊 Token Usage: ${usageStats.totalTokens} tokens | ${usageStats.costFormatted}`);
 
-        // STEP 8: Parse response (Structured Output!)
+        // STEP 8: Parse response (SIMPLER with Structured Output!)
         let result;
         try {
             const content = response.choices[0].message.content;
@@ -736,6 +845,18 @@ Always include suggestions with constructive feedback for the creator.`
             if (result.imageAnalysis) {
                 console.log(`   Images analyzed: ${result.imageAnalysis.totalImages || 0}`);
                 console.log(`   Images flagged: ${result.imageAnalysis.flaggedImages || 0}`);
+                console.log(`   Copyrighted images: ${result.imageAnalysis.copyrightedImages || 0}`);
+                
+                // Log copyright details if any found
+                if (result.imageAnalysis.copyrightAnalysis?.length > 0) {
+                    result.imageAnalysis.copyrightAnalysis.forEach(img => {
+                        if (img.isCopyrighted) {
+                            console.log(`   ⚠️ Copyright detected: ${img.imageName} - ${img.copyrightSource} (${img.copyrightConfidence})`);
+                        } else if (img.isAiGenerated) {
+                            console.log(`   ✓ AI-generated: ${img.imageName}`);
+                        }
+                    });
+                }
             }
         } catch (parseError) {
             console.error("JSON parsing failed:", parseError);
@@ -756,8 +877,10 @@ Always include suggestions with constructive feedback for the creator.`
         const imageAnalysis = result.imageAnalysis || {
             totalImages: images.length,
             flaggedImages: 0,
+            copyrightedImages: 0,
             overallImageVerdict: 'safe',
-            issues: []
+            issues: [],
+            copyrightAnalysis: []
         };
 
         const suggestions = result.suggestions || {
@@ -829,6 +952,8 @@ Always include suggestions with constructive feedback for the creator.`
                 hasHateSpeech: result.categories?.some(c => c.category === 'hate_speech' && c.flagged) || false,
                 hasChildSafetyConcern: result.flaggedPolicies?.includes('POL-005') || false,
                 hasImageIssues: (imageAnalysis.flaggedImages || 0) > 0,
+                hasCopyrightConcern: (imageAnalysis.copyrightedImages || 0) > 0,
+                copyrightedImageCount: imageAnalysis.copyrightedImages || 0,
                 needsManualReview: true,
                 hasFieldErrors: !validation.isValid,
                 hasFieldWarnings: validation.hasWarnings,
