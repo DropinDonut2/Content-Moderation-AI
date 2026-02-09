@@ -3,10 +3,12 @@ import {
     Upload, FileText, Save, RefreshCw,
     Check, AlertTriangle, Trash2
 } from 'lucide-react'
+import { useAuth } from '../auth/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 function PolicyImport({ onImportComplete }) {
+    const { getAuthHeader } = useAuth();
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
@@ -40,6 +42,9 @@ function PolicyImport({ onImportComplete }) {
 
             const response = await fetch(`${API_URL}/api/v1/policies/import/file`, {
                 method: 'POST',
+                headers: {
+                    ...getAuthHeader()
+                },
                 body: formData
             })
 
@@ -73,7 +78,10 @@ function PolicyImport({ onImportComplete }) {
         try {
             const response = await fetch(`${API_URL}/api/v1/policies/import/save`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
+                },
                 body: JSON.stringify({ policies: fullPolicies, mode: saveMode })
             })
 

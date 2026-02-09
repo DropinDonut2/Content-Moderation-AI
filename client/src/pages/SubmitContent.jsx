@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Save, AlertTriangle, BookOpen, User, FileJson, Upload, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import JsonImportPreview from '../components/JsonImportPreview';
+import { useAuth } from '../auth/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const SubmitContent = () => {
     const navigate = useNavigate();
+    const { getAuthHeader } = useAuth();
     const [contentType, setContentType] = useState('storyline'); // 'storyline', 'character', or 'json'
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -154,7 +156,8 @@ const SubmitContent = () => {
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
                 },
                 body: JSON.stringify(payload)
             });
@@ -250,7 +253,10 @@ const SubmitContent = () => {
                                             const parsed = JSON.parse(jsonInput);
                                             const response = await fetch(`${API_URL}/api/v1/content/preview-json`, {
                                                 method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    ...getAuthHeader()
+                                                },
                                                 body: JSON.stringify(parsed)
                                             });
                                             const result = await response.json();
@@ -309,7 +315,10 @@ const SubmitContent = () => {
                                         const parsed = JSON.parse(jsonInput);
                                         const response = await fetch(`${API_URL}/api/v1/content/import-json?includeImages=${includeImages}`, {
                                             method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                ...getAuthHeader()
+                                            },
                                             body: JSON.stringify(parsed)
                                         });
                                         const result = await response.json();
