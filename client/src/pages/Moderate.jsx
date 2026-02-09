@@ -30,7 +30,8 @@ function Moderate() {
 
     // Socket.io connection
     useEffect(() => {
-        const socket = io('http://localhost:5000') 
+        const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+        const socket = io(socketUrl)
 
         socket.on('connect', () => {
             console.log('🔌 Connected to server')
@@ -119,12 +120,12 @@ function Moderate() {
     return (
         <div className="space-y-8 animate-fade-in pb-10">
             {/* Header */}
-            <div 
+            <div
                 className="flex justify-between items-end pb-6"
                 style={{ borderBottom: '1px solid var(--border-color)' }}
             >
                 <div>
-                    <h2 
+                    <h2
                         className="text-3xl font-bold mb-2 uppercase tracking-tighter"
                         style={{ color: 'var(--text-primary)' }}
                     >
@@ -139,80 +140,80 @@ function Moderate() {
             {/* Stats Overview */}
             {stats && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div 
+                    <div
                         className="p-4"
-                        style={{ 
+                        style={{
                             backgroundColor: 'var(--bg-card)',
                             border: '1px solid var(--border-color)'
                         }}
                     >
-                        <div 
+                        <div
                             className="text-[10px] uppercase font-bold tracking-widest mb-1"
                             style={{ color: 'var(--text-secondary)' }}
                         >
                             Characters Pending
                         </div>
-                        <div 
+                        <div
                             className="text-2xl font-bold font-mono"
                             style={{ color: 'var(--flagged-text)' }}
                         >
                             {stats.characters?.pending || 0}
                         </div>
                     </div>
-                    <div 
+                    <div
                         className="p-4"
-                        style={{ 
+                        style={{
                             backgroundColor: 'var(--bg-card)',
                             border: '1px solid var(--border-color)'
                         }}
                     >
-                        <div 
+                        <div
                             className="text-[10px] uppercase font-bold tracking-widest mb-1"
                             style={{ color: 'var(--text-secondary)' }}
                         >
                             Storylines Pending
                         </div>
-                        <div 
+                        <div
                             className="text-2xl font-bold font-mono"
                             style={{ color: 'var(--flagged-text)' }}
                         >
                             {stats.storylines?.pending || 0}
                         </div>
                     </div>
-                    <div 
+                    <div
                         className="p-4"
-                        style={{ 
+                        style={{
                             backgroundColor: 'var(--bg-card)',
                             border: '1px solid var(--border-color)'
                         }}
                     >
-                        <div 
+                        <div
                             className="text-[10px] uppercase font-bold tracking-widest mb-1"
                             style={{ color: 'var(--text-secondary)' }}
                         >
                             Personas Pending
                         </div>
-                        <div 
+                        <div
                             className="text-2xl font-bold font-mono"
                             style={{ color: 'var(--flagged-text)' }}
                         >
                             {stats.personas?.pending || 0}
                         </div>
                     </div>
-                    <div 
+                    <div
                         className="p-4"
-                        style={{ 
+                        style={{
                             backgroundColor: 'var(--rejected-bg)',
                             border: '1px solid var(--rejected-border)'
                         }}
                     >
-                        <div 
+                        <div
                             className="text-[10px] uppercase font-bold tracking-widest mb-1"
                             style={{ color: 'var(--rejected-text)' }}
                         >
                             Total Pending
                         </div>
-                        <div 
+                        <div
                             className="text-2xl font-bold font-mono"
                             style={{ color: 'var(--rejected-text)' }}
                         >
@@ -227,9 +228,9 @@ function Moderate() {
             {/* Tabs & Filters */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 {/* Tabs */}
-                <div 
+                <div
                     className="flex gap-2 p-1 rounded-lg"
-                    style={{ 
+                    style={{
                         backgroundColor: 'var(--bg-secondary)',
                         border: '1px solid var(--border-color)'
                     }}
@@ -247,7 +248,7 @@ function Moderate() {
                             {tab.icon}
                             {tab.label}
                             {stats && getTabStats(tab.id).pending > 0 && (
-                                <span 
+                                <span
                                     className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-mono"
                                     style={{
                                         backgroundColor: activeTab === tab.id ? 'var(--bg-primary)' : 'var(--flagged-text)',
@@ -303,13 +304,13 @@ function Moderate() {
 
             {/* Pagination */}
             {pagination.pages > 1 && (
-                <div 
+                <div
                     className="flex justify-center items-center gap-4 pt-6"
                     style={{ borderTop: '1px solid var(--border-color)' }}
                 >
                     <button
                         className="px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
-                        style={{ 
+                        style={{
                             border: '1px solid var(--border-color)',
                             color: 'var(--text-primary)',
                             backgroundColor: 'transparent'
@@ -319,7 +320,7 @@ function Moderate() {
                     >
                         Previous
                     </button>
-                    <span 
+                    <span
                         className="text-xs font-mono"
                         style={{ color: 'var(--text-secondary)' }}
                     >
@@ -327,7 +328,7 @@ function Moderate() {
                     </span>
                     <button
                         className="px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
-                        style={{ 
+                        style={{
                             border: '1px solid var(--border-color)',
                             color: 'var(--text-primary)',
                             backgroundColor: 'transparent'

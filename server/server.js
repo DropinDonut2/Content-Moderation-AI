@@ -27,7 +27,7 @@ const server = http.createServer(app);
 // Socket.io setup
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.CORS_ORIGIN || "http://localhost:5173",
         methods: ["GET", "POST", "PATCH", "DELETE"],
         credentials: true
     }
@@ -52,7 +52,7 @@ connectDB();
 // MIDDLEWARE (must be AFTER app is created)
 // ============================================
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     credentials: true
 }));
 app.use(express.json({ limit: '5mb' }));
