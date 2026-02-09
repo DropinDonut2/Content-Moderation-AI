@@ -7,13 +7,38 @@ import Moderate from './pages/Moderate'
 import Analytics from './components/Analytics'
 import SubmitContent from './pages/SubmitContent'
 import ThemeToggle from './components/ThemeToggle'
-import { useTheme } from './context/ThemeContext'
 import { 
     LayoutDashboard, Shield, ClipboardList, PenTool, BarChart3, User, 
-    ChevronLeft, ChevronRight, PlusCircle, Keyboard, X, Activity
+    ChevronLeft, ChevronRight, PlusCircle, Keyboard, X, LogOut
 } from 'lucide-react'
+import { AuthProvider, ProtectedRoute, useAuth } from './auth/AuthContext'
+import LoginPage from './auth/LoginPage'
 
+// ============================================
+// MAIN APP (BrowserRouter is in main.jsx - don't add it here!)
+// ============================================
 function App() {
+    return (
+        <AuthProvider>
+            <Routes>
+                {/* Public - Login page */}
+                <Route path="/login" element={<LoginPage />} />
+                
+                {/* Protected - Everything else */}
+                <Route path="/*" element={
+                    <ProtectedRoute>
+                        <MainLayout />
+                    </ProtectedRoute>
+                } />
+            </Routes>
+        </AuthProvider>
+    )
+}
+
+// ============================================
+// MAIN LAYOUT - Your existing dashboard
+// ============================================
+function MainLayout() {
     const [isCollapsed, setIsCollapsed] = useState(() => {
         const saved = localStorage.getItem('sidebarCollapsed')
         return saved ? JSON.parse(saved) : false
@@ -29,10 +54,8 @@ function App() {
     // Keyboard shortcuts for moderators
     useEffect(() => {
         const handleKeydown = (e) => {
-            // Don't trigger if typing in an input
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
             
-            // Alt + key shortcuts
             if (e.altKey) {
                 switch (e.key) {
                     case 'd':
@@ -66,13 +89,11 @@ function App() {
                 }
             }
             
-            // ? to show shortcuts
             if (e.key === '?' && !e.ctrlKey && !e.altKey) {
                 e.preventDefault()
                 setShowShortcuts(prev => !prev)
             }
             
-            // Escape to close shortcuts modal
             if (e.key === 'Escape') {
                 setShowShortcuts(false)
             }
@@ -101,12 +122,10 @@ function App() {
                 </div>
             </main>
 
-            {/* Keyboard Shortcuts Modal */}
             {showShortcuts && (
                 <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
             )}
 
-            {/* Floating Shortcuts Button */}
             <button
                 onClick={() => setShowShortcuts(true)}
                 className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg transition-all hover:scale-110 no-print"
@@ -123,8 +142,18 @@ function App() {
     )
 }
 
+// ============================================
+// SIDEBAR WITH LOGOUT
+// ============================================
 function Sidebar({ isCollapsed, toggleCollapse }) {
     const location = useLocation()
+    const navigate = useNavigate()
+    const { logout, user } = useAuth()
+
+    const handleLogout = async () => {
+        await logout()
+        navigate('/login')
+    }
 
     const navItems = [
         { to: "/", icon: <LayoutDashboard size={18} />, label: "Dashboard", shortcut: "Alt+D" },
@@ -143,7 +172,6 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
                 borderRight: '1px solid var(--border-color)'
             }}
         >
-            {/* Floating Toggle Button */}
             <button
                 onClick={toggleCollapse}
                 className="absolute -right-3 top-8 w-6 h-6 rounded-full flex items-center justify-center transition-all z-50 shadow-sm hover:scale-110"
@@ -157,7 +185,6 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
                 {isCollapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
             </button>
 
-            {/* Header */}
             <div 
                 className={`p-6 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} h-[73px]`}
                 style={{ borderBottom: '1px solid var(--border-color)' }}
@@ -173,7 +200,6 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
                 )}
             </div>
 
-            {/* Navigation */}
             <ul className="flex flex-col gap-px px-0 pt-4 cursor-pointer flex-1">
                 {navItems.map((item) => (
                     <li key={item.to} title={isCollapsed ? `${item.label} (${item.shortcut})` : item.shortcut}>
@@ -201,27 +227,42 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
                 ))}
             </ul>
 
-            {/* Footer */}
             <div style={{ borderTop: '1px solid var(--border-color)' }}>
-                <div className={`p-4 transition-all duration-300 ${isCollapsed ? 'flex flex-col items-center gap-4' : 'flex items-center justify-between'}`}>
-                    <div className="flex items-center gap-3">
+                <div className={`p-4 transition-all duration-300 ${isCollapsed ? 'flex flex-col items-center gap-4' : 'flex flex-col gap-3'}`}>
+                    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
                         <div className="w-8 h-8 bg-white/10 flex items-center justify-center text-white shrink-0 rounded">
                             <User size={16} />
                         </div>
                         {!isCollapsed && (
-                            <div className="flex flex-col overflow-hidden">
-                                <span className="text-xs font-bold text-white uppercase tracking-wider truncate">Admin</span>
-                                <span className="text-[10px] text-zinc-500 font-mono truncate">WORKSPACE_A</span>
+                            <div className="flex flex-col overflow-hidden flex-1">
+                                <span className="text-xs font-bold text-white uppercase tracking-wider truncate">
+                                    {user?.username || 'Admin'}
+                                </span>
+                                <span className="text-[10px] text-zinc-500 font-mono truncate">Logged in</span>
                             </div>
                         )}
                     </div>
-                    <ThemeToggle showLabel={!isCollapsed} />
+                    
+                    <div className={`flex ${isCollapsed ? 'flex-col items-center gap-2' : 'items-center justify-between'}`}>
+                        <ThemeToggle showLabel={!isCollapsed} />
+                        <button
+                            onClick={handleLogout}
+                            className={`flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors ${isCollapsed ? 'p-2' : 'px-2 py-1'}`}
+                            title="Logout"
+                        >
+                            <LogOut size={16} />
+                            {!isCollapsed && <span className="text-xs uppercase tracking-wider">Logout</span>}
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
     )
 }
 
+// ============================================
+// KEYBOARD SHORTCUTS MODAL
+// ============================================
 function KeyboardShortcutsModal({ onClose }) {
     const shortcuts = [
         { category: 'Navigation', items: [
