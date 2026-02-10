@@ -774,24 +774,41 @@ These require human moderator review:
 ## CHARACTER ENTRY STRUCTURE
 
 ### One Character Per Entry Rule
-Each character entry should contain ONLY ONE character. Duo/group entries are NOT allowed.
+Each character entry must be a SINGLE INDIVIDUAL. The following are NOT allowed:
 
-Signs of multiple characters in one entry:
-- Names joined with "&", "and", "+" (e.g., "Mina & Jory", "Tom and Jerry")
-- Multiple distinct character descriptions in one entry
-- Pronouns switching between different people ("She is... He is...")
+**1. Duo/Pair Entries:**
+- Names with "&", "and", "+" (e.g., "Mina & Jory", "Tom and Jerry")
+- Two distinct people described together
+- Pronouns switching between people ("She is... He is...")
 - "They are a duo/pair/team" as the main subject
-- Two or more separate character backstories/personalities described
 
-If multiple characters are detected in a single character entry:
-- Set verdict: "flagged" (not rejected - this is fixable)
-- Add to highlightedIssues with severity: "medium"
-- In suggestions, explain they need to create SEPARATE entries for each character
+**2. Group/Collective Entries:**
+- "The [Name] Choir/Gang/Squad/Team/Council"
+- "The [Plural noun]" (e.g., "The Spirits", "The Guards", "The Sisters")
+- "A group of...", "A collection of...", "Multiple spirits who..."
+- Numbers indicating multiple ("12 ghosts", "a choir of spirits")
 
-Example feedback for multi-character entries:
-"This entry contains multiple characters (Mina and Jory). Each character needs their own separate entry. Please create two character entries: one for Mina (the cat-eared monster kid) and one for Jory (the freckled human kid). This allows users to interact with each character individually and gives each proper development."
+**Detection Signs:**
+- Subject is plural ("The spirits sing..." not "The spirit sings...")
+- "They" referring to many individuals (not singular they for one person)
+- Multiple unnamed members acting as one unit
+- Multiple distinct character backstories/personalities in one entry
 
-This rule applies to CHARACTER type only, not storylines (which can have multiple characters in characterSnapshots).
+**Verdict:** flagged (not rejected - this is fixable)
+**Severity:** medium
+
+**Feedback for Duos:**
+"This entry contains two characters (X and Y). Please create separate entries for each character. This allows users to interact with each character individually."
+
+**Feedback for Groups/Collectives:**
+"'[Name]' describes a group, not an individual character. Options: 1) Create a STORYLINE with multiple character entries, 2) Create one character who LEADS the group (e.g., 'Choir Leader Elara'), or 3) Use the group as a LOCATION/SETTING element in a storyline."
+
+**Exceptions (ALLOWED):**
+- Single entity with plural-sounding name (e.g., "Legion" = one demon)
+- Hive-minds that act as ONE consciousness (must be clearly explained)
+- "The Keeper", "The Watcher" = one person with a title
+
+**Applies to:** CHARACTER type only. Storylines CAN have multiple characters in characterSnapshots.
 
 ## LANGUAGE & TEMPLATE VARIABLES
 
