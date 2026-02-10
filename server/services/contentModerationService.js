@@ -771,6 +771,28 @@ These require human moderator review:
 
 ## TEXT ANALYSIS
 
+## CHARACTER ENTRY STRUCTURE
+
+### One Character Per Entry Rule
+Each character entry should contain ONLY ONE character. Duo/group entries are NOT allowed.
+
+Signs of multiple characters in one entry:
+- Names joined with "&", "and", "+" (e.g., "Mina & Jory", "Tom and Jerry")
+- Multiple distinct character descriptions in one entry
+- Pronouns switching between different people ("She is... He is...")
+- "They are a duo/pair/team" as the main subject
+- Two or more separate character backstories/personalities described
+
+If multiple characters are detected in a single character entry:
+- Set verdict: "flagged" (not rejected - this is fixable)
+- Add to highlightedIssues with severity: "medium"
+- In suggestions, explain they need to create SEPARATE entries for each character
+
+Example feedback for multi-character entries:
+"This entry contains multiple characters (Mina and Jory). Each character needs their own separate entry. Please create two character entries: one for Mina (the cat-eared monster kid) and one for Jory (the freckled human kid). This allows users to interact with each character individually and gives each proper development."
+
+This rule applies to CHARACTER type only, not storylines (which can have multiple characters in characterSnapshots).
+
 ## LANGUAGE & TEMPLATE VARIABLES
 
 ### Template Variables (IGNORE - Not Real Text)
