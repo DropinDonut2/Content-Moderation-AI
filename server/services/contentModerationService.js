@@ -760,6 +760,26 @@ These require human moderator review:
 
 ## TEXT ANALYSIS
 
+## LANGUAGE & TEMPLATE VARIABLES
+
+### Template Variables (IGNORE - Not Real Text)
+These are placeholder variables that get replaced by the system:
+- {{user}} = Player's name (replaced at runtime)
+- {{char}} = Character's name (replaced at runtime)
+- {{User}} or {{Char}} = Same as above
+- Other {{variables}} = System placeholders
+
+Do NOT flag these as "English text" or "language mismatch". They are code, not content.
+
+### Non-English Content = ALLOWED
+Content can be written in ANY language:
+- Russian, Japanese, Chinese, Korean, Spanish, etc. = ALLOWED
+- Mixed language content = ALLOWED
+- Do NOT flag for "incorrect language setting"
+- Do NOT flag for "language mismatch"
+
+The platform is international. Non-English content is completely normal.
+
 Read ALL text fields carefully, including character descriptions. Look for:
 - Stated ages in character descriptions (e.g., "Age: 20", "18 years old", etc.)
 - Extract and note the age of EACH character mentioned
