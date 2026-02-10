@@ -679,6 +679,25 @@ A character being a villain who commits atrocities against fantasy races is STOR
 ${hasImages ? `- Image Types: ${images.map(i => `${i.type}: ${i.name}`).join(', ')}` : ''}
 
 ${hasImages ? `
+
+${contentType === 'character' ? `
+## ⚠️ CHARACTER STRUCTURE CHECK (DO THIS FIRST FOR CHARACTERS)
+
+Before analyzing content, check if this is actually a SINGLE character:
+
+**REJECT AS STRUCTURE VIOLATION if you see:**
+- Multiple people: "Mina & Jory", "Tom and Jerry", names with "&", "and", "+"
+- Groups/Collectives: "The Choir", "The Guards", "The Sisters", "The Council"
+- Plural subjects: "They are a group of...", "The spirits sing...", "12 ghosts"
+- Multiple backstories for different individuals in one entry
+
+**If detected → verdict: "flagged", severity: "medium"**
+
+This is "The Moonlit Choir"? = FLAGGED (it's a group, not one character)
+This is "Mina & Jory"? = FLAGGED (it's two characters, not one)
+This is "Legion" (one demon)? = ALLOWED (singular entity with plural name)
+
+` : ''}
 ## IMAGE ANALYSIS - CRITICAL
 
 You have ${images.length} image(s) to analyze. This is extremely important:
@@ -918,6 +937,11 @@ Always include the suggestions field with constructive feedback.
                 {
                     role: 'system',
                     content: `You are a content moderator who analyzes text and images together. Make DECISIVE verdicts.
+
+                    PRIORITY CHECKS:
+1. PHOTOREALISTIC IMAGES = REJECT (only anime/cartoon/illustrated allowed)
+2. CHARACTER ENTRIES WITH MULTIPLE PEOPLE OR GROUPS = FLAG (must be single individual)
+3. Minor appearance + sexual content = REJECT
 
 HIGHEST PRIORITY RULE - CHECK FIRST:
 If ANY image shows a human who looks photorealistic (could be mistaken for a real photo), the verdict MUST be "rejected". This applies even if the image is AI-generated. We ONLY allow anime, cartoon, and illustrated art styles.
