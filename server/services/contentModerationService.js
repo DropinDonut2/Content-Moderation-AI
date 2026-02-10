@@ -214,6 +214,10 @@ const moderationSchema = {
                     type: "number",
                     description: "Number of images that appear to be copyrighted (not AI-generated)"
                 },
+                photorealisticImages: {
+                    type: "number",
+                    description: "Number of photorealistic/human images detected (NOT ALLOWED)"
+                },
                 overallImageVerdict: {
                     type: "string",
                     enum: ["safe", "flagged", "rejected"],
@@ -244,7 +248,7 @@ const moderationSchema = {
                             },
                             category: {
                                 type: "string",
-                                enum: ["nudity", "minor_appearance", "violence", "hate_symbol", "copyright", "other"],
+                                enum: ["nudity", "minor_appearance", "violence", "hate_symbol", "copyright", "photorealistic", "other"],
                                 description: "Category of the issue. Use 'minor_appearance' if character LOOKS underage regardless of stated age. Use 'copyright' for copyrighted images."
                             },
                             visualAgeAssessment: {
@@ -274,6 +278,15 @@ const moderationSchema = {
                                 type: "string",
                                 description: "Name/identifier of the image"
                             },
+                            imageStyle: {
+                                type: "string",
+                                enum: ["anime", "cartoon", "illustrated", "photorealistic", "real_photo"],
+                                description: "The visual style of the image. 'photorealistic' and 'real_photo' are NOT ALLOWED."
+                            },
+                            isPhotorealistic: {
+                                type: "boolean",
+                                description: "TRUE if image is photorealistic, hyperrealistic, or a real human photo. These are NOT ALLOWED."
+                            },
                             isAiGenerated: {
                                 type: "boolean",
                                 description: "True if the image appears to be AI-generated (which is ALLOWED)"
@@ -296,11 +309,11 @@ const moderationSchema = {
                                 description: "Brief explanation of why you think it's AI-generated or copyrighted"
                             }
                         },
-                        required: ["imageType", "imageName", "isAiGenerated", "isCopyrighted", "copyrightSource", "copyrightConfidence", "reasoning"]
+                       required: ["imageType", "imageName", "imageStyle", "isPhotorealistic", "isAiGenerated", "isCopyrighted", "copyrightSource", "copyrightConfidence", "reasoning"]
                     }
                 }
             },
-            required: ["totalImages", "flaggedImages", "copyrightedImages", "overallImageVerdict", "issues", "copyrightAnalysis"]
+            required: ["totalImages", "flaggedImages", "copyrightedImages", "photorealisticImages", "overallImageVerdict", "issues", "copyrightAnalysis"]
         },
         suggestions: {
             type: "object",
@@ -572,6 +585,56 @@ Analyze the text content and any attached images against the provided CONTENT CR
 
 You MUST respond with valid JSON matching the required schema.
 
+## AUTONOMOUS MODERATION PHILOSOPHY
+
+You are an AUTONOMOUS moderator. Make DECISIVE verdicts:
+
+**APPROVE (verdict: "safe")** - Default for compliant content:
+- Content follows platform policies
+- Images are anime/cartoon/illustrated style
+- No policy violations
+- NSFW content properly tagged
+
+**REJECT (verdict: "rejected")** - Clear violations:
+- Photorealistic or human images (even AI-generated)
+- Real photos of people
+- Minor sexualization (visual OR text)
+- Non-consensual sexual content
+- Real-world hate speech
+
+**FLAG (verdict: "flagged")** - USE SPARINGLY:
+- ONLY for genuine edge cases
+- NOT for "being safe"
+- If it's a violation, REJECT it
+
+## CRITICAL: IMAGE STYLE POLICY
+
+### ALLOWED Image Styles ✓
+- **Anime** - Japanese animation style
+- **Cartoon** - Western animation style  
+- **Illustrated** - Digital art, drawings, paintings
+- **AI-Generated Anime/Art** - Stylized AI art is ALLOWED
+
+### NOT ALLOWED Image Styles ✗ (AUTO-REJECT)
+- **Photorealistic** - Realistic digital art that looks like photos
+- **Hyperrealistic** - Art designed to look like real life
+- **Real Photos** - Actual photographs of humans
+- **AI-Generated Realistic Humans** - Even if AI-made, if it looks real = REJECT
+
+Signs of photorealistic (REJECT):
+- Natural skin texture, pores, blemishes
+- Realistic lighting on human features
+- Camera-like perspective
+- Real-world backgrounds
+- Realistic fabric textures
+
+Signs of anime/illustrated (ALLOWED):
+- Large stylized eyes
+- Simplified features
+- Cel-shaded or flat coloring
+- Anime hair styles
+- Artistic backgrounds
+
 ## CRITICAL: FANTASY CONTENT CONTEXT
 
 This is a FANTASY ROLEPLAY platform. You must understand the difference between:
@@ -784,11 +847,17 @@ Always include the suggestions field with constructive feedback.
             messages: [
                 {
                     role: 'system',
-                    content: `You are a content moderator who analyzes text and images together.
+                    content: `You are a content moderator who analyzes text and images together. Make DECISIVE verdicts.
 
 CRITICAL FOR IMAGES: 
 1. Judge whether characters LOOK like minors based on their VISUAL APPEARANCE, not stated ages. A character drawn with childlike proportions in sexual content is a violation regardless of claimed age.
 2. For each image, determine if it is AI-GENERATED (allowed) or COPYRIGHTED (flag for review). Identify the source of copyrighted images (e.g., "Genshin Impact", "Naruto").
+3. PHOTOREALISTIC/REAL HUMAN IMAGES = ALWAYS REJECT (even if AI-generated)
+4. Only anime, cartoon, or illustrated art styles are allowed
+5. Judge characters by VISUAL APPEARANCE, not stated ages
+6. Fantasy content (violence against fantasy races, villains, dark themes) = ALLOWED
+7. Don't flag content just to "be safe" - if it's compliant, APPROVE it
+8. If it violates policy, REJECT it - don't pass to human review
 
 Write your reasoning in natural conversational prose. Do not use step labels, bullet points, bold text, or structured formatting.
 
@@ -848,12 +917,16 @@ Always include suggestions with constructive feedback for the creator.`
                 console.log(`   Copyrighted images: ${result.imageAnalysis.copyrightedImages || 0}`);
                 
                 // Log copyright details if any found
+                // Log image style and copyright details
                 if (result.imageAnalysis.copyrightAnalysis?.length > 0) {
+                    console.log(`\n   🎨 Image Style Analysis:`);
                     result.imageAnalysis.copyrightAnalysis.forEach(img => {
-                        if (img.isCopyrighted) {
-                            console.log(`   ⚠️ Copyright detected: ${img.imageName} - ${img.copyrightSource} (${img.copyrightConfidence})`);
-                        } else if (img.isAiGenerated) {
-                            console.log(`   ✓ AI-generated: ${img.imageName}`);
+                        if (img.isPhotorealistic) {
+                            console.log(`      🚫 REJECTED - Photorealistic: ${img.imageName}`);
+                        } else if (img.isCopyrighted) {
+                            console.log(`      ⚠️ Copyright: ${img.imageName} - ${img.copyrightSource} (${img.copyrightConfidence})`);
+                        } else {
+                            console.log(`      ✓ ${img.imageStyle}: ${img.imageName}`);
                         }
                     });
                 }
@@ -954,6 +1027,8 @@ Always include suggestions with constructive feedback for the creator.`
                 hasImageIssues: (imageAnalysis.flaggedImages || 0) > 0,
                 hasCopyrightConcern: (imageAnalysis.copyrightedImages || 0) > 0,
                 copyrightedImageCount: imageAnalysis.copyrightedImages || 0,
+                hasPhotorealisticImages: (imageAnalysis.photorealisticImages || 0) > 0,
+                photorealisticImageCount: imageAnalysis.photorealisticImages || 0,
                 needsManualReview: true,
                 hasFieldErrors: !validation.isValid,
                 hasFieldWarnings: validation.hasWarnings,
