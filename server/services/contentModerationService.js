@@ -914,15 +914,12 @@ Example feedback for rejected quality issues:
 
 ### IMAGE NUDITY & EXPOSURE RULES
 
-**ALLOWED ✓:**
-- Cleavage (normal/moderate) = ALLOWED
-- Revealing outfits (low-cut, short skirts) = ALLOWED for NSFW-tagged content
-- Swimwear, lingerie = ALLOWED for NSFW-tagged content
-- Suggestive poses = ALLOWED for NSFW-tagged content
-
-**FLAG (excessive but not violation):**
-- Excessive cleavage (barely covered) = FLAG for review
-- Extremely revealing outfits = FLAG for review
+**ALLOWED ✓ (with proper NSFW tag):**
+- Cleavage (any amount) = ALLOWED
+- Revealing outfits (low-cut, short skirts, lingerie) = ALLOWED
+- Swimwear, bikinis = ALLOWED
+- Suggestive poses = ALLOWED
+- Sexy/revealing clothing = ALLOWED
 
 **REJECT ✗ (visible intimate areas):**
 - Visible nipples (even partially) = REJECT
@@ -930,6 +927,9 @@ Example feedback for rejected quality issues:
 - Crotch bulge (visible outline) = REJECT
 - Camel toe = REJECT
 - See-through clothing showing nipples/genitals = REJECT
+
+**The Rule:** Revealing/sexy = ALLOWED. Actual intimate parts visible = REJECT.
+Do NOT flag for "excessive cleavage" - only reject when nipples/genitals are actually visible.
 
 **The key distinction:**
 - Sexy/revealing clothing = ALLOWED (with proper NSFW tag)
@@ -970,25 +970,26 @@ Always include the suggestions field with constructive feedback.
                     role: 'system',
                     content: `You are a content moderator who analyzes text and images together. Make DECISIVE verdicts.
 
-                    PRIORITY CHECKS:
+                    PRIORITY CHECKS (DO ALL OF THESE FIRST):
 1. PHOTOREALISTIC IMAGES = REJECT (only anime/cartoon/illustrated allowed)
-2. CHARACTER ENTRIES WITH MULTIPLE PEOPLE OR GROUPS = FLAG (must be single individual)
-3. Minor appearance + sexual content = REJECT
+2. LANGUAGE MISMATCH = FLAG (title must be same language as content)
+3. CHARACTER ENTRIES WITH MULTIPLE PEOPLE OR GROUPS = FLAG (must be single individual)
+4. Minor appearance + sexual content = REJECT
 
 HIGHEST PRIORITY RULE - CHECK FIRST:
 If ANY image shows a human who looks photorealistic (could be mistaken for a real photo), the verdict MUST be "rejected". This applies even if the image is AI-generated. We ONLY allow anime, cartoon, and illustrated art styles.
 
-LANGUAGE CHECK:
-- Title and content must be in the SAME language
-- English title + Spanish content = FLAG (language mismatch)
-- Spanish title + Spanish content = ALLOWED
+LANGUAGE CHECK (MANDATORY):
+Look at the TITLE and compare to the CONTENT language:
+- Title: "Between Halo and Horns" (English) + Content in Spanish = FLAG 
+- Title: "Entre Halo y Cuernos" (Spanish) + Content in Spanish = ALLOWED 
+If title language ≠ content language → verdict: "flagged", add to highlightedIssues
 
 IMAGE EXPOSURE CHECK:
-- Cleavage = ALLOWED (even significant cleavage)
-- Visible nipples, genitalia, crotch bulge, camel toe = REJECT
-- Don't flag images just for being "revealing" or "sexy"
-- Only reject when intimate areas are actually VISIBLE
-
+- ALL cleavage = ALLOWED (do NOT flag for "excessive cleavage")
+- Revealing/sexy outfits = ALLOWED (with NSFW tag)
+- ONLY REJECT if you can see: nipples, genitalia, crotch bulge, or camel toe
+- If no intimate parts are visible → image is ALLOWED regardless of how revealing
 Signs of photorealistic (REJECT IMMEDIATELY):
 - Realistic skin texture with pores
 - Natural lighting/shadows on human face
