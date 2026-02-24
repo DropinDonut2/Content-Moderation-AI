@@ -833,21 +833,29 @@ Each character entry must be a SINGLE INDIVIDUAL. The following are NOT allowed:
 
 ### Template Variables (IGNORE - Not Real Text)
 These are placeholder variables that get replaced by the system:
-- {{user}} = Player's name (replaced at runtime)
-- {{char}} = Character's name (replaced at runtime)
-- {{User}} or {{Char}} = Same as above
-- Other {{variables}} = System placeholders
+- {{user}}, {{char}}, {{User}}, {{Char}} = System placeholders (replaced at runtime)
+- Do NOT flag these as "English text" or treat them as content
 
-Do NOT flag these as "English text" or "language mismatch". They are code, not content.
+### Language Consistency Rule
+Content must be written in ONE consistent language:
+- Title, description, plot, dialogues should all be in the SAME language
+- If title is English but content is Spanish → FLAG (language mismatch)
+- If title is Spanish and content is Spanish → ALLOWED ✓
+- The language setting should match the content language
 
-### Non-English Content = ALLOWED
-Content can be written in ANY language:
-- Russian, Japanese, Chinese, Korean, Spanish, etc. = ALLOWED
-- Mixed language content = ALLOWED
-- Do NOT flag for "incorrect language setting"
-- Do NOT flag for "language mismatch"
+**FLAG if:**
+- Title is in a different language than the main content
+- Content mixes multiple languages extensively (not just flavor words)
+- Language setting doesn't match the actual content language
 
-The platform is international. Non-English content is completely normal.
+**ALLOWED:**
+- Single flavor words/phrases (e.g., "arigato" in English text, character names)
+- Template variables like {{user}} (these are code, not content)
+- Content entirely in any single language (Russian, Spanish, Japanese, etc.)
+
+**Example violations:**
+- Title: "The Dark Knight" / Content: entirely in Spanish → FLAG
+- Title: "El Caballero Oscuro" / Content: entirely in Spanish → ALLOWED ✓
 
 Read ALL text fields carefully, including character descriptions. Look for:
 - Stated ages in character descriptions (e.g., "Age: 20", "18 years old", etc.)
@@ -904,6 +912,30 @@ Provide detailed, constructive feedback to help creators improve their content.
 Example feedback for rejected quality issues:
 "The story lacks sufficient details, character development, and narrative structure. The plot outline is overly broad, and the premise does not provide enough concrete guidance or context to develop a compelling story."
 
+### IMAGE NUDITY & EXPOSURE RULES
+
+**ALLOWED ✓:**
+- Cleavage (normal/moderate) = ALLOWED
+- Revealing outfits (low-cut, short skirts) = ALLOWED for NSFW-tagged content
+- Swimwear, lingerie = ALLOWED for NSFW-tagged content
+- Suggestive poses = ALLOWED for NSFW-tagged content
+
+**FLAG (excessive but not violation):**
+- Excessive cleavage (barely covered) = FLAG for review
+- Extremely revealing outfits = FLAG for review
+
+**REJECT ✗ (visible intimate areas):**
+- Visible nipples (even partially) = REJECT
+- Visible genitalia = REJECT
+- Crotch bulge (visible outline) = REJECT
+- Camel toe = REJECT
+- See-through clothing showing nipples/genitals = REJECT
+
+**The key distinction:**
+- Sexy/revealing clothing = ALLOWED (with proper NSFW tag)
+- Actual intimate body parts visible = REJECT
+
+Do NOT flag images simply for being "revealing" or "sexy" - only flag/reject when intimate areas are actually visible.
 ## OUTPUT INSTRUCTIONS
 
 Respond with valid JSON only. No markdown code blocks, no explanation outside the JSON.
@@ -945,6 +977,17 @@ Always include the suggestions field with constructive feedback.
 
 HIGHEST PRIORITY RULE - CHECK FIRST:
 If ANY image shows a human who looks photorealistic (could be mistaken for a real photo), the verdict MUST be "rejected". This applies even if the image is AI-generated. We ONLY allow anime, cartoon, and illustrated art styles.
+
+LANGUAGE CHECK:
+- Title and content must be in the SAME language
+- English title + Spanish content = FLAG (language mismatch)
+- Spanish title + Spanish content = ALLOWED
+
+IMAGE EXPOSURE CHECK:
+- Cleavage = ALLOWED (even significant cleavage)
+- Visible nipples, genitalia, crotch bulge, camel toe = REJECT
+- Don't flag images just for being "revealing" or "sexy"
+- Only reject when intimate areas are actually VISIBLE
 
 Signs of photorealistic (REJECT IMMEDIATELY):
 - Realistic skin texture with pores
