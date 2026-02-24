@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { Save, AlertTriangle, BookOpen, User, FileJson, Upload, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import JsonImportPreview from '../components/JsonImportPreview';
+import { useAuth } from '../auth/AuthContext';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const SubmitContent = () => {
     const navigate = useNavigate();
+    const { getAuthHeader } = useAuth();
     const [contentType, setContentType] = useState('storyline'); // 'storyline', 'character', or 'json'
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -54,7 +58,7 @@ const SubmitContent = () => {
         if (!importText.trim()) return;
 
         const newFormData = { ...formData };
-        
+
         const sections = [
             { key: 'title', headers: ['Title:', 'Name:', 'Character Name:', 'Storyline Title:'] },
             { key: 'rawCharacterList', headers: ['Character List:', 'Characters:', 'Char List:'] },
@@ -81,10 +85,10 @@ const SubmitContent = () => {
                 const lowerDump = cleanDump.toLowerCase();
                 const lowerHeader = header.toLowerCase();
                 const index = lowerDump.indexOf(lowerHeader);
-                
+
                 if (index !== -1) {
-                    foundHeaders.push({ 
-                        key: sec.key, 
+                    foundHeaders.push({
+                        key: sec.key,
                         header: header,
                         index: index,
                         headerLength: header.length
@@ -124,7 +128,7 @@ const SubmitContent = () => {
 
         setFormData(newFormData);
         setImportText('');
-        
+
         console.log('Parsed fields:', Object.keys(newFormData).filter(k => newFormData[k]));
     };
 
@@ -137,8 +141,8 @@ const SubmitContent = () => {
             if (!formData.title) throw new Error("Title/Name is required");
 
             const endpoint = contentType === 'storyline'
-                ? '/api/v1/content/storylines'
-                : '/api/v1/content/characters';
+                ? `${API_URL}/api/v1/content/storylines`
+                : `${API_URL}/api/v1/content/characters`;
 
             const payload = {
                 ...formData,
@@ -152,7 +156,8 @@ const SubmitContent = () => {
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
                 },
                 body: JSON.stringify(payload)
             });
@@ -246,9 +251,12 @@ const SubmitContent = () => {
                                         setJsonPreview(null);
                                         try {
                                             const parsed = JSON.parse(jsonInput);
-                                            const response = await fetch('/api/v1/content/preview-json', {
+                                            const response = await fetch(`${API_URL}/api/v1/content/preview-json`, {
                                                 method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    ...getAuthHeader()
+                                                },
                                                 body: JSON.stringify(parsed)
                                             });
                                             const result = await response.json();
@@ -305,9 +313,12 @@ const SubmitContent = () => {
                                     setJsonError(null);
                                     try {
                                         const parsed = JSON.parse(jsonInput);
-                                        const response = await fetch(`/api/v1/content/import-json?includeImages=${includeImages}`, {
+                                        const response = await fetch(`${API_URL}/api/v1/content/import-json?includeImages=${includeImages}`, {
                                             method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                ...getAuthHeader()
+                                            },
                                             body: JSON.stringify(parsed)
                                         });
                                         const result = await response.json();

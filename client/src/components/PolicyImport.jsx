@@ -1,21 +1,25 @@
 import { useState } from 'react'
-import { 
-    Upload, FileText, Save, RefreshCw, 
-    Check, AlertTriangle, Trash2 
+import {
+    Upload, FileText, Save, RefreshCw,
+    Check, AlertTriangle, Trash2
 } from 'lucide-react'
+import { useAuth } from '../auth/AuthContext';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 function PolicyImport({ onImportComplete }) {
+    const { getAuthHeader } = useAuth();
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
-    
+
     // Import state
     const [selectedFile, setSelectedFile] = useState(null)
-    
+
     // Preview state
     const [previewPolicies, setPreviewPolicies] = useState(null)
     const [fullPolicies, setFullPolicies] = useState(null)
-    
+
     // Save options
     const [saveMode, setSaveMode] = useState('merge')
 
@@ -34,13 +38,18 @@ function PolicyImport({ onImportComplete }) {
             const formData = new FormData()
             formData.append('file', selectedFile)
 
-            const response = await fetch('/api/v1/policies/import/file', {
+            formData.append('file', selectedFile)
+
+            const response = await fetch(`${API_URL}/api/v1/policies/import/file`, {
                 method: 'POST',
+                headers: {
+                    ...getAuthHeader()
+                },
                 body: formData
             })
 
             const data = await response.json()
-            
+
             if (!data.success) {
                 throw new Error(data.error || 'Import failed')
             }
@@ -67,25 +76,28 @@ function PolicyImport({ onImportComplete }) {
         setError(null)
 
         try {
-            const response = await fetch('/api/v1/policies/import/save', {
+            const response = await fetch(`${API_URL}/api/v1/policies/import/save`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
+                },
                 body: JSON.stringify({ policies: fullPolicies, mode: saveMode })
             })
 
             const data = await response.json()
-            
+
             if (!data.success) {
                 throw new Error(data.error || 'Save failed')
             }
 
             setSuccess(`Saved! Added: ${data.stats.added}, Updated: ${data.stats.updated}${data.stats.deleted ? `, Deleted: ${data.stats.deleted}` : ''}`)
-            
+
             // Clear preview
             setPreviewPolicies(null)
             setFullPolicies(null)
             setSelectedFile(null)
-            
+
             // Notify parent
             if (onImportComplete) {
                 onImportComplete()
@@ -120,13 +132,13 @@ function PolicyImport({ onImportComplete }) {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h3 
+                <h3
                     className="text-lg font-bold mb-1"
                     style={{ color: 'var(--text-primary)' }}
                 >
                     Import Policies
                 </h3>
-                <p 
+                <p
                     className="text-sm"
                     style={{ color: 'var(--text-secondary)' }}
                 >
@@ -137,13 +149,13 @@ function PolicyImport({ onImportComplete }) {
             {/* File Upload */}
             <div className="space-y-4">
                 <div>
-                    <label 
-                        className="text-xs font-bold uppercase tracking-widest mb-2 block" 
+                    <label
+                        className="text-xs font-bold uppercase tracking-widest mb-2 block"
                         style={{ color: 'var(--text-secondary)' }}
                     >
                         Upload Policy File
                     </label>
-                    <div 
+                    <div
                         className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors hover:border-opacity-70"
                         style={{ borderColor: 'var(--border-color)' }}
                         onClick={() => document.getElementById('file-input').click()}
@@ -182,7 +194,7 @@ function PolicyImport({ onImportComplete }) {
 
             {/* Messages */}
             {error && (
-                <div 
+                <div
                     className="flex items-center gap-3 p-4 rounded-lg"
                     style={{ backgroundColor: 'var(--rejected-bg)', border: '1px solid var(--rejected-border)' }}
                 >
@@ -192,7 +204,7 @@ function PolicyImport({ onImportComplete }) {
             )}
 
             {success && (
-                <div 
+                <div
                     className="flex items-center gap-3 p-4 rounded-lg"
                     style={{ backgroundColor: 'var(--safe-bg)', border: '1px solid var(--safe-border)' }}
                 >
@@ -218,22 +230,22 @@ function PolicyImport({ onImportComplete }) {
                         </button>
                     </div>
 
-                    <div 
+                    <div
                         className="max-h-64 overflow-y-auto rounded-lg"
                         style={{ border: '1px solid var(--border-color)' }}
                     >
                         {previewPolicies.map((policy, i) => {
                             const severityStyle = getSeverityStyle(policy.severity)
                             return (
-                                <div 
+                                <div
                                     key={i}
                                     className="flex items-center gap-4 p-3 transition-colors"
-                                    style={{ 
+                                    style={{
                                         borderBottom: i < previewPolicies.length - 1 ? '1px solid var(--border-color)' : 'none',
                                         backgroundColor: 'var(--bg-card)'
                                     }}
                                 >
-                                    <span 
+                                    <span
                                         className="font-mono text-xs px-2 py-1 rounded"
                                         style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
                                     >
@@ -242,13 +254,13 @@ function PolicyImport({ onImportComplete }) {
                                     <span className="flex-1 font-medium truncate" style={{ color: 'var(--text-primary)' }}>
                                         {policy.title}
                                     </span>
-                                    <span 
+                                    <span
                                         className="px-2 py-0.5 rounded text-[10px] uppercase font-bold"
                                         style={{ backgroundColor: severityStyle.bg, color: severityStyle.color }}
                                     >
                                         {policy.severity}
                                     </span>
-                                    <span 
+                                    <span
                                         className="px-2 py-0.5 rounded text-[10px] uppercase"
                                         style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
                                     >
@@ -260,13 +272,13 @@ function PolicyImport({ onImportComplete }) {
                     </div>
 
                     {/* Save Options */}
-                    <div 
+                    <div
                         className="p-4 rounded-lg space-y-4"
                         style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
                     >
                         <div>
-                            <label 
-                                className="text-xs font-bold uppercase tracking-widest mb-2 block" 
+                            <label
+                                className="text-xs font-bold uppercase tracking-widest mb-2 block"
                                 style={{ color: 'var(--text-secondary)' }}
                             >
                                 Save Mode
@@ -277,7 +289,7 @@ function PolicyImport({ onImportComplete }) {
                                     { id: 'replace', label: 'Replace', desc: 'Delete all, import fresh' },
                                     { id: 'append', label: 'Append', desc: 'Add all with new IDs' }
                                 ].map(mode => (
-                                    <label 
+                                    <label
                                         key={mode.id}
                                         className="flex items-start gap-2 cursor-pointer"
                                     >

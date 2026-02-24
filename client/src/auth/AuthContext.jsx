@@ -5,6 +5,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+
 const AuthContext = createContext(null);
 
 // ============================================
@@ -24,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     // Verify token with backend
     const checkAuth = useCallback(async () => {
         const token = localStorage.getItem('auth_token');
-        
+
         if (!token) {
             setIsLoading(false);
             setIsAuthenticated(false);
@@ -33,7 +35,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const response = await fetch('/api/auth/verify', {
+            const response = await fetch(`${API_URL}/api/auth/verify`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -62,7 +64,7 @@ export const AuthProvider = ({ children }) => {
     // Login function
     const login = async (username, password) => {
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -91,9 +93,9 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(async () => {
         try {
             const token = localStorage.getItem('auth_token');
-            
+
             // Call logout endpoint
-            await fetch('/api/auth/logout', {
+            await fetch(`${API_URL}/api/auth/logout`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -118,7 +120,7 @@ export const AuthProvider = ({ children }) => {
     // Authenticated fetch wrapper
     const authFetch = useCallback(async (url, options = {}) => {
         const token = localStorage.getItem('auth_token');
-        
+
         const response = await fetch(url, {
             ...options,
             headers: {

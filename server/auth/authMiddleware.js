@@ -66,18 +66,18 @@ const verifyToken = (token) => {
 
 const safeCompare = (input, secret) => {
     if (typeof input !== 'string' || typeof secret !== 'string') return false;
-    
+
     // Pad to same length to prevent timing attacks on length
     const maxLen = Math.max(input.length, secret.length);
     const paddedInput = input.padEnd(maxLen, '\0');
     const paddedSecret = secret.padEnd(maxLen, '\0');
-    
+
     // Use timing-safe comparison
     const match = crypto.timingSafeEqual(
         Buffer.from(paddedInput),
         Buffer.from(paddedSecret)
     );
-    
+
     // Also check original lengths match
     return match && input.length === secret.length;
 };
@@ -160,7 +160,7 @@ const setupAuthRoutes = (app) => {
         res.cookie('auth_token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 365 * 24 * 60 * 60 * 1000 // 1 year cookie
         });
 
@@ -188,7 +188,7 @@ const setupAuthRoutes = (app) => {
     });
 
     app.use('/api/auth', router);
-    
+
     // Check if credentials are configured
     if (!CREDENTIALS.username || !CREDENTIALS.password) {
         console.log('\n  WARNING: Auth credentials not configured!');
