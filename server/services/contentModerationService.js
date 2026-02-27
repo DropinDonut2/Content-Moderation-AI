@@ -309,7 +309,7 @@ const moderationSchema = {
                                 description: "Brief explanation of why you think it's AI-generated or copyrighted"
                             }
                         },
-                       required: ["imageType", "imageName", "imageStyle", "isPhotorealistic", "isAiGenerated", "isCopyrighted", "copyrightSource", "copyrightConfidence", "reasoning"]
+                        required: ["imageType", "imageName", "imageStyle", "isPhotorealistic", "isAiGenerated", "isCopyrighted", "copyrightSource", "copyrightConfidence", "reasoning"]
                     }
                 }
             },
@@ -387,14 +387,14 @@ const moderationSchema = {
         }
     },
     required: [
-        "verdict", 
-        "confidence", 
-        "summary", 
+        "verdict",
+        "confidence",
+        "summary",
         "reasoning",
-        "highlightedIssues", 
-        "imageAnalysis", 
+        "highlightedIssues",
+        "imageAnalysis",
         "suggestions",
-        "nsfw", 
+        "nsfw",
         "nsfwReason",
         "categories",
         "flaggedPolicies",
@@ -1034,16 +1034,16 @@ Always include suggestions with constructive feedback for the creator.`
 
         // STEP 7.5: Calculate usage and cost
         const usage = response.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
-        
+
         const PRICING = {
-            input: 3.00 / 1_000_000,
-            output: 15.00 / 1_000_000
+            input: 0.50 / 1_000_000,
+            output: 3.00 / 1_000_000
         };
-        
+
         const inputCost = usage.prompt_tokens * PRICING.input;
         const outputCost = usage.completion_tokens * PRICING.output;
         const totalCost = inputCost + outputCost;
-        
+
         const usageStats = {
             inputTokens: usage.prompt_tokens,
             outputTokens: usage.completion_tokens,
@@ -1053,7 +1053,7 @@ Always include suggestions with constructive feedback for the creator.`
             totalCost: totalCost,
             costFormatted: `$${totalCost.toFixed(4)}`
         };
-        
+
         console.log(`📊 Token Usage: ${usageStats.totalTokens} tokens | ${usageStats.costFormatted}`);
 
         // STEP 8: Parse response (SIMPLER with Structured Output!)
@@ -1067,7 +1067,7 @@ Always include suggestions with constructive feedback for the creator.`
                 console.log(`   Images analyzed: ${result.imageAnalysis.totalImages || 0}`);
                 console.log(`   Images flagged: ${result.imageAnalysis.flaggedImages || 0}`);
                 console.log(`   Copyrighted images: ${result.imageAnalysis.copyrightedImages || 0}`);
-                
+
                 // Log copyright details if any found
                 // Log image style and copyright details
                 if (result.imageAnalysis.copyrightAnalysis?.length > 0) {
@@ -1206,18 +1206,18 @@ Always include suggestions with constructive feedback for the creator.`
         // ============================================
         // If Anthropic's input moderation flags the content, auto-reject it
         // This is a GOOD signal - it means the content is definitely problematic
-        
+
         const errorMessage = error.message || '';
-        const isModerationFlag = errorMessage.includes('flagged for') || 
-                                  errorMessage.includes('requires moderation') ||
-                                  error.status === 403;
-        
+        const isModerationFlag = errorMessage.includes('flagged for') ||
+            errorMessage.includes('requires moderation') ||
+            error.status === 403;
+
         // Check for specific flag types
-        const isMinorsSexualFlag = errorMessage.includes('sexual/minors') || 
-                                    errorMessage.includes('minors');
+        const isMinorsSexualFlag = errorMessage.includes('sexual/minors') ||
+            errorMessage.includes('minors');
         const isSexualFlag = errorMessage.includes('sexual') && !isMinorsSexualFlag;
         const isViolenceFlag = errorMessage.includes('violence');
-        
+
         if (isModerationFlag && isMinorsSexualFlag) {
             console.log('⛔ ANTHROPIC MODERATION: Content flagged for sexual/minors - AUTO-REJECTING');
             return {
@@ -1235,10 +1235,10 @@ Always include suggestions with constructive feedback for the creator.`
                         severity: 'critical',
                         reason: 'Content was flagged by AI provider moderation for "sexual/minors". This indicates potential CSAM or sexualized minor content.'
                     }],
-                    imageAnalysis: { 
-                        totalImages: 0, 
-                        flaggedImages: 0, 
-                        overallImageVerdict: 'rejected', 
+                    imageAnalysis: {
+                        totalImages: 0,
+                        flaggedImages: 0,
+                        overallImageVerdict: 'rejected',
                         issues: [{
                             imageType: 'content',
                             imageName: 'All content',
@@ -1266,7 +1266,7 @@ Always include suggestions with constructive feedback for the creator.`
                     violationSeverity: 'critical',
                     moderatedAt: new Date()
                 },
-                flags: { 
+                flags: {
                     needsManualReview: false, // Auto-rejected, no review needed
                     hasChildSafetyConcern: true,
                     autoRejectedByProvider: true
@@ -1306,7 +1306,7 @@ Always include suggestions with constructive feedback for the creator.`
                     violationSeverity: 'high',
                     moderatedAt: new Date()
                 },
-                flags: { 
+                flags: {
                     needsManualReview: true,
                     flaggedByProvider: true
                 }
