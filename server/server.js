@@ -17,6 +17,7 @@ const logRoutes = require('./routes/logs');
 const analyticsRoutes = require('./routes/analytics');
 const contentRoutes = require('./routes/content');
 const policyImportRoutes = require('./routes/policyImport');
+const modelTestRoutes = require('./routes/modelTest');
 
 // ============================================
 // CREATE APP FIRST! (before using app.use)
@@ -96,6 +97,7 @@ app.use('/api/v1/analytics', requireAuth, analyticsRoutes);
 app.use('/api/v1/content', requireAuth, contentRoutes);
 app.use('/api/v1/policies/import', requireAuth, policyImportRoutes);
 app.use('/api/content', requireAuth, contentRoutes);
+app.use('/api/v1/model-test', requireAuth, modelTestRoutes);
 
 // ============================================
 // ERROR HANDLER

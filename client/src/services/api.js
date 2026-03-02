@@ -207,4 +207,18 @@ export const savePolicies = async (policies, mode = 'merge') => {
     return response.data;
 };
 
+// ============ MODEL TEST ============
+
+export const getModelTestModels = async () => {
+    const response = await api.get('/model-test/models');
+    return response.data;
+};
+
+export const runModelTestBatch = async (images, model, batchIndex) => {
+    const response = await api.post('/model-test/analyze', { images, model, batchIndex }, {
+        timeout: 120000 // 2-minute timeout for batch analysis
+    });
+    return response.data;
+};
+
 export default api;

@@ -6,10 +6,11 @@ import PolicyManager from './components/PolicyManager'
 import Moderate from './pages/Moderate'
 import Analytics from './components/Analytics'
 import SubmitContent from './pages/SubmitContent'
+import ModelTest from './pages/ModelTest'
 import ThemeToggle from './components/ThemeToggle'
-import { 
-    LayoutDashboard, Shield, ClipboardList, PenTool, BarChart3, User, 
-    ChevronLeft, ChevronRight, PlusCircle, Keyboard, X, LogOut
+import {
+    LayoutDashboard, Shield, ClipboardList, PenTool, BarChart3, User,
+    ChevronLeft, ChevronRight, PlusCircle, Keyboard, X, LogOut, FlaskConical
 } from 'lucide-react'
 import { AuthProvider, ProtectedRoute, useAuth } from './auth/AuthContext'
 import LoginPage from './auth/LoginPage'
@@ -23,7 +24,7 @@ function App() {
             <Routes>
                 {/* Public - Login page */}
                 <Route path="/login" element={<LoginPage />} />
-                
+
                 {/* Protected - Everything else */}
                 <Route path="/*" element={
                     <ProtectedRoute>
@@ -55,7 +56,7 @@ function MainLayout() {
     useEffect(() => {
         const handleKeydown = (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
-            
+
             if (e.altKey) {
                 switch (e.key) {
                     case 'd':
@@ -82,18 +83,22 @@ function MainLayout() {
                         e.preventDefault()
                         navigate('/submit')
                         break
+                    case 't':
+                        e.preventDefault()
+                        navigate('/model-test')
+                        break
                     case 'b':
                         e.preventDefault()
                         setIsCollapsed(prev => !prev)
                         break
                 }
             }
-            
+
             if (e.key === '?' && !e.ctrlKey && !e.altKey) {
                 e.preventDefault()
                 setShowShortcuts(prev => !prev)
             }
-            
+
             if (e.key === 'Escape') {
                 setShowShortcuts(false)
             }
@@ -106,7 +111,7 @@ function MainLayout() {
     return (
         <div className="flex min-h-screen font-mono" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
             <Sidebar isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
-            <main 
+            <main
                 className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}
                 style={{ borderLeft: '1px solid var(--border-color)' }}
             >
@@ -118,6 +123,7 @@ function MainLayout() {
                         <Route path="/review" element={<Activities />} />
                         <Route path="/policies" element={<PolicyManager />} />
                         <Route path="/analytics" element={<Analytics />} />
+                        <Route path="/model-test" element={<ModelTest />} />
                     </Routes>
                 </div>
             </main>
@@ -129,8 +135,8 @@ function MainLayout() {
             <button
                 onClick={() => setShowShortcuts(true)}
                 className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg transition-all hover:scale-110 no-print"
-                style={{ 
-                    backgroundColor: 'var(--bg-card)', 
+                style={{
+                    backgroundColor: 'var(--bg-card)',
                     border: '1px solid var(--border-color)',
                     color: 'var(--text-secondary)'
                 }}
@@ -162,12 +168,13 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
         { to: "/review", icon: <ClipboardList size={18} />, label: "Activities", shortcut: "Alt+Q" },
         { to: "/policies", icon: <Shield size={18} />, label: "Policies", shortcut: "Alt+P" },
         { to: "/analytics", icon: <BarChart3 size={18} />, label: "Analytics", shortcut: "Alt+A" },
+        { to: "/model-test", icon: <FlaskConical size={18} />, label: "Model Test", shortcut: "Alt+T" },
     ]
 
     return (
-        <nav 
+        <nav
             className={`fixed h-full flex flex-col z-50 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} group`}
-            style={{ 
+            style={{
                 backgroundColor: 'var(--sidebar-bg)',
                 borderRight: '1px solid var(--border-color)'
             }}
@@ -185,7 +192,7 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
                 {isCollapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
             </button>
 
-            <div 
+            <div
                 className={`p-6 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} h-[73px]`}
                 style={{ borderBottom: '1px solid var(--border-color)' }}
             >
@@ -242,7 +249,7 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
                             </div>
                         )}
                     </div>
-                    
+
                     <div className={`flex ${isCollapsed ? 'flex-col items-center gap-2' : 'items-center justify-between'}`}>
                         <ThemeToggle showLabel={!isCollapsed} />
                         <button
@@ -265,31 +272,37 @@ function Sidebar({ isCollapsed, toggleCollapse }) {
 // ============================================
 function KeyboardShortcutsModal({ onClose }) {
     const shortcuts = [
-        { category: 'Navigation', items: [
-            { keys: 'Alt + D', action: 'Go to Dashboard' },
-            { keys: 'Alt + S', action: 'Go to Submit Content' },
-            { keys: 'Alt + M', action: 'Go to Moderate' },
-            { keys: 'Alt + Q', action: 'Go to Activities' },
-            { keys: 'Alt + P', action: 'Go to Policies' },
-            { keys: 'Alt + A', action: 'Go to Analytics' },
-        ]},
-        { category: 'Interface', items: [
-            { keys: 'Alt + B', action: 'Toggle Sidebar' },
-            { keys: '?', action: 'Show/Hide Shortcuts' },
-            { keys: 'Esc', action: 'Close Modal' },
-        ]},
-        { category: 'Review Activities', items: [
-            { keys: 'A', action: 'Approve Current Item' },
-            { keys: 'R', action: 'Reject Current Item' },
-            { keys: 'S', action: 'Skip Current Item' },
-            { keys: '↑ / ↓', action: 'Navigate Items' },
-        ]},
+        {
+            category: 'Navigation', items: [
+                { keys: 'Alt + D', action: 'Go to Dashboard' },
+                { keys: 'Alt + S', action: 'Go to Submit Content' },
+                { keys: 'Alt + M', action: 'Go to Moderate' },
+                { keys: 'Alt + Q', action: 'Go to Activities' },
+                { keys: 'Alt + P', action: 'Go to Policies' },
+                { keys: 'Alt + A', action: 'Go to Analytics' },
+            ]
+        },
+        {
+            category: 'Interface', items: [
+                { keys: 'Alt + B', action: 'Toggle Sidebar' },
+                { keys: '?', action: 'Show/Hide Shortcuts' },
+                { keys: 'Esc', action: 'Close Modal' },
+            ]
+        },
+        {
+            category: 'Review Activities', items: [
+                { keys: 'A', action: 'Approve Current Item' },
+                { keys: 'R', action: 'Reject Current Item' },
+                { keys: 'S', action: 'Skip Current Item' },
+                { keys: '↑ / ↓', action: 'Navigate Items' },
+            ]
+        },
     ]
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div 
-                className="modal-content w-full max-w-lg p-6" 
+            <div
+                className="modal-content w-full max-w-lg p-6"
                 onClick={e => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-6">
@@ -297,7 +310,7 @@ function KeyboardShortcutsModal({ onClose }) {
                         <Keyboard size={20} />
                         Keyboard Shortcuts
                     </h2>
-                    <button 
+                    <button
                         onClick={onClose}
                         className="p-1 hover:bg-white/10 rounded transition-colors"
                     >
@@ -308,9 +321,9 @@ function KeyboardShortcutsModal({ onClose }) {
                 <div className="space-y-6">
                     {shortcuts.map(section => (
                         <div key={section.category}>
-                            <h3 
+                            <h3
                                 className="text-xs uppercase tracking-wider mb-3 pb-2"
-                                style={{ 
+                                style={{
                                     color: 'var(--text-secondary)',
                                     borderBottom: '1px solid var(--border-color)'
                                 }}
@@ -319,16 +332,16 @@ function KeyboardShortcutsModal({ onClose }) {
                             </h3>
                             <div className="space-y-2">
                                 {section.items.map(shortcut => (
-                                    <div 
-                                        key={shortcut.keys} 
+                                    <div
+                                        key={shortcut.keys}
                                         className="flex justify-between items-center py-1"
                                     >
                                         <span style={{ color: 'var(--text-secondary)' }}>
                                             {shortcut.action}
                                         </span>
-                                        <kbd 
+                                        <kbd
                                             className="px-2 py-1 text-xs font-mono rounded"
-                                            style={{ 
+                                            style={{
                                                 backgroundColor: 'var(--bg-secondary)',
                                                 border: '1px solid var(--border-color)'
                                             }}
@@ -342,9 +355,9 @@ function KeyboardShortcutsModal({ onClose }) {
                     ))}
                 </div>
 
-                <div 
+                <div
                     className="mt-6 pt-4 text-center text-xs"
-                    style={{ 
+                    style={{
                         borderTop: '1px solid var(--border-color)',
                         color: 'var(--text-muted)'
                     }}
