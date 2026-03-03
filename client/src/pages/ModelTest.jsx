@@ -1,10 +1,11 @@
-    import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { getModelTestModels, runModelTestBatch } from '../services/api'
 import {
     Upload, Play, RotateCcw, Download, X, CheckCircle,
     AlertTriangle, XCircle, Clock, Zap, Image as ImageIcon,
     ChevronDown, ChevronUp, FlaskConical, Loader2, Info,
-    SkipForward, TrendingUp, Filter, Eye, EyeOff, Save, FolderOpen
+    SkipForward, TrendingUp, Filter, Eye, EyeOff, Save, FolderOpen,
+    Coins, DollarSign, Hash
 } from 'lucide-react'
 
 // ============================================
@@ -22,6 +23,28 @@ const STORAGE_KEY = 'modelTestSession'
 const ACCENT = '#f97316'
 const ACCENT_DIM = 'rgba(249,115,22,0.12)'
 const ACCENT_BORDER = 'rgba(249,115,22,0.35)'
+
+// ============================================
+// OPENROUTER PRICING (USD per 1M tokens)
+// ============================================
+const MODEL_PRICING = {
+    'anthropic/claude-sonnet-4.6': { input: 3.00, output: 15.00 },
+    'google/gemini-3-flash-preview': { input: 0.50, output: 3.00 },
+    'x-ai/grok-4.1-fast': { input: 0.20, output: 0.50 },
+    'moonshotai/kimi-k2.5': { input: 0.45, output: 2.20 },
+    _default: { input: 1.00, output: 3.00 }
+}
+
+const calcCost = (usage, modelId) => {
+    if (!usage) return 0
+    const pricing = MODEL_PRICING[modelId] || MODEL_PRICING._default
+    const inputCost = ((usage.prompt_tokens || 0) / 1_000_000) * pricing.input
+    const outputCost = ((usage.completion_tokens || 0) / 1_000_000) * pricing.output
+    return inputCost + outputCost
+}
+
+const fmtTokens = (n) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n)
+const fmtCost = (usd) => usd < 0.001 ? `$${usd.toFixed(6)}` : usd < 0.01 ? `$${usd.toFixed(5)}` : `$${usd.toFixed(4)}`
 
 // ============================================
 // HELPERS
@@ -380,6 +403,29 @@ function ResultRow({ result, index }) {
                                     <p style={{ margin: 0, fontSize: 11, color: '#f59e0b' }}>
                                         ⚠ Possible copyright: <strong>{result.copyrightSource}</strong>
                                     </p>
+                                </div>
+                            )}
+                            {/* ── Token Usage ── */}
+                            {result.usage && (
+                                <div style={{
+                                    marginTop: 10, padding: '8px 12px', borderRadius: 6,
+                                    background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)',
+                                    display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <Hash size={11} color="#818cf8" />
+                                        <span style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.8 }}>Tokens</span>
+                                    </div>
+                                    <span style={{ fontSize: 11, color: '#818cf8', fontFamily: 'monospace' }}>
+                                        <span style={{ opacity: 0.7 }}>in </span>{fmtTokens(result.usage.prompt_tokens || 0)}
+                                        <span style={{ opacity: 0.4, margin: '0 6px' }}>·</span>
+                                        <span style={{ opacity: 0.7 }}>out </span>{fmtTokens(result.usage.completion_tokens || 0)}
+                                        <span style={{ opacity: 0.4, margin: '0 6px' }}>·</span>
+                                        <span style={{ opacity: 0.7 }}>total </span>{fmtTokens((result.usage.prompt_tokens || 0) + (result.usage.completion_tokens || 0))}
+                                    </span>
+                                    <span style={{ fontSize: 11, color: '#34d399', fontFamily: 'monospace', fontWeight: 700, marginLeft: 'auto' }}>
+                                        {fmtCost(calcCost(result.usage, result.model))}
+                                    </span>
                                 </div>
                             )}
                         </div>
@@ -754,6 +800,9 @@ export default function ModelTest() {
             const { previewUrl, ...rest } = r
             return rest
         })
+        const totalIn = resultArray.reduce((s, r) => s + (r.usage?.prompt_tokens || 0), 0)
+        const totalOut = resultArray.reduce((s, r) => s + (r.usage?.completion_tokens || 0), 0)
+        const totalC = resultArray.reduce((s, r) => s + calcCost(r.usage, r.model), 0)
         const exportData = {
             exportedAt: new Date().toISOString(),
             model: selectedModel,
@@ -762,6 +811,12 @@ export default function ModelTest() {
                 safe: resultArray.filter(r => r.verdict === 'safe').length,
                 flagged: resultArray.filter(r => r.verdict === 'flagged').length,
                 rejected: resultArray.filter(r => r.verdict === 'rejected').length,
+            },
+            tokenSummary: {
+                totalInputTokens: totalIn,
+                totalOutputTokens: totalOut,
+                totalTokens: totalIn + totalOut,
+                estimatedCostUSD: totalC
             },
             results: resultArray,
             batchHistory: batchHistory.map(b => ({
@@ -867,6 +922,10 @@ export default function ModelTest() {
     const avgConfidence = analyzedCount > 0
         ? resultList.reduce((sum, r) => sum + (r.confidence || 0), 0) / analyzedCount
         : 0
+    // Token / cost stats
+    const totalInputTokens = resultList.reduce((s, r) => s + (r.usage?.prompt_tokens || 0), 0)
+    const totalOutputTokens = resultList.reduce((s, r) => s + (r.usage?.completion_tokens || 0), 0)
+    const totalCost = resultList.reduce((s, r) => s + calcCost(r.usage, r.model), 0)
     const pendingCount = useMemo(() => {
         const analyzedIds = new Set(Object.keys(results))
         return images.filter(img => !analyzedIds.has(img.id) && img.status !== 'analyzing').length
@@ -1211,35 +1270,90 @@ export default function ModelTest() {
 
             {/* ── Stats Summary ── */}
             {analyzedCount > 0 && (
-                <div style={{
-                    display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)',
-                    gap: 10, marginBottom: 20
-                }}>
-                    {[
-                        { label: 'Total', value: images.length || analyzedCount, color: 'var(--text-secondary)', icon: <ImageIcon size={14} /> },
-                        { label: 'Analyzed', value: analyzedCount, color: 'var(--text-primary)', icon: <TrendingUp size={14} /> },
-                        { label: 'Safe', value: safeCount, color: '#22c55e', icon: <CheckCircle size={14} color="#22c55e" /> },
-                        { label: 'Flagged', value: flaggedCount, color: '#f59e0b', icon: <AlertTriangle size={14} color="#f59e0b" /> },
-                        { label: 'Rejected', value: rejectedCount, color: '#ef4444', icon: <XCircle size={14} color="#ef4444" /> },
-                        { label: 'Avg Conf.', value: `${Math.round(avgConfidence * 100)}%`, color: avgConfidence > 0.7 ? '#22c55e' : avgConfidence > 0.4 ? '#f59e0b' : '#ef4444', icon: <Info size={14} /> },
-                    ].map(stat => (
-                        <div key={stat.label} style={{
-                            background: 'var(--bg-card)', border: '1px solid var(--border-color)',
-                            borderRadius: 8, padding: '12px 14px',
-                            display: 'flex', flexDirection: 'column', gap: 5
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <span style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>
-                                    {stat.label}
+                <>
+                    <div style={{
+                        display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)',
+                        gap: 10, marginBottom: 10
+                    }}>
+                        {[
+                            { label: 'Total', value: images.length || analyzedCount, color: 'var(--text-secondary)', icon: <ImageIcon size={14} /> },
+                            { label: 'Analyzed', value: analyzedCount, color: 'var(--text-primary)', icon: <TrendingUp size={14} /> },
+                            { label: 'Safe', value: safeCount, color: '#22c55e', icon: <CheckCircle size={14} color="#22c55e" /> },
+                            { label: 'Flagged', value: flaggedCount, color: '#f59e0b', icon: <AlertTriangle size={14} color="#f59e0b" /> },
+                            { label: 'Rejected', value: rejectedCount, color: '#ef4444', icon: <XCircle size={14} color="#ef4444" /> },
+                            { label: 'Avg Conf.', value: `${Math.round(avgConfidence * 100)}%`, color: avgConfidence > 0.7 ? '#22c55e' : avgConfidence > 0.4 ? '#f59e0b' : '#ef4444', icon: <Info size={14} /> },
+                        ].map(stat => (
+                            <div key={stat.label} style={{
+                                background: 'var(--bg-card)', border: '1px solid var(--border-color)',
+                                borderRadius: 8, padding: '12px 14px',
+                                display: 'flex', flexDirection: 'column', gap: 5
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>
+                                        {stat.label}
+                                    </span>
+                                    {stat.icon}
+                                </div>
+                                <span style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: 'monospace', lineHeight: 1 }}>
+                                    {stat.value}
                                 </span>
-                                {stat.icon}
                             </div>
-                            <span style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: 'monospace', lineHeight: 1 }}>
-                                {stat.value}
-                            </span>
+                        ))}
+                    </div>
+                    {/* Token & Cost row — only shown if any usage data exists */}
+                    {totalInputTokens > 0 || totalOutputTokens > 0 ? (
+                        <div style={{
+                            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+                            gap: 10, marginBottom: 20
+                        }}>
+                            {[
+                                {
+                                    label: 'Input Tokens',
+                                    value: fmtTokens(totalInputTokens),
+                                    sub: `${totalInputTokens.toLocaleString()} tokens`,
+                                    color: '#818cf8',
+                                    icon: <Hash size={14} color="#818cf8" />
+                                },
+                                {
+                                    label: 'Output Tokens',
+                                    value: fmtTokens(totalOutputTokens),
+                                    sub: `${totalOutputTokens.toLocaleString()} tokens`,
+                                    color: '#a78bfa',
+                                    icon: <Hash size={14} color="#a78bfa" />
+                                },
+                                {
+                                    label: 'Total Cost',
+                                    value: fmtCost(totalCost),
+                                    sub: `${analyzedCount} image${analyzedCount !== 1 ? 's' : ''} · avg ${fmtCost(analyzedCount > 0 ? totalCost / analyzedCount : 0)}/img`,
+                                    color: '#34d399',
+                                    icon: <DollarSign size={14} color="#34d399" />
+                                },
+                            ].map(stat => (
+                                <div key={stat.label} style={{
+                                    background: 'var(--bg-card)',
+                                    border: '1px solid rgba(99,102,241,0.2)',
+                                    borderRadius: 8, padding: '12px 14px',
+                                    display: 'flex', flexDirection: 'column', gap: 4
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <span style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>
+                                            {stat.label}
+                                        </span>
+                                        {stat.icon}
+                                    </div>
+                                    <span style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: 'monospace', lineHeight: 1 }}>
+                                        {stat.value}
+                                    </span>
+                                    <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                                        {stat.sub}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    ) : (
+                        <div style={{ marginBottom: 20 }} />
+                    )}
+                </>
             )}
 
             {/* ── Image Grid (collapsible thumbnails) ── */}

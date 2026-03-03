@@ -216,7 +216,7 @@ export const getModelTestModels = async () => {
 
 export const runModelTestBatch = async (images, model, batchIndex) => {
     const response = await api.post('/model-test/analyze', { images, model, batchIndex }, {
-        timeout: 120000 // 2-minute timeout for batch analysis
+        timeout: 480000 // 8-minute timeout for batch analysis
     });
     return response.data;
 };
