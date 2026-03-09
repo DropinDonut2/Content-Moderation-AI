@@ -32,6 +32,7 @@ const MODEL_PRICING = {
     'google/gemini-3-flash-preview': { input: 0.50, output: 3.00 },
     'x-ai/grok-4.1-fast': { input: 0.20, output: 0.50 },
     'moonshotai/kimi-k2.5': { input: 0.45, output: 2.20 },
+    'openai/gpt-5-nano': { input: 0.05, output: 0.40 },
     _default: { input: 1.00, output: 3.00 }
 }
 
