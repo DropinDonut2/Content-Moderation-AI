@@ -31,6 +31,14 @@ const SUPPORTED_MODELS = {
     'openai/gpt-5-nano': 'GPT-5 Nano'
 };
 
+// Models that support OpenAI-style strict json_schema structured output.
+// All others will use json_object mode (prompt-guided JSON).
+const STRICT_JSON_SCHEMA_MODELS = new Set([
+    'openai/gpt-5-nano',
+    'openai/gpt-4o',
+    'openai/gpt-4o-mini'
+]);
+
 // ============================================
 // IMAGE ANALYSIS SCHEMA (simplified for test)
 // ============================================
@@ -648,20 +656,28 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
                 }
             ];
 
-            const response = await openai.chat.completions.create({
-                model: validModel,
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: messageContent }
-                ],
-                response_format: {
+            // Only use strict json_schema mode for models that support it.
+            // Other models (Kimi, Grok, Gemini, etc.) use json_object mode
+            // and rely on the prompt to return valid JSON.
+            const supportsStrictSchema = STRICT_JSON_SCHEMA_MODELS.has(validModel);
+            const responseFormat = supportsStrictSchema
+                ? {
                     type: 'json_schema',
                     json_schema: {
                         name: 'image_moderation_result',
                         strict: true,
                         schema: imageTestSchema
                     }
-                },
+                }
+                : { type: 'json_object' };
+
+            const response = await openai.chat.completions.create({
+                model: validModel,
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: messageContent }
+                ],
+                response_format: responseFormat,
                 max_tokens: 1024,
                 temperature: 0.1
             });
@@ -671,13 +687,16 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
 
             let parsed;
             try {
-                parsed = JSON.parse(rawContent);
+                // Strip markdown code fences if model wrapped the JSON (common with non-OpenAI models)
+                const cleanContent = rawContent.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+                parsed = JSON.parse(cleanContent);
             } catch (parseErr) {
-                // Fallback if JSON parse fails
+                // Log the raw content to help diagnose model-specific response format issues
+                console.error(`[ModelTest] Failed to parse JSON from ${validModel}. Raw content:`, rawContent.slice(0, 500));
                 parsed = {
                     verdict: 'flagged',
                     confidence: 0,
-                    reasoning: 'Failed to parse model response.',
+                    reasoning: 'Unable to parse model response. The model may not support the requested output format.',
                     imageStyle: 'unknown',
                     isPhotorealistic: false,
                     isAiGenerated: false,
