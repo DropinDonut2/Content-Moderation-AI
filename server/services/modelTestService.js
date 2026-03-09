@@ -28,6 +28,7 @@ const SUPPORTED_MODELS = {
     'google/gemini-3-flash-preview': 'Gemini 3 Flash Preview',
     'x-ai/grok-4.1-fast': 'Grok 4.1 Fast',
     'moonshotai/kimi-k2.5': 'Kimi K2.5',
+    'openai/gpt-5-nano': 'GPT-5 Nano'
 };
 
 // ============================================
