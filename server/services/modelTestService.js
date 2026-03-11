@@ -28,7 +28,9 @@ const SUPPORTED_MODELS = {
     'google/gemini-3-flash-preview': 'Gemini 3 Flash Preview',
     'x-ai/grok-4.1-fast': 'Grok 4.1 Fast',
     'moonshotai/kimi-k2.5': 'Kimi K2.5',
-    'openai/gpt-5-nano': 'GPT-5 Nano'
+    'openai/gpt-5-nano': 'GPT-5 Nano',
+    'qwen/qwen3.5-122b-a10b': 'Qwen 3.5 122B A10B',
+    'minimax/minimax-01': 'Minimax 01'
 };
 
 // ============================================
@@ -667,17 +669,24 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
             });
 
             const elapsed = Date.now() - startTime;
-            const rawContent = response.choices[0]?.message?.content || '{}';
+            const rawContent = response.choices[0]?.message?.content;
+            const finishReason = response.choices[0]?.finish_reason || 'unknown';
+
+            // Log for diagnosis
+            console.log(`[ModelTest] ${validModel} | ${image.name} | finish_reason: ${finishReason} | content length: ${rawContent?.length ?? 'null'}`);
 
             let parsed;
-            try {
-                parsed = JSON.parse(rawContent);
-            } catch (parseErr) {
-                // Fallback if JSON parse fails
+
+            // Handle null/empty content — happens when the model's own safety filter blocks the image
+            if (!rawContent || rawContent.trim() === '') {
+                const reason = finishReason === 'content_filter'
+                    ? `Model refused to analyze this image (content_filter). The model's own safety policy blocked it.`
+                    : `Model returned empty response (finish_reason: ${finishReason}). Image may have triggered model-side safety filters.`;
+                console.warn(`[ModelTest] Empty content from ${validModel} for ${image.name} — ${reason}`);
                 parsed = {
                     verdict: 'flagged',
-                    confidence: 0,
-                    reasoning: 'Failed to parse model response.',
+                    confidence: 0.5,
+                    reasoning: reason,
                     imageStyle: 'unknown',
                     isPhotorealistic: false,
                     isAiGenerated: false,
@@ -687,6 +696,25 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
                     nudityDetected: false,
                     issues: []
                 };
+            } else {
+                try {
+                    parsed = JSON.parse(rawContent);
+                } catch (parseErr) {
+                    console.error(`[ModelTest] Failed to parse JSON from ${validModel} for ${image.name}. Raw:`, rawContent.slice(0, 300));
+                    parsed = {
+                        verdict: 'flagged',
+                        confidence: 0,
+                        reasoning: `Failed to parse model response. Raw: ${rawContent.slice(0, 120)}`,
+                        imageStyle: 'unknown',
+                        isPhotorealistic: false,
+                        isAiGenerated: false,
+                        isCopyrighted: false,
+                        copyrightSource: '',
+                        minorAppearance: false,
+                        nudityDetected: false,
+                        issues: []
+                    };
+                }
             }
 
             results.push({
