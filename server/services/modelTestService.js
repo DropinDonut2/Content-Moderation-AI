@@ -33,6 +33,101 @@ const SUPPORTED_MODELS = {
     'minimax/minimax-01': 'Minimax 01'
 };
 
+// Models that do NOT support ANY response_format parameter.
+// For these, we omit response_format entirely and rely on the system prompt
+// instructing the model to return valid JSON, then parse the plain text.
+const NO_RESPONSE_FORMAT_MODELS = new Set([
+    'minimax/minimax-01'   // rejects both json_schema and json_object via OpenRouter
+]);
+
+// Models that support json_object but NOT json_schema strict mode.
+const JSON_OBJECT_ONLY_MODELS = new Set([
+    'moonshotai/kimi-k2.5'  // reasoning model — json_object mode only
+]);
+
+// ============================================
+// NORMALIZE FREEFORM JSON TO SCHEMA FIELDS
+// ============================================
+// When a model returns plain JSON without schema enforcement (e.g. minimax), it
+// may use different field names. This maps known aliases to the canonical schema
+// fields and fills any missing required fields with safe defaults.
+
+const normalizeToSchema = (raw) => {
+    // reasoning: accept 'reason', 'reasons' (array), 'explanation', 'analysis'
+    let reasoning = raw.reasoning || raw.reason || raw.explanation || raw.analysis || '';
+    if (!reasoning && Array.isArray(raw.reasons)) {
+        reasoning = raw.reasons.join(' ');
+    }
+    if (!reasoning && Array.isArray(raw.reason)) {
+        reasoning = raw.reason.join(' ');
+    }
+
+    // verdict: sanitise to allowed enum values
+    const verdictRaw = (raw.verdict || raw.decision || raw.result || 'safe').toLowerCase();
+    const verdict = ['safe', 'flagged', 'rejected'].includes(verdictRaw) ? verdictRaw : 'safe';
+
+    // confidence: accept 0-1 floats or 0-100 percentages.
+    // If not provided (common with freeform models like minimax), infer from verdict:
+    // a decisive safe/rejected answer implies high confidence; flagged implies uncertainty.
+    let confidence = raw.confidence ?? raw.score ?? raw.certainty ?? null;
+    if (confidence === null) {
+        confidence = verdict === 'flagged' ? 0.5 : 0.95;
+    } else if (confidence > 1) {
+        confidence = confidence / 100;
+    }
+
+    // imageStyle: accept style, art_style, image_style
+    const styleRaw = (raw.imageStyle || raw.style || raw.art_style || raw.image_style || 'unknown').toLowerCase().replace(/[- ]/g, '_');
+    const allowedStyles = ['anime', 'cartoon', 'illustrated', 'photorealistic', 'real_photo', 'unknown'];
+    const imageStyle = allowedStyles.includes(styleRaw) ? styleRaw : 'unknown';
+
+    // booleans with common aliases
+    const toBool = (v) => v === true || v === 'true' || v === 1;
+    const isPhotorealistic = toBool(raw.isPhotorealistic ?? raw.is_photorealistic ?? raw.photorealistic);
+    const isAiGenerated = toBool(raw.isAiGenerated ?? raw.is_ai_generated ?? raw.aiGenerated ?? raw.ai_generated);
+    const isCopyrighted = toBool(raw.isCopyrighted ?? raw.is_copyrighted ?? raw.copyrighted);
+    const minorAppearance = toBool(raw.minorAppearance ?? raw.minor_appearance ?? raw.minor);
+    const nudityDetected = toBool(raw.nudityDetected ?? raw.nudity_detected ?? raw.nudity);
+
+    // copyrightSource
+    const copyrightSource = raw.copyrightSource ?? raw.copyright_source ?? raw.source ?? '';
+
+    // issues: accept array of objects or array of strings
+    let issues = [];
+    if (Array.isArray(raw.issues)) {
+        issues = raw.issues.map(item => {
+            if (typeof item === 'string') {
+                return { category: 'other', severity: 'low', description: item };
+            }
+            return {
+                category: item.category || 'other',
+                severity: item.severity || 'low',
+                description: item.description || item.reason || ''
+            };
+        });
+    } else if (Array.isArray(raw.violations)) {
+        issues = raw.violations.map(v => ({
+            category: v.category || 'other',
+            severity: v.severity || 'low',
+            description: typeof v === 'string' ? v : (v.description || v.reason || '')
+        }));
+    }
+
+    return {
+        verdict,
+        confidence,
+        reasoning,
+        imageStyle,
+        isPhotorealistic,
+        isAiGenerated,
+        isCopyrighted,
+        copyrightSource,
+        minorAppearance,
+        nudityDetected,
+        issues
+    };
+};
+
 // ============================================
 // IMAGE ANALYSIS SCHEMA (simplified for test)
 // ============================================
@@ -637,7 +732,32 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
         try {
             console.log(`[ModelTest] Batch ${batchIndex} | Image ${i + 1}/${images.length}: ${image.name} | Model: ${validModel}`);
 
-            const userPrompt = `Analyze this image for content policy compliance. The image filename is: "${image.name}". Return your analysis as valid JSON matching the required schema.`;
+            // For models without response_format enforcement, inject the expected JSON
+            // structure directly in the user message so the model fills every field.
+            const userPrompt = NO_RESPONSE_FORMAT_MODELS.has(validModel)
+                ? `Analyze this image for content policy compliance. The image filename is: "${image.name}".
+
+You MUST respond with ONLY a valid JSON object — no markdown, no explanation, just raw JSON.
+Fill in every field below based on your analysis:
+
+{
+  "verdict": "<safe | flagged | rejected>",
+  "confidence": <0.0 to 1.0 — how confident you are>,
+  "reasoning": "<2-3 sentences explaining your verdict>",
+  "imageStyle": "<anime | cartoon | illustrated | photorealistic | real_photo | unknown>",
+  "isPhotorealistic": <true | false>,
+  "isAiGenerated": <true | false>,
+  "isCopyrighted": <true | false>,
+  "copyrightSource": "<name of IP if copyrighted, else empty string>",
+  "minorAppearance": <true | false — does any character VISUALLY look under 18?>,
+  "nudityDetected": <true | false — are nipples or genitals visible?>,
+  "issues": [
+    { "category": "<nudity|minor_appearance|photorealistic|copyright|violence|hate_symbol|other>", "severity": "<low|medium|high|critical>", "description": "<what was found>" }
+  ]
+}
+
+If there are no issues, set "issues" to an empty array [].`
+                : `Analyze this image for content policy compliance. The image filename is: "${image.name}". Return your analysis as valid JSON matching the required schema.`;
 
             const messageContent = [
                 { type: 'text', text: userPrompt },
@@ -650,23 +770,35 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
                 }
             ];
 
-            const response = await openai.chat.completions.create({
+            // Build request params — omit response_format entirely for models that
+            // reject it (minimax), use json_object for reasoning-only models (kimi),
+            // and use the full json_schema for everything else.
+            const requestParams = {
                 model: validModel,
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: messageContent }
                 ],
-                response_format: {
-                    type: 'json_schema',
-                    json_schema: {
-                        name: 'image_moderation_result',
-                        strict: true,
-                        schema: imageTestSchema
-                    }
-                },
                 max_tokens: 1024,
                 temperature: 0.1
-            });
+            };
+
+            if (!NO_RESPONSE_FORMAT_MODELS.has(validModel)) {
+                if (JSON_OBJECT_ONLY_MODELS.has(validModel)) {
+                    requestParams.response_format = { type: 'json_object' };
+                } else {
+                    requestParams.response_format = {
+                        type: 'json_schema',
+                        json_schema: {
+                            name: 'image_moderation_result',
+                            strict: true,
+                            schema: imageTestSchema
+                        }
+                    };
+                }
+            }
+
+            const response = await openai.chat.completions.create(requestParams);
 
             const elapsed = Date.now() - startTime;
             const rawContent = response.choices[0]?.message?.content;
@@ -699,6 +831,11 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
             } else {
                 try {
                     parsed = JSON.parse(rawContent);
+                    // Normalize freeform responses (models without schema enforcement)
+                    // to ensure all expected fields exist with canonical names.
+                    if (NO_RESPONSE_FORMAT_MODELS.has(validModel) || JSON_OBJECT_ONLY_MODELS.has(validModel)) {
+                        parsed = normalizeToSchema(parsed);
+                    }
                 } catch (parseErr) {
                     console.error(`[ModelTest] Failed to parse JSON from ${validModel} for ${image.name}. Raw:`, rawContent.slice(0, 300));
                     parsed = {
@@ -729,7 +866,11 @@ const analyzeImageBatch = async (images, model, batchIndex) => {
             });
 
         } catch (err) {
-            console.error(`[ModelTest] Error analyzing image ${image.name}:`, err.message);
+            // Log the full error details so we can diagnose API-level failures
+            console.error(`[ModelTest] Error analyzing ${image.name} with ${validModel}:`, err.message);
+            if (err.status) console.error(`[ModelTest] API status: ${err.status}`);
+            if (err.error) console.error(`[ModelTest] API error body:`, JSON.stringify(err.error));
+            if (err.cause) console.error(`[ModelTest] Cause:`, err.cause);
             results.push({
                 id: image.id,
                 name: image.name,
